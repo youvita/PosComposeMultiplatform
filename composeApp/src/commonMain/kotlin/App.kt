@@ -1,37 +1,55 @@
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
+
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
+import cafe.adriel.voyager.navigator.Navigator
+import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import di.appModule
+//import login.presentation.LoginRoute
+import login.presentation.LoginScreen
+import login.presentation.LoginViewModel
+//import moe.tlaster.precompose.navigation.NavHost
+//import moe.tlaster.precompose.navigation.path
+//import moe.tlaster.precompose.navigation.rememberNavigator
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinApplication
+import org.koin.compose.koinInject
 
-import poscomposemultiplatform.composeapp.generated.resources.Res
-import poscomposemultiplatform.composeapp.generated.resources.compose_multiplatform
-
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
+    KoinApplication(application = {
+        modules(appModule())
+    }) {
+        MaterialTheme {
+            NavigationHost()
         }
     }
+}
+
+@Composable
+fun NavigationHost() {
+//    val navigator = rememberNavigator()
+//    val stack = mutableMapOf<String, ViewModel>()
+//
+//    println("kdkdkdkdkkdkd")
+//    NavHost(
+//        navigator = navigator,
+//        initialRoute = "/login"
+//    ) {
+//        scene(
+//            route = "/login"
+//        ) {
+//            val viewModel = stack["/login"] as LoginViewModel? ?: koinInject()
+//            stack["/login"] = viewModel
+//
+//            LoginRoute(viewModel)
+//        }
+//    }
+    val viewModel: LoginViewModel = koinInject()
+    Navigator(
+        screen = LoginScreen(
+            state = viewModel.uiState.collectAsState().value,
+            loginEvent = viewModel::onLoginClick
+        )
+    )
 }
