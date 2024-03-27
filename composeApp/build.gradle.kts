@@ -13,7 +13,7 @@ kotlin {
     androidTarget {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "11"
+                jvmTarget = "17"
             }
         }
     }
@@ -30,52 +30,37 @@ kotlin {
     }
     
     sourceSets {
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.compose.ui.tooling.preview)
-                implementation(libs.androidx.activity.compose)
-                implementation(libs.androidx.appcompat)
 
-                implementation(libs.koin.android)
-            }
+        androidMain.dependencies {
+            implementation(libs.compose.ui.tooling.preview)
+            implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.appcompat)
+
+            implementation(libs.koin.android)
         }
 
-        val commonMain by getting {
-            dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.ui)
-                implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
 
-                implementation(libs.koin.core)
-                implementation(libs.koin.compose)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
 
-                api(libs.mvvm.core)
-                api(libs.mvvm.compose)
-                api(libs.mvvm.flow)
-                api(libs.mvvm.flow.compose)
-
-//                api(libs.precompose)
-
-                implementation(libs.voyager.navigator)
-                implementation(libs.voyager.bottomSheetNavigator)
-                implementation(libs.voyager.transitions)
-                implementation(libs.voyager.tabNavigator)
-                implementation(libs.voyager.koin)
-            }
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.bottomSheetNavigator)
+            implementation(libs.voyager.transitions)
+            implementation(libs.voyager.tabNavigator)
+            implementation(libs.voyager.koin)
         }
 
-        val iosX64Main by getting
-        val iosArm64Main by getting
-        val iosSimulatorArm64Main by getting
-        val iosMain by creating {
-            dependsOn(commonMain)
-            iosX64Main.dependsOn(this)
-            iosArm64Main.dependsOn(this)
-            iosSimulatorArm64Main.dependsOn(this)
+        iosMain.dependencies {
+            implementation(compose.components.resources)
         }
+
     }
 }
 
@@ -108,8 +93,8 @@ android {
         prefab = true
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)

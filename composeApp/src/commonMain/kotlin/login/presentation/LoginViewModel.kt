@@ -1,21 +1,21 @@
 package login.presentation
 
-import core.data.Status
-import dev.icerock.moko.mvvm.viewmodel.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
+import core.data.Resource
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import login.domain.model.User
 import login.domain.repository.LoginRepository
 
 class LoginViewModel(
     private val repository: LoginRepository
-): ViewModel() {
+): ScreenModel {
 
     private val _uiState = MutableStateFlow(LoginState())
     val uiState: StateFlow<LoginState> = _uiState.asStateFlow()
@@ -32,17 +32,26 @@ class LoginViewModel(
     }
 
     fun onLoginClick() {
-        viewModelScope.launch {
-            val result = repository.login(_uiState.value.username, _uiState.value.password)
-            result.onEach { resource ->
-                if (resource.status == Status.SUCCESS){
-                    _uiState.update { it.copy(showDialog = false) }
-                    _uiEvent.send(User())
-                } else {
-                    _uiState.update { it.copy(showDialog = false) }
-                    _uiState.value = _uiState.value.copy(dialogMsg = resource.message.toString())
+        repository.login(_uiState.value.username, _uiState.value.password)
+            .onEach { result ->
+                when(result) {
+                    is Resource.Success -> {
+                        _uiState.value = uiState.value.copy(
+                            status = result.status,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Error -> {
+                        _uiState.value = uiState.value.copy(
+                            status = result.status,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _uiState.value = uiState.value.copy(isLoading = true)
+                    }
                 }
-            }
-        }
+            }.launchIn(screenModelScope)
+
     }
 }

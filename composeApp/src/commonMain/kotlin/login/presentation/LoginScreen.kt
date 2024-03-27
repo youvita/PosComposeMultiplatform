@@ -4,28 +4,34 @@ import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import cafe.adriel.voyager.core.screen.Screen
+import core.data.Status
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
-//@Composable
-//fun LoginRoute(
-//    viewModel: LoginViewModel
-//) {
-//    val state by viewModel.uiState.collectAsState()
-//    viewModel.onPasswordChange("")
-//    viewModel.onUsernameChange("")
-//    LoginScreen(state = state, loginEvent = viewModel::onLoginClick)
-//}
-class LoginScreen(
-    state: LoginState,
-    loginEvent: () -> Unit
-): Screen {
+class LoginScreen: Screen, KoinComponent {
+
     @Composable
     override fun Content() {
+        val loginModel = get<LoginViewModel>()
+        val state = loginModel.uiState.collectAsState().value
+
+        val loading by rememberUpdatedState(state.isLoading)
+        LaunchedEffect(loading) {
+            if (state.status == Status.SUCCESS) {
+                println("Move to new screen")
+            }
+        }
+
         Scaffold {
             Button(
-                onClick = {  }
+                onClick = {
+                    loginModel.onLoginClick()
+                }
             ) {
                 Text("Click Me!!!")
             }

@@ -8,10 +8,10 @@ import login.domain.repository.LoginRepository
 
 class LoginRepositoryImpl: LoginRepository {
     override fun login(username: String, password: String): Flow<Resource<Boolean>> {
-        Resource.Loading(true)
         return flow {
+            emit(Resource.Loading(true))
             delay(1000)
-            Resource.Success(true)
+            emit(Resource.Success(true))
         }
     }
 }

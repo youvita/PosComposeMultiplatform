@@ -8,14 +8,13 @@ import org.koin.dsl.module
 fun appModule() = module {
 
     // repositories
-    single {
+    single<LoginRepository> {
         LoginRepositoryImpl()
     }
 
+    // viewmodel
     single<LoginViewModel> {
         LoginViewModel(repository = get())
     }
 
-//    // viewmodel
-//    viewModelDefinition { LoginViewModel(get()) }
 }
