@@ -55,6 +55,8 @@ kotlin {
             implementation(libs.voyager.transitions)
             implementation(libs.voyager.tabNavigator)
             implementation(libs.voyager.koin)
+
+            implementation(libs.stately.common)
         }
 
         iosMain.dependencies {

@@ -21,6 +21,7 @@ koin-compose = "1.1.2"
 moko = "0.16.1"
 precompose = "1.5.0-rc01"
 voyager = "1.0.0"
+stately = "2.0.5"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -36,15 +37,10 @@ androidx-activity-compose = { module = "androidx.activity:activity-compose", ver
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 
+# Koin Injection
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose" }
-
-mvvm-compose = { module = "dev.icerock.moko:mvvm-compose", version.ref = "moko" }
-mvvm-core = { module = "dev.icerock.moko:mvvm-core", version.ref = "moko" }
-mvvm-flow = { module = "dev.icerock.moko:mvvm-flow", version.ref = "moko" }
-mvvm-flow-compose = { module = "dev.icerock.moko:mvvm-flow-compose", version.ref = "moko" }
-precompose = { module = "moe.tlaster:precompose", version.ref = "precompose" }
 
 # Voyager
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
@@ -52,6 +48,9 @@ voyager-bottomSheetNavigator = { module = "cafe.adriel.voyager:voyager-bottom-sh
 voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
+
+# State management in Kotlin Multiplatform
+stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
 
 
 [plugins]
