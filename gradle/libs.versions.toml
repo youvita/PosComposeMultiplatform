@@ -49,7 +49,7 @@ voyager-tabNavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", v
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voyager" }
 
-# State management in Kotlin Multiplatform
+# Set this for fixed issue with iosX64 running
 stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
 
 
