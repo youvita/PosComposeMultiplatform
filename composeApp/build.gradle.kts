@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
 //    alias(libs.plugins.devToolsKsp)
+    alias(libs.plugins.sqlDelight)
 }
 
 kotlin {
@@ -37,6 +38,9 @@ kotlin {
             implementation(libs.androidx.appcompat)
 
             implementation(libs.koin.android)
+
+            // sql
+            implementation(libs.sqlDelight.android)
         }
 
         commonMain.dependencies {
@@ -48,6 +52,11 @@ kotlin {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+
+            // sql
+            implementation(libs.sqlDelight.runtime)
+            implementation(libs.sqlDelight.coroutine)
+            implementation(libs.primitive.adapters)
 
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
@@ -64,6 +73,9 @@ kotlin {
         iosMain.dependencies {
             @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+
+            // sql
+            implementation(libs.sqlDelight.native)
         }
 
     }
@@ -103,6 +115,14 @@ android {
     }
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
+    }
+}
+
+sqldelight {
+    databases {
+        create("PosDatabase") {
+            packageName.set("org.topteam.pos")
+        }
     }
 }
 

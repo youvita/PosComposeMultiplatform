@@ -9,7 +9,8 @@ class KoinInit {
         return startKoin {
             modules(
                 listOf(
-                    appModule()
+                    platformModule(),
+                    appModule(),
                 ),
             )
             appDeclaration()

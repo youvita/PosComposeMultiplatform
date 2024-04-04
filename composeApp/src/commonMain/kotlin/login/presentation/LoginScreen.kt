@@ -53,6 +53,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import core.data.Status
 import core.theme.Black
 import core.theme.PrimaryColor
+import menu.domain.model.Menu
+import menu.presentation.MenuViewModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -86,6 +88,10 @@ class LoginScreen: Screen, KoinComponent {
             if (state.status == Status.SUCCESS) {
                 println("Move to new screen")
             }
+        }
+
+        LaunchedEffect(Unit) {
+            loginModel.addMenu(Menu(id = 0, name = "Dara", description = "Test"))
         }
 
         val focusManager = LocalFocusManager.current

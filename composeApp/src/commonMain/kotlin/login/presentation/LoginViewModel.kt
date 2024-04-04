@@ -10,11 +10,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import login.domain.model.User
 import login.domain.repository.LoginRepository
+import menu.domain.model.Menu
+import menu.domain.repository.MenuRepository
 
 class LoginViewModel(
-    private val repository: LoginRepository
+    private val repository: LoginRepository,
+    private val menuRepository: MenuRepository
 ): ScreenModel {
 
     private val _uiState = MutableStateFlow(LoginState())
@@ -53,5 +57,11 @@ class LoginViewModel(
                 }
             }.launchIn(screenModelScope)
 
+    }
+
+    fun addMenu(menu: Menu) {
+        screenModelScope.launch {
+            menuRepository.addMenu(menu)
+        }
     }
 }

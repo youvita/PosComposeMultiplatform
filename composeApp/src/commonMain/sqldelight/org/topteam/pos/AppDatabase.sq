@@ -1,0 +1,9 @@
+
+CREATE TABLE Menu (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT
+);
+
+insertMenu:
+INSERT INTO Menu(id, name, description) VALUES(?, ?, ?);
