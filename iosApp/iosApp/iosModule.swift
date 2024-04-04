@@ -13,7 +13,7 @@ class iosModule {
     static var koin = {
         KoinInit().doInit(
                 appDeclaration: { _ in
-                    // Do nothing
+
                 }
         )
     }()
