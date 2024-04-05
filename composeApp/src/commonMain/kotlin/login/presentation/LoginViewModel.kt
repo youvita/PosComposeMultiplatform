@@ -17,8 +17,7 @@ import menu.domain.model.Menu
 import menu.domain.repository.MenuRepository
 
 class LoginViewModel(
-    private val repository: LoginRepository,
-    private val menuRepository: MenuRepository
+    private val repository: LoginRepository
 ): ScreenModel {
 
     private val _uiState = MutableStateFlow(LoginState())
@@ -57,11 +56,5 @@ class LoginViewModel(
                 }
             }.launchIn(screenModelScope)
 
-    }
-
-    fun addMenu(menu: Menu) {
-        screenModelScope.launch {
-            menuRepository.addMenu(menu)
-        }
     }
 }

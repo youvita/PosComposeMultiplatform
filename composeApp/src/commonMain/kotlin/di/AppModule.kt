@@ -5,6 +5,7 @@ import login.domain.repository.LoginRepository
 import login.presentation.LoginViewModel
 import menu.data.repository.MenuRepositoryImpl
 import menu.domain.repository.MenuRepository
+import menu.presentation.MenuViewModel
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.topteam.pos.PosDatabase
@@ -20,10 +21,11 @@ fun appModule() = module {
     }
 
     single<LoginViewModel> {
-        LoginViewModel(
-            repository = get(),
-            menuRepository = get()
-        )
+        LoginViewModel(repository = get())
+    }
+
+    single<MenuViewModel> {
+        MenuViewModel(repository = get())
     }
 
     single<LoginRepository> {

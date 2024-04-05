@@ -1,7 +1,6 @@
 package login.presentation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -12,18 +11,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -50,20 +46,18 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.currentOrThrow
 import core.data.Status
 import core.theme.Black
 import core.theme.PrimaryColor
-import menu.domain.model.Menu
-import menu.presentation.MenuViewModel
-import org.jetbrains.compose.resources.DrawableResource
+import core.utils.LocalAppNavigator
+import main.MainScreen
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import poscomposemultiplatform.composeapp.generated.resources.Res
-import poscomposemultiplatform.composeapp.generated.resources.compose_multiplatform
 import poscomposemultiplatform.composeapp.generated.resources.ic_background
 import poscomposemultiplatform.composeapp.generated.resources.ic_visibility
 import poscomposemultiplatform.composeapp.generated.resources.ic_visibility_off
@@ -82,21 +76,29 @@ class LoginScreen: Screen, KoinComponent {
     override fun Content() {
         val loginModel = get<LoginViewModel>()
         val state = loginModel.uiState.collectAsState().value
+        val navigator = LocalAppNavigator.currentOrThrow
+        val focusManager = LocalFocusManager.current
+
+        var passwordVisibility by remember {
+            mutableStateOf(false)
+        }
+
+        var isLoginSuccess by remember {
+            mutableStateOf(false)
+        }
 
         val loading by rememberUpdatedState(state.isLoading)
         LaunchedEffect(loading) {
             if (state.status == Status.SUCCESS) {
-                println("Move to new screen")
+                isLoginSuccess = true
             }
         }
 
-        LaunchedEffect(Unit) {
-            loginModel.addMenu(Menu(id = 0, name = "Dara", description = "Test"))
+        if (isLoginSuccess) {
+            isLoginSuccess = false
+            navigator.push(MainScreen())
         }
 
-        val focusManager = LocalFocusManager.current
-
-        var passwordVisibility by remember { mutableStateOf(false) }
         Scaffold { paddingValues ->
             Row(
                 modifier = Modifier
@@ -142,6 +144,7 @@ class LoginScreen: Screen, KoinComponent {
                     Button(
                         onClick = {
 //                            navController.navigate(Screen.PinScreen.route)
+                            loginModel.onLoginClick()
                         }
                     ) {
                         Text(text = "Pin")
