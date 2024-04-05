@@ -41,6 +41,8 @@ kotlin {
 
             // sql
             implementation(libs.sqlDelight.android)
+
+            implementation(libs.printer.android)
         }
 
         commonMain.dependencies {
@@ -68,6 +70,8 @@ kotlin {
             implementation(libs.voyager.koin)
 
             implementation(libs.stately.common)
+
+
         }
 
         iosMain.dependencies {

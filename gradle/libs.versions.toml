@@ -23,6 +23,7 @@ precompose = "1.5.0-rc01"
 voyager = "1.0.0"
 stately = "2.0.5"
 sqlDelight = "2.0.1"
+printer-android = "1.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -59,6 +60,9 @@ voyager-koin = { module = "cafe.adriel.voyager:voyager-koin", version.ref = "voy
 
 # Set this for fixed issue with iosX64 running
 stately-common = { module = "co.touchlab:stately-common", version.ref = "stately" }
+
+# Printer
+printer-android = { module = "com.github.KhairoHumsi:Printer-ktx", version.ref = "printer-android" }
 
 
 [plugins]

@@ -14,6 +14,8 @@ fun App() {
     KoinContext {
         MaterialTheme {
             NavigationHost()
+
+
         }
     }
 }
