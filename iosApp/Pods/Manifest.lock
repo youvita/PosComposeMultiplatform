@@ -1,0 +1,23 @@
+PODS:
+  - composeApp (1.0):
+    - Printer
+  - Printer (4.0.1)
+
+DEPENDENCIES:
+  - composeApp (from `../composeApp`)
+
+SPEC REPOS:
+  trunk:
+    - Printer
+
+EXTERNAL SOURCES:
+  composeApp:
+    :path: "../composeApp"
+
+SPEC CHECKSUMS:
+  composeApp: 8b12a848e031c5586ab854f4b6d50c5d13e9b78b
+  Printer: 9054c0de769f1e25eb06356c70769f9fcf074e33
+
+PODFILE CHECKSUM: 06edc42fa7c0e47b5d5c22e92ce8e01ece22231c
+
+COCOAPODS: 1.15.2

@@ -1,13 +1,11 @@
-import com.android.build.gradle.internal.ide.kmp.KotlinAndroidSourceSetMarker.Companion.android
-import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
 //    alias(libs.plugins.devToolsKsp)
     alias(libs.plugins.sqlDelight)
+    alias(libs.plugins.nativeCocoapods)
+//    kotlin("native.cocoapods")
 }
 
 kotlin {
@@ -18,17 +16,52 @@ kotlin {
             }
         }
     }
-    
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
+
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+    cocoapods {
+        version = "1.0"
+        summary = "Some description for a Kotlin/Native module"
+        homepage = "Link to a Kotlin/Native module homepage"
+        ios.deploymentTarget = "14.1"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
             baseName = "ComposeApp"
-            isStatic = true
+            isStatic = false
+        }
+
+        pod("Printer") {
+            packageName = "print"
+            source = git("https://github.com/KevinGong2013/Printer.git") {
+                branch = "refactor"
+            }
+            extraOpts += listOf("-compiler-option", "-fmodules")
         }
     }
+//    cocoapods {
+//        version = "1.0"
+//        summary = "Some description for a Kotlin/Native module"
+//        homepage = "Link to a Kotlin/Native module homepage"
+//        ios.deploymentTarget = "14.1"
+//        podfile = project.file("../ios/Podfile")
+//        framework {
+//            baseName = "shared"
+//            isStatic = false
+//        }
+//    }
+    
+//    listOf(
+//        iosX64(),
+//        iosArm64(),
+//        iosSimulatorArm64()
+//    ).forEach { iosTarget ->
+//        iosTarget.binaries.framework {
+//            baseName = "ComposeApp"
+//            isStatic = true
+//        }
+//    }
     
     sourceSets {
 

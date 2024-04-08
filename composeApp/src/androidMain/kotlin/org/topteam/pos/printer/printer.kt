@@ -1,13 +1,10 @@
 package org.topteam.pos.printer
 
-import androidx.compose.runtime.Composable
 import com.khairo.escposprinter.EscPosCharsetEncoding
 import com.khairo.escposprinter.EscPosPrinter
 import com.khairo.escposprinter.connection.bluetooth.BluetoothPrintersConnections
-import com.khairo.escposprinter.textparser.PrinterTextParserImg
 
-@Composable
-fun Printer() {
+fun printer() {
 
     println("Hello Printer")
     val printer = EscPosPrinter(

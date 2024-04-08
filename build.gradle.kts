@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.devToolsKsp) apply false
     alias(libs.plugins.sqlDelight) apply false
+    alias(libs.plugins.nativeCocoapods) apply false
 }
