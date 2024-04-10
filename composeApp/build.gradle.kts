@@ -32,13 +32,13 @@ kotlin {
             isStatic = false
         }
 
-        pod("Printer") {
-            packageName = "print"
-            source = git("https://github.com/KevinGong2013/Printer.git") {
-                branch = "refactor"
-            }
-            extraOpts += listOf("-compiler-option", "-fmodules")
-        }
+//        pod("Printer") {
+//            packageName = "print"
+//            source = git("https://github.com/KevinGong2013/Printer.git") {
+//                branch = "refactor"
+//            }
+//            extraOpts += listOf("-compiler-option", "-fmodules")
+//        }
     }
 //    cocoapods {
 //        version = "1.0"
