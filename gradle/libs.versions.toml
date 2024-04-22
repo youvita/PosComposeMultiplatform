@@ -25,6 +25,7 @@ stately = "2.0.5"
 sqlDelight = "2.0.1"
 printer-android = "1.0.1"
 cocoapods = "1.9.22"
+kamel-image = "0.9.4"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -64,6 +65,9 @@ stately-common = { module = "co.touchlab:stately-common", version.ref = "stately
 
 # Printer
 printer-android = { module = "com.github.KhairoHumsi:Printer-ktx", version.ref = "printer-android" }
+
+# Asyn image loading
+kamel-image = {module = "media.kamel:kamel-image", version.ref = "kamel-image"}
 
 
 [plugins]

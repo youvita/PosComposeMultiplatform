@@ -104,7 +104,7 @@ kotlin {
 
             implementation(libs.stately.common)
 
-
+            implementation(libs.kamel.image)
         }
 
         iosMain.dependencies {

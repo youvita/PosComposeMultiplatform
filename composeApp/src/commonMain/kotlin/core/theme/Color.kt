@@ -21,10 +21,12 @@ val ErrorColor = Color(0xFFFF8989)
 val OnErrorColor = Color(0xFF000000)
 
 val Black = Color(0xFF000000)
+val White = Color(0xFFFFFFFF)
 val ColorProgress = Color(0x1A1E5CFE)
 val ColorPaid = Color(0x1A219653)
 val ColorCancel = Color(0x1AE1232E)
 val ColorPreOrder = Color(0x1A828282)
+val ColorDDE3F9 = Color(0xFFDDE3F9)
 val Color979797 = Color(0xFF979797)
 val Color6D7278= Color(0xFF6D7278)
 val ColorD9D9D9= Color(0xFFD9D9D9);
