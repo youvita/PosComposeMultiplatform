@@ -105,6 +105,9 @@ kotlin {
             implementation(libs.stately.common)
 
             implementation(libs.kamel.image)
+
+            implementation(libs.share.preference.no.arg)
+
         }
 
         iosMain.dependencies {

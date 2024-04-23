@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import cafe.adriel.voyager.core.screen.Screen
 import core.theme.ColorDDE3F9
+import core.utils.SharePrefer
 import getPlatform
 import main.component.NavigationTabScaffold
 import main.model.NavModel
@@ -70,6 +71,7 @@ class MainScreen: Screen, KoinComponent {
             ),
         )
 
+        println(">>>>> ${SharePrefer.getPrefer("Key")}")
 
         LaunchedEffect(Unit) {
             menuViewModel.addMenu(Menu(id = 0, name = "Dara", description = "Test"))

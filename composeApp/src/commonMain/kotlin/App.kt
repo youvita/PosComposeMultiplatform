@@ -4,6 +4,8 @@ import androidx.compose.runtime.*
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import core.utils.ProvideAppNavigator
+import core.utils.SharePrefer
+import kotlinx.coroutines.launch
 import login.presentation.LoginScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
@@ -15,7 +17,7 @@ fun App() {
         MaterialTheme {
             NavigationHost()
 
-
+            SharePrefer.putPrefer("Key", "Value")
         }
     }
 }
