@@ -92,7 +92,7 @@ fun NavCard(
             .offset { IntOffset(0, verticalTranslation) }
             .zIndex(zIndex)
     ) {
-        Box(modifier = Modifier.clip(Shapes.medium)) {
+        Box(modifier = Modifier.clip(Shapes.large)) {
             Card(
                 modifier = Modifier
                 .clickable {

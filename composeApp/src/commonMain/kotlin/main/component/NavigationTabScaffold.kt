@@ -128,8 +128,8 @@ fun NavItemList(
                         modifier = Modifier.then(
                         if (itemSelected == navItem.id) {
                             Modifier
-                                .background(color = ColorDDE3F9, shape = Shapes.medium)
-                                .border(2.dp, color = PrimaryColor, shape = Shapes.medium)
+                                .background(color = ColorDDE3F9, shape = Shapes.large)
+                                .border(2.dp, color = PrimaryColor, shape = Shapes.large)
                         } else {
                             Modifier
                         }
