@@ -57,6 +57,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import pin.presentation.PinScreen
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_background
 import poscomposemultiplatform.composeapp.generated.resources.ic_visibility
@@ -143,8 +144,7 @@ class LoginScreen: Screen, KoinComponent {
                 ) {
                     Button(
                         onClick = {
-//                            navController.navigate(Screen.PinScreen.route)
-                            loginModel.onLoginClick()
+                            navigator.push(PinScreen())
                         }
                     ) {
                         Text(text = "Pin")
@@ -250,7 +250,9 @@ class LoginScreen: Screen, KoinComponent {
 
                         //Login Button
                         Button(
-                            onClick = {},
+                            onClick = {
+                                loginModel.onLoginClick()
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp, vertical = 24.dp)

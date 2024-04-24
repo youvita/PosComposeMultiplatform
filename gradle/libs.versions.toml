@@ -12,6 +12,8 @@ androidx-material = "1.11.0"
 androidx-test-junit = "1.1.5"
 compose = "1.6.2"
 compose-plugin = "1.6.0"
+constraintlayoutComposeMultiplatform = "0.3.1"
+cryptographyCore = "0.3.0"
 junit = "4.13.2"
 kotlin = "1.9.22"
 ksp = "1.9.22-1.0.17"
@@ -25,10 +27,13 @@ stately = "2.0.5"
 sqlDelight = "2.0.1"
 printer-android = "1.0.1"
 cocoapods = "1.9.22"
+security_crypto_ktx = "1.0.0-alpha02"
 kamel-image = "0.9.4"
 preference = "1.1.1"
 
 [libraries]
+constraintlayout-compose-multiplatform = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
+cryptography-core = { module = "dev.whyoleg.cryptography:cryptography-core", version.ref = "cryptographyCore" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -67,6 +72,8 @@ stately-common = { module = "co.touchlab:stately-common", version.ref = "stately
 # Printer
 printer-android = { module = "com.github.KhairoHumsi:Printer-ktx", version.ref = "printer-android" }
 
+# Security
+security-crypto = { module = "androidx.security:security-crypto", version.ref = "security_crypto_ktx" }
 # Asyn image loading
 kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamel-image" }
 

@@ -88,6 +88,9 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
+//            implementation(libs.androidx.constraintlayout)
+            implementation(libs.constraintlayout.compose.multiplatform)
+
             // sql
             implementation(libs.sqlDelight.runtime)
             implementation(libs.sqlDelight.coroutine)
