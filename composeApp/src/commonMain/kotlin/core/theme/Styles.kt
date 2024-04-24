@@ -63,7 +63,7 @@ enum class Styles {
 @Composable
 fun textStylePrimary12Normal(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         color = PrimaryColor
@@ -73,7 +73,7 @@ fun textStylePrimary12Normal(): TextStyle {
 @Composable
 fun textStyleBlack14Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         color = Black
@@ -83,7 +83,7 @@ fun textStyleBlack14Medium(): TextStyle {
 @Composable
 fun textStyleBlack25Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Bold,
         fontSize = 25.sp,
         color = Black
@@ -93,7 +93,7 @@ fun textStyleBlack25Bold(): TextStyle {
 @Composable
 fun textStyleBlack25Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Medium,
         fontSize = 25.sp,
         color = Black
@@ -103,7 +103,7 @@ fun textStyleBlack25Medium(): TextStyle {
 @Composable
 fun textStyleBlack25Small(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Normal,
         fontSize = 25.sp,
         color = Black
@@ -113,7 +113,7 @@ fun textStyleBlack25Small(): TextStyle {
 @Composable
 fun textStyleBlack30Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Bold,
         fontSize = 30.sp,
         color = Black
@@ -123,7 +123,7 @@ fun textStyleBlack30Bold(): TextStyle {
 @Composable
 fun textStyleBlack30Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Medium,
         fontSize = 30.sp,
         color = Black
@@ -133,7 +133,7 @@ fun textStyleBlack30Medium(): TextStyle {
 @Composable
 fun textStyleBlack30Small(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Normal,
         fontSize = 30.sp,
         color = Black
@@ -143,7 +143,7 @@ fun textStyleBlack30Small(): TextStyle {
 @Composable
 fun textStyleBlack20Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.Medium,
         fontSize = 20.sp,
         color = Black
@@ -153,7 +153,7 @@ fun textStyleBlack20Medium(): TextStyle {
 @Composable
 fun textStyleBlack20Small(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
         color = Black
@@ -163,7 +163,7 @@ fun textStyleBlack20Small(): TextStyle {
 @Composable
 fun textStyleBlack20Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
         color = Black
@@ -173,7 +173,7 @@ fun textStyleBlack20Bold(): TextStyle {
 @Composable
 fun textStyleBlack17Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Medium,
         fontSize = 17.sp,
         color = Black
@@ -183,7 +183,7 @@ fun textStyleBlack17Medium(): TextStyle {
 @Composable
 fun textStyleBlack17Small(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Normal,
         fontSize = 17.sp,
         color = Black
@@ -193,7 +193,7 @@ fun textStyleBlack17Small(): TextStyle {
 @Composable
 fun textStyleBlack17Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Bold,
         fontSize = 17.sp,
         color = Black
@@ -203,7 +203,7 @@ fun textStyleBlack17Bold(): TextStyle {
 @Composable
 fun textStyleBlack15Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Medium,
         fontSize = 15.sp,
         color = Black
@@ -213,7 +213,7 @@ fun textStyleBlack15Medium(): TextStyle {
 @Composable
 fun textStyleBlack15Small(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Normal,
         fontSize = 15.sp,
         color = Black
@@ -223,7 +223,7 @@ fun textStyleBlack15Small(): TextStyle {
 @Composable
 fun textStyleBlack15Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Bold,
         fontSize = 15.sp,
         color = Black
@@ -233,7 +233,7 @@ fun textStyleBlack15Bold(): TextStyle {
 @Composable
 fun textStyleBlack13Small(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Normal,
         fontSize = 13.sp,
         color = Black
@@ -243,7 +243,7 @@ fun textStyleBlack13Small(): TextStyle {
 @Composable
 fun textStyleBlack13Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Bold,
         fontSize = 13.sp,
         color = Black
@@ -253,7 +253,7 @@ fun textStyleBlack13Bold(): TextStyle {
 @Composable
 fun textStyleBlack13Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Medium,
         fontSize = 13.sp,
         color = Black
@@ -263,7 +263,7 @@ fun textStyleBlack13Medium(): TextStyle {
 @Composable
 fun textStyleBlack12Small(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         color = Black
@@ -273,7 +273,7 @@ fun textStyleBlack12Small(): TextStyle {
 @Composable
 fun textStyleBlack12Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Bold,
         fontSize = 12.sp,
         color = Black
@@ -283,7 +283,7 @@ fun textStyleBlack12Bold(): TextStyle {
 @Composable
 fun textStyleBlack12Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         color = Black
@@ -292,7 +292,7 @@ fun textStyleBlack12Medium(): TextStyle {
 @Composable
 fun textStyleBlack14Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         color = Black
@@ -302,7 +302,7 @@ fun textStyleBlack14Bold(): TextStyle {
 @Composable
 fun textStyleBlack14Small(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         color = Black
@@ -311,7 +311,7 @@ fun textStyleBlack14Small(): TextStyle {
 @Composable
 fun textStyleBlack10Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.BattambangText),
+        fontFamily = getFontFamily(Font.BattambangText),
         fontWeight = FontWeight.Medium,
         fontSize = 10.sp,
         color = Black,
@@ -320,7 +320,7 @@ fun textStyleBlack10Medium(): TextStyle {
 @Composable
 fun textStyleKantumruyBlack14Bold(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.KantumruyText),
+        fontFamily = getFontFamily(Font.KantumruyText),
         fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
         color = Black
@@ -329,7 +329,7 @@ fun textStyleKantumruyBlack14Bold(): TextStyle {
 @Composable
 fun textStyleKantumruyBlack10Medium(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.KantumruyText),
+        fontFamily = getFontFamily(Font.KantumruyText),
         fontWeight = FontWeight.Medium,
         fontSize = 10.sp,
         color = Black
@@ -338,7 +338,7 @@ fun textStyleKantumruyBlack10Medium(): TextStyle {
 @Composable
 fun textStyleKantumruyBlack10Regular(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.KantumruyText),
+        fontFamily = getFontFamily(Font.KantumruyText),
         fontWeight = FontWeight.W400,
         fontSize = 10.sp,
         color = Black
@@ -347,7 +347,7 @@ fun textStyleKantumruyBlack10Regular(): TextStyle {
 @Composable
 fun textStyleKantumruy9Regular6D7278(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.KantumruyText),
+        fontFamily = getFontFamily(Font.KantumruyText),
         fontWeight = FontWeight.W400,
         fontSize = 9.sp,
         color = Color6D7278
@@ -357,7 +357,7 @@ fun textStyleKantumruy9Regular6D7278(): TextStyle {
 @Composable
 fun textStyleKantumruy9MediumBlack(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.KantumruyText),
+        fontFamily = getFontFamily(Font.KantumruyText),
         fontWeight = FontWeight.W500,
         fontSize = 9.sp,
         color = Black
@@ -366,7 +366,7 @@ fun textStyleKantumruy9MediumBlack(): TextStyle {
 @Composable
 fun textStyle9RegularBlack(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.W500,
         fontSize = 9.sp,
         color = Black
@@ -375,7 +375,7 @@ fun textStyle9RegularBlack(): TextStyle {
 @Composable
 fun textStyle9MediumBlack(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.W500,
         fontSize = 9.sp,
         color = Black
@@ -384,7 +384,7 @@ fun textStyle9MediumBlack(): TextStyle {
 @Composable
 fun textStyle12BoldBlack(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.GolosText),
+        fontFamily = getFontFamily(Font.GolosText),
         fontWeight = FontWeight.Bold,
         fontSize = 12.sp,
         color = Black
@@ -393,7 +393,7 @@ fun textStyle12BoldBlack(): TextStyle {
 @Composable
 fun textStyleKantumruy12BoldBlack(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.KantumruyText),
+        fontFamily = getFontFamily(Font.KantumruyText),
         fontWeight = FontWeight.Bold,
         fontSize = 12.sp,
         color = Black
@@ -402,7 +402,7 @@ fun textStyleKantumruy12BoldBlack(): TextStyle {
 @Composable
 fun textStyleKantumruy11BoldBlack(): TextStyle {
     return TextStyle(
-        fontFamily = getFontFamily(core.theme.Font.KantumruyText),
+        fontFamily = getFontFamily(Font.KantumruyText),
         fontWeight = FontWeight.Bold,
         fontSize = 11.sp,
         color = Black
