@@ -16,6 +16,7 @@ constraintlayoutComposeMultiplatform = "0.3.1"
 cryptographyCore = "0.3.0"
 junit = "4.13.2"
 kotlin = "1.9.22"
+kotlinxDatetime = "0.6.0-RC.2"
 ksp = "1.9.22-1.0.17"
 jvm = "1.9.0"
 koin = "3.5.3"
@@ -48,6 +49,7 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = 
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 
 # Sql
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqlDelight" }
 sqlDelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
 sqlDelight-coroutine = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }

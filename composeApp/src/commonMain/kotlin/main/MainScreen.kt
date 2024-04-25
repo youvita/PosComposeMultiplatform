@@ -15,6 +15,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import core.theme.ColorDDE3F9
 import core.utils.SharePrefer
 import getPlatform
+import history.HistoryScreen
 import main.component.NavigationTabScaffold
 import main.model.NavModel
 import menu.domain.model.Menu
@@ -100,7 +101,7 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 1 -> {
-
+                    HistoryScreen()
                 }
 
                 2 -> {
