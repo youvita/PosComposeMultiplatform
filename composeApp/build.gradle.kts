@@ -111,6 +111,8 @@ kotlin {
 
             implementation(libs.share.preference.no.arg)
 
+            implementation(libs.capture.image)
+
         }
 
         iosMain.dependencies {

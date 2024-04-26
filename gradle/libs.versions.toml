@@ -30,6 +30,7 @@ cocoapods = "1.9.22"
 security_crypto_ktx = "1.0.0-alpha02"
 kamel-image = "0.9.4"
 preference = "1.1.1"
+capture = "0.1.0"
 
 [libraries]
 constraintlayout-compose-multiplatform = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
@@ -79,6 +80,8 @@ kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamel-image" 
 
 # Local save data
 share-preference-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "preference" }
+
+capture-image = { module = "ir.mahozad.multiplatform:comshot", version.ref = "capture" }
 
 
 [plugins]
