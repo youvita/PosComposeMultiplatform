@@ -27,6 +27,7 @@ import core.theme.ColorDDE3F9
 import core.theme.White
 import core.utils.SharePrefer
 import getPlatform
+import history.HistoryScreen
 import main.component.NavigationTabScaffold
 import main.model.NavModel
 import menu.domain.model.Menu
@@ -145,7 +146,7 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 1 -> {
-
+                    HistoryScreen()
                 }
 
                 2 -> {
