@@ -35,6 +35,13 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_notification_me
 import poscomposemultiplatform.composeapp.generated.resources.ic_order_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_setting_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_super_mario_menu
+import receipt.BillCompanySeal
+import receipt.BillCustomerForm1
+import receipt.BillCustomerForm2
+import receipt.BillFooter
+import receipt.BillHeader
+import receipt.BillPayment
+import receipt.BillQueue
 
 class MainScreen: Screen, KoinComponent {
     @OptIn(ExperimentalResourceApi::class)
@@ -82,25 +89,53 @@ class MainScreen: Screen, KoinComponent {
 
         if (isPrint) {
             isPrint = false
-            platform.Capture(1) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().background(White)
-                ) {
-                    Text("$1,000", style = textStyleBlack25Medium())
-                }
-            }
             platform.Capture(0) {
                 Box(
                     modifier = Modifier.fillMaxWidth().background(White)
                 ) {
-                    Text("Pay by Cash", style = textStyleBlack25Medium())
+                    BillHeader()
+                }
+            }
+            platform.Capture(1) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().background(White)
+                ) {
+                    BillCustomerForm1()
                 }
             }
             platform.Capture(2) {
                 Box(
                     modifier = Modifier.fillMaxWidth().background(White)
                 ) {
-                    Text("Account Holder: Chan Youvita", style = textStyleBlack25Medium())
+                    BillCustomerForm2()
+                }
+            }
+            platform.Capture(3) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().background(White)
+                ) {
+                    BillPayment()
+                }
+            }
+            platform.Capture(4) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().background(White)
+                ) {
+                    BillCompanySeal()
+                }
+            }
+            platform.Capture(5) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().background(White)
+                ) {
+                    BillQueue()
+                }
+            }
+            platform.Capture(6) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().background(White)
+                ) {
+                    BillFooter()
                 }
             }
         }

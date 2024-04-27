@@ -17,7 +17,7 @@ fun App() {
         MaterialTheme {
             NavigationHost()
 
-            SharePrefer.putPrefer("Key", "Value")
+            SharePrefer.putPrefer("paper_width", "48")
         }
     }
 }

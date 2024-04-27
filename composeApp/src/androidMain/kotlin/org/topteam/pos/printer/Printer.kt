@@ -51,7 +51,7 @@ fun Printer(key: Int, content: @Composable () -> Unit) {
                     }
 
                     imageList.add(Capture(key, bitmap))
-                    if (imageList.size == 3) {
+                    if (imageList.size == 6) {
                         printOut(imageList)
                     }
                 }
