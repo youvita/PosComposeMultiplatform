@@ -18,10 +18,15 @@ import com.khairo.escposprinter.EscPosPrinter
 import com.khairo.escposprinter.connection.bluetooth.BluetoothPrintersConnections
 import com.khairo.escposprinter.textparser.PrinterTextParserImg
 
-var imageList = mutableListOf<Bitmap>()
+var imageList = mutableListOf<Capture>()
+
+data class Capture(
+    val key: Int,
+    val bitmap: Bitmap
+)
 
 @Composable
-fun Printer(content: @Composable () -> Unit) {
+fun Printer(key: Int, content: @Composable () -> Unit) {
 
     Box(modifier = Modifier.fillMaxWidth()) {
         AndroidView(factory = {
@@ -45,7 +50,7 @@ fun Printer(content: @Composable () -> Unit) {
                         it.draw(this)
                     }
 
-                    imageList.add(bitmap)
+                    imageList.add(Capture(key, bitmap))
                     if (imageList.size == 3) {
                         printOut(imageList)
                     }
@@ -55,17 +60,16 @@ fun Printer(content: @Composable () -> Unit) {
     }
 }
 
-fun printOut(bitmaps: MutableList<Bitmap>) {
+fun printOut(bitmaps: MutableList<Capture>) {
     val printer = EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(),
         203,
         48f,
         32, EscPosCharsetEncoding("UTF-8", 24))
 
     var receipt = ""
-    for(i in bitmaps) {
+    for(image in bitmaps.sortedBy { it.key }) {
          receipt = receipt.plus("[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
-            printer,
-            i
+            printer, image.bitmap
         ) + "</img>\n")
     }
 

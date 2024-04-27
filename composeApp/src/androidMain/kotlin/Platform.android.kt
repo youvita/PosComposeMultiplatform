@@ -7,8 +7,8 @@ class AndroidPlatform : Platform {
     override val name: String = "Android ${Build.VERSION.SDK_INT}"
 
     @Composable
-    override fun Capture(composable: @Composable () -> Unit) {
-        Printer(composable)
+    override fun Capture(key: Int, composable: @Composable () -> Unit) {
+        Printer(key, composable)
     }
 }
 

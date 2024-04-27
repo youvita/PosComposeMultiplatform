@@ -5,7 +5,7 @@ interface Platform {
     val name: String
 
     @Composable
-    fun Capture(composable: @Composable () -> Unit)
+    fun Capture(key: Int, composable: @Composable () -> Unit)
 }
 
 expect fun getPlatform(): Platform

@@ -82,21 +82,21 @@ class MainScreen: Screen, KoinComponent {
 
         if (isPrint) {
             isPrint = false
-            platform.Capture {
+            platform.Capture(1) {
                 Box(
                     modifier = Modifier.fillMaxWidth().background(White)
                 ) {
                     Text("$1,000", style = textStyleBlack25Medium())
                 }
             }
-            platform.Capture {
+            platform.Capture(0) {
                 Box(
                     modifier = Modifier.fillMaxWidth().background(White)
                 ) {
                     Text("Pay by Cash", style = textStyleBlack25Medium())
                 }
             }
-            platform.Capture {
+            platform.Capture(2) {
                 Box(
                     modifier = Modifier.fillMaxWidth().background(White)
                 ) {
