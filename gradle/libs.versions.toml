@@ -83,8 +83,6 @@ kamel-image = { module = "media.kamel:kamel-image", version.ref = "kamel-image" 
 # Local save data
 share-preference-no-arg = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "preference" }
 
-capture-image = { module = "ir.mahozad.multiplatform:comshot", version.ref = "capture" }
-
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

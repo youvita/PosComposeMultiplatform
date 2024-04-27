@@ -1,89 +1,74 @@
 package org.topteam.pos.printer
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
+import android.graphics.Bitmap
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalContext
-import ir.mahozad.multiplatform.comshot.captureToImage
-import kotlin.time.measureTimedValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.graphics.applyCanvas
+import androidx.core.view.doOnLayout
+import com.khairo.escposprinter.EscPosCharsetEncoding
+import com.khairo.escposprinter.EscPosPrinter
+import com.khairo.escposprinter.connection.bluetooth.BluetoothPrintersConnections
+import com.khairo.escposprinter.textparser.PrinterTextParserImg
 
-//import org.topteam.pos.capture.findActivity
-
+var imageList = mutableListOf<Bitmap>()
 
 @Composable
-fun PrinterReceipt(content: @Composable () -> Unit) {
-    val context = LocalContext.current
-    println("L>>>>>>>>>pidjfdijfkdjfdf")
-    var image by remember { mutableStateOf<ImageBitmap?>(null) }
-    val activity = try {
-        context.findActivity()
-    } catch (t: Throwable) {
-//        screenCaptureState.updateImageState(ScreenShotResult.Error(t))
-        return
+fun Printer(content: @Composable () -> Unit) {
+
+    Box(modifier = Modifier.fillMaxWidth()) {
+        AndroidView(factory = {
+            ComposeView(it).apply {
+                setContent {
+                    Row(
+                        modifier = Modifier.size(380.dp, height = Dp.Infinity)
+                    ) {
+                        content()
+                    }
+                }
+            }
+        }, modifier = Modifier.fillMaxWidth(), update = {
+            it.run {
+                doOnLayout { view ->
+                    val bitmap = Bitmap.createBitmap(
+                        1080,
+                        view.measuredHeight,
+                        Bitmap.Config.ARGB_8888
+                    ).applyCanvas {
+                        it.draw(this)
+                    }
+
+                    imageList.add(bitmap)
+                    if (imageList.size == 3) {
+                        printOut(imageList)
+                    }
+                }
+            }
+        })
     }
-
-    var timevalue = measureTimedValue {
-        captureToImage(activity) {
-//            Row(
-//                modifier = Modifier.size(380.dp, height = Dp.Infinity)
-//            ) {
-//                content()
-//            }
-        }
-    }
-    image = timevalue.value
-    image?.let {
-        println(it)
-//        val path = Environment.getExternalStorageDirectory().toString() + "/Download/"
-//            val file = File(path + "20240452349.png")
-//            val fileOutputStream = FileOutputStream(file)
-//            it.asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
-//            fileOutputStream.close()
-    }
-//    Button(
-//        onClick = {
-//            image = captureToImage(activity) {
-//                Box(
-//                    modifier = Modifier.size(width = 380.dp, height = Dp.Infinity)) {
-//                    Box(modifier = Modifier.height(100.dp)) {
-//                        Text("Hello")
-//                    }
-//
-//                }
-//            }
-//            image?.let {
-//                println(">>>>> $it")
-//            }
-//        }
-//    ) {
-//        androidx.compose.material3.Text("Click")
-//    }
-
-
-//    val printer = EscPosPrinter(
-//        BluetoothPrintersConnections.selectFirstPaired(),
-//        203,
-//        48f,
-//        32,
-//        EscPosCharsetEncoding("UTF-8", 24)
-//    )
-//
-//    printer.printFormattedText("[C]Compose Multiplatform")
-
-
 }
 
-private fun Context.findActivity(): Activity {
-    var context = this
-    while (context is ContextWrapper) {
-        if (context is Activity) return context
-        context = context.baseContext
+fun printOut(bitmaps: MutableList<Bitmap>) {
+    val printer = EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(),
+        203,
+        48f,
+        32, EscPosCharsetEncoding("UTF-8", 24))
+
+    var receipt = ""
+    for(i in bitmaps) {
+         receipt = receipt.plus("[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+            printer,
+            i
+        ) + "</img>\n")
     }
-    throw IllegalStateException("Did not find activity")
+
+    printer.printFormattedText(receipt)
+
 }
