@@ -9,6 +9,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,9 +19,9 @@ import androidx.compose.ui.layout.ContentScale
 import cafe.adriel.voyager.core.screen.Screen
 import core.theme.ColorDDE3F9
 import core.theme.White
-import core.theme.textStyleBlack25Medium
 import getPlatform
-import history.HistoryScreen
+import history.presentation.HistoryScreen
+import history.presentation.HistoryViewModel
 import main.component.NavigationTabScaffold
 import main.model.NavModel
 import menu.domain.model.Menu
@@ -49,6 +50,10 @@ class MainScreen: Screen, KoinComponent {
     @Composable
     override fun Content() {
         val platform = getPlatform()
+
+        val historyViewModel = get<HistoryViewModel>()
+        val historyState = historyViewModel.uiState.collectAsState().value
+        val pagingState = historyViewModel.pagingState.collectAsState().value
 
         val menuViewModel = get<MenuViewModel>()
 
@@ -166,7 +171,11 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 1 -> {
-                    HistoryScreen()
+                    HistoryScreen(
+                        historyState = historyState,
+                        pagingState = pagingState,
+                        historyEvent = historyViewModel::onEvent
+                    )
                 }
 
                 2 -> {

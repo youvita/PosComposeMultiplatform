@@ -1,6 +1,9 @@
 package di
 
 import com.russhwolf.settings.Settings
+import history.data.repository.HistoryRepositoryImpl
+import history.domain.repository.HistoryRepository
+import history.presentation.HistoryViewModel
 import login.data.repository.LoginRepositoryImpl
 import login.domain.repository.LoginRepository
 import login.presentation.LoginViewModel
@@ -35,6 +38,14 @@ fun appModule() = module {
 
     single<MenuRepository> {
         MenuRepositoryImpl(get())
+    }
+
+    single<HistoryRepository> {
+        HistoryRepositoryImpl(get())
+    }
+
+    single<HistoryViewModel> {
+        HistoryViewModel(historyRepository = get())
     }
 }
 

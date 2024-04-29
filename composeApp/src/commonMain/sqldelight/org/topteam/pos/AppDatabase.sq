@@ -7,3 +7,45 @@ CREATE TABLE Menu (
 
 insertMenu:
 INSERT INTO Menu(id, name, description) VALUES(?, ?, ?);
+
+CREATE TABLE History (
+    order_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER DEFAULT 1,
+    table_id INTEGER DEFAULT 3,
+    order_no INTEGER DEFAULT 909,
+    queue_no INTEGER DEFAULT 23,
+    date TEXT DEFAULT "Jan, 23, 2024",
+    total_item INTEGER DEFAULT 93,
+    total_qty INTEGER DEFAULT 9,
+    sub_total REAL DEFAULT 3.3,
+    discount INTEGER DEFAULT 10,
+    vat INTEGER DEFAULT 20,
+    total REAL DEFAULT 90.90,
+    status TEXT DEFAULT "Paid"
+);
+
+insertHistory:
+INSERT INTO History(
+customer_id,
+table_id,
+order_no,
+queue_no,
+date,
+total_item,
+total_qty,
+sub_total,
+discount,
+vat,
+total,
+status
+) VALUES(2,3,34,3,"Jan, 23, 2024",23,23,43.4,45,34,34.45,"Paid");
+
+getAllHistory:
+SELECT * FROM History;
+
+getHistoryPaging:
+SELECT * FROM History LIMIT ? OFFSET ?;
+
+
+
+
