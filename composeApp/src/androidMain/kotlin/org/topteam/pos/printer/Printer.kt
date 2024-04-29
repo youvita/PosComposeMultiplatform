@@ -26,8 +26,9 @@ data class Capture(
 )
 
 @Composable
-fun Printer(key: Int, content: @Composable () -> Unit) {
-
+fun CaptureImage(
+    key: Int, content: @Composable () -> Unit
+) {
     Box(modifier = Modifier.fillMaxWidth()) {
         AndroidView(factory = {
             ComposeView(it).apply {
@@ -51,28 +52,24 @@ fun Printer(key: Int, content: @Composable () -> Unit) {
                     }
 
                     imageList.add(Capture(key, bitmap))
-                    if (imageList.size == 6) {
-                        printOut(imageList)
-                    }
                 }
             }
         })
     }
 }
 
-fun printOut(bitmaps: MutableList<Capture>) {
+fun printOut() {
     val printer = EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(),
         203,
         48f,
         32, EscPosCharsetEncoding("UTF-8", 24))
 
     var receipt = ""
-    for(image in bitmaps.sortedBy { it.key }) {
-         receipt = receipt.plus("[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+    for(image in imageList.sortedBy { it.key }) {
+        receipt = receipt.plus("[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
             printer, image.bitmap
         ) + "</img>\n")
     }
 
     printer.printFormattedText(receipt)
-
 }

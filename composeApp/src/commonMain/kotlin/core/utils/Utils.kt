@@ -170,3 +170,7 @@ fun DashedDivider(
         )
     }
 }
+
+fun calculateWeight(value: Int): Float {
+    return value.toFloat() / 10
+}

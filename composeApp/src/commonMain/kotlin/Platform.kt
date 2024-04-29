@@ -6,6 +6,8 @@ interface Platform {
 
     @Composable
     fun Capture(key: Int, composable: @Composable () -> Unit)
+
+    fun printer()
 }
 
 expect fun getPlatform(): Platform
