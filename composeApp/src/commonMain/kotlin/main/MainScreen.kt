@@ -42,8 +42,13 @@ import receipt.BillCustomerForm1
 import receipt.BillCustomerForm2
 import receipt.BillFooter
 import receipt.BillHeader
+import receipt.BillHeaderItem
 import receipt.BillPayment
 import receipt.BillQueue
+import receipt.BillRowItem
+import receipt.BillTotalItem
+import receipt.CaptureItem
+import setting.domain.model.ItemModel
 
 class MainScreen: Screen, KoinComponent {
     @OptIn(ExperimentalResourceApi::class)
@@ -93,57 +98,22 @@ class MainScreen: Screen, KoinComponent {
             menuViewModel.addMenu(Menu(id = 0, name = "Dara", description = "Test"))
         }
 
+        CaptureItem()
         if (isPrint) {
             isPrint = false
-            platform.Capture(0) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().background(White)
-                ) {
-                    BillHeader()
-                }
-            }
-            platform.Capture(1) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().background(White)
-                ) {
-                    BillCustomerForm1()
-                }
-            }
-            platform.Capture(2) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().background(White)
-                ) {
-                    BillCustomerForm2()
-                }
-            }
-            platform.Capture(3) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().background(White)
-                ) {
-                    BillPayment()
-                }
-            }
             platform.Capture(4) {
                 Box(
                     modifier = Modifier.fillMaxWidth().background(White)
                 ) {
-                    BillCompanySeal()
+                    val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
+                    val rowList = listOf(ItemModel(name = "Caramel Frappuccino Caramel", qty = 1, price = 1.0, discount = 0))
+                    BillRowItem(
+                        columnList = columnList,
+                        rowList = rowList
+                    )
                 }
             }
-            platform.Capture(5) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().background(White)
-                ) {
-                    BillQueue()
-                }
-            }
-            platform.Capture(6) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().background(White)
-                ) {
-                    BillFooter()
-                }
-            }
+            platform.printer()
         }
 
         NavigationTabScaffold(
