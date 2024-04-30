@@ -1,6 +1,7 @@
 package di
 
 import com.russhwolf.settings.Settings
+import core.bluetooth.BluetoothViewModel
 import history.data.repository.HistoryRepositoryImpl
 import history.domain.repository.HistoryRepository
 import history.presentation.HistoryViewModel
@@ -13,6 +14,7 @@ import menu.presentation.MenuViewModel
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.topteam.pos.PosDatabase
+import platform.BluetoothDeviceFactory
 import platform.DatabaseDriverFactory
 
 
@@ -22,6 +24,10 @@ fun appModule() = module {
         PosDatabase(
             driver = get<DatabaseDriverFactory>().createDriver()
         )
+    }
+
+    single<BluetoothViewModel> {
+        BluetoothViewModel(blueFalcon = get<BluetoothDeviceFactory>().blueFalcon)
     }
 
     single<LoginViewModel> {

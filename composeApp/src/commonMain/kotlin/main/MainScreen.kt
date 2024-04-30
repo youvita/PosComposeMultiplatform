@@ -13,15 +13,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import cafe.adriel.voyager.core.screen.Screen
+import core.bluetooth.BluetoothViewModel
 import core.theme.ColorDDE3F9
 import core.theme.White
+import dev.icerock.moko.permissions.Permission
+import dev.icerock.moko.permissions.PermissionsController
+import dev.icerock.moko.permissions.compose.BindEffect
+import dev.icerock.moko.permissions.compose.PermissionsControllerFactory
+import dev.icerock.moko.permissions.compose.rememberPermissionsControllerFactory
 import getPlatform
 import history.presentation.HistoryScreen
 import history.presentation.HistoryViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import main.component.NavigationTabScaffold
 import main.model.NavModel
 import menu.domain.model.Menu
@@ -65,6 +74,20 @@ class MainScreen: Screen, KoinComponent {
         var isPrint by remember {
             mutableStateOf(false)
         }
+
+        val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
+        val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
+        val coroutineScope: CoroutineScope = rememberCoroutineScope()
+
+        val blueViewModel = get<BluetoothViewModel>()
+        val bluetoothState by blueViewModel.deviceState.collectAsState()
+        BindEffect(controller)
+        coroutineScope.launch {
+            controller.providePermission(Permission.BLUETOOTH_CONNECT)
+            controller.providePermission(Permission.BLUETOOTH_SCAN)
+            controller.providePermission(Permission.LOCATION)
+        }
+        println(">>>>>> ${bluetoothState.devices.values.toList()}")
 
         val allNavModels = arrayOf(
             NavModel(

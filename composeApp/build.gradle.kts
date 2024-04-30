@@ -113,6 +113,10 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
 
+            implementation(libs.bluetooth)
+
+            implementation(libs.moko.permission)
+
         }
 
         iosMain.dependencies {
