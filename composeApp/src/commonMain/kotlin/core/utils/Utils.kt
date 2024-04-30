@@ -1,18 +1,31 @@
 package core.utils
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.formatWithSkeleton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.WindowInfo
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import cafe.adriel.voyager.navigator.Navigator
+import core.theme.PrimaryColor
 import core.theme.Styles
 import core.theme.textStyleBlack13Bold
 import core.theme.textStyleBlack13Medium
@@ -35,6 +48,18 @@ import core.theme.textStyleBlack25Small
 import core.theme.textStyleBlack30Bold
 import core.theme.textStyleBlack30Medium
 import core.theme.textStyleBlack30Small
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import poscomposemultiplatform.composeapp.generated.resources.Res
+import poscomposemultiplatform.composeapp.generated.resources.ic_cereal
+import poscomposemultiplatform.composeapp.generated.resources.ic_coffee
+import poscomposemultiplatform.composeapp.generated.resources.ic_dessert
+import poscomposemultiplatform.composeapp.generated.resources.ic_juice
+import poscomposemultiplatform.composeapp.generated.resources.ic_ramen
+import poscomposemultiplatform.composeapp.generated.resources.ic_salads
+import poscomposemultiplatform.composeapp.generated.resources.ic_smoothie
+import poscomposemultiplatform.composeapp.generated.resources.ic_snack
+import poscomposemultiplatform.composeapp.generated.resources.ic_soup
+import kotlin.math.roundToInt
 
 val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> = staticCompositionLocalOf { null }
 
@@ -174,3 +199,91 @@ fun DashedDivider(
 fun calculateWeight(value: Int): Float {
     return value.toFloat() / 10
 }
+
+
+val dateFormatList = arrayListOf(
+    "8 Digits (YYYY/MM/DD)",
+    "8 Digits (DD/MM/YYYY)",
+    "6 Digits (YY/MM/DD)",
+    "6 Digits (DD/MM/YY)",
+)
+
+val countingSequence = arrayListOf(
+    "1 Digit (1)",
+    "2 Digits (01)",
+    "3 Digits (001)",
+    "4 Digits (0001)",
+    "5 Digits (00001)",
+)
+
+val vats = arrayListOf(
+    "5",
+    "10",
+    "15",
+    "20",
+)
+
+@OptIn(ExperimentalResourceApi::class)
+val menuIcons = arrayListOf(
+    Res.drawable.ic_coffee,
+    Res.drawable.ic_dessert,
+    Res.drawable.ic_juice,
+    Res.drawable.ic_snack,
+    Res.drawable.ic_salads,
+    Res.drawable.ic_soup,
+    Res.drawable.ic_ramen,
+    Res.drawable.ic_cereal,
+    Res.drawable.ic_smoothie,
+)
+
+
+fun String?.stringToBoolean(): Boolean = if(this.isNullOrEmpty()) false else this.toBoolean()
+
+
+
+infix fun Int.percentOf(value: Double): Double = if (this == 0) 0.0 else (value / 100) * this
+
+
+
+
+object RedRippleTheme: RippleTheme {
+    @Composable
+    override fun defaultColor() =
+        RippleTheme.defaultRippleColor(
+            PrimaryColor.copy(alpha = 0.5f),
+            lightTheme = true
+        )
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha =
+        RippleTheme.defaultRippleAlpha(
+            PrimaryColor.copy(alpha = 0.5f),
+            lightTheme = true
+        )
+}
+
+
+data class DottedShape(
+    val step: Dp,
+) : Shape {
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ) = Outline.Generic(Path().apply {
+        val stepPx = with(density) { step.toPx() }
+        val stepsCount = (size.width / stepPx).roundToInt()
+        val actualStep = size.width / stepsCount
+        val dotSize = Size(width = actualStep / 2, height = size.height)
+        for (i in 0 until stepsCount) {
+            addRect(
+                Rect(
+                    offset = Offset(x = i * actualStep, y = 0f),
+                    size = dotSize
+                )
+            )
+        }
+        close()
+    })
+}
+fun Double.dollar(): String = if (this == 0.0) "$0.00" else "$${this}"

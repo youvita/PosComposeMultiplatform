@@ -1,9 +1,12 @@
 package setting.domain.model
 
-data class ItemModel(
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+
+data class ItemModel @OptIn(ExperimentalResourceApi::class) constructor(
     var itemId: Long? = null,
     var menuId: Long? = null,
-    var image: Int? = null,
+    var image: DrawableResource? = null,
     var imageUrl: String? = null,
     var name: String? = null,
     var description: String? = null,
@@ -18,6 +21,7 @@ data class ItemModel(
     var ice: List<ItemOption>? = null,
 )
 
+@OptIn(ExperimentalResourceApi::class)
 fun ItemModel.mapItem(): Item {
     return Item(
         menu_id = menuId,
@@ -37,6 +41,7 @@ fun ItemModel.mapItem(): Item {
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 fun ItemModel.mapUpdateItem(): Item {
     return Item(
         item_id = itemId?: -1,

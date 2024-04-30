@@ -19,6 +19,7 @@ val BackgroundDarkColor = Color(0xff010100)
 
 val DarkGreen = Color(0xFF04662E)
 
+val RedBg = Color(0x22EF4040)
 val ErrorColor = Color(0xFFFF8989)
 val OnErrorColor = Color(0xFF000000)
 

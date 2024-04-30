@@ -35,6 +35,7 @@ import main.component.NavigationTabScaffold
 import main.model.NavModel
 import menu.domain.model.Menu
 import menu.presentation.MenuViewModel
+import menu.presentation.OrderScreen
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
@@ -154,13 +155,15 @@ class MainScreen: Screen, KoinComponent {
 
             when(selectedItem) {
                 0 -> {
-                    Button(
-                        onClick = {
-                          isPrint = true
-                        }
-                    ) {
-                        Text("Print Order")
-                    }
+//                    Button(
+//                        onClick = {
+//                          isPrint = true
+//                        }
+//                    ) {
+//                        Text("Print Order")
+//                    }
+
+                    OrderScreen()
                 }
 
                 1 -> {
