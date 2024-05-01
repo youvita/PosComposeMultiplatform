@@ -3,8 +3,12 @@ package main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import core.bluetooth.BluetoothViewModel
 import core.theme.ColorDDE3F9
@@ -72,7 +77,7 @@ class MainScreen: Screen, KoinComponent {
 
         val menuViewModel = get<MenuViewModel>()
 
-        var isPrint by remember {
+        var isAddItem by remember {
             mutableStateOf(false)
         }
 
@@ -123,8 +128,8 @@ class MainScreen: Screen, KoinComponent {
         }
 
         CaptureItem()
-        if (isPrint) {
-            isPrint = false
+        if (isAddItem) {
+            isAddItem = false
             platform.Capture(4) {
                 Box(
                     modifier = Modifier.fillMaxWidth().background(White)
@@ -137,7 +142,6 @@ class MainScreen: Screen, KoinComponent {
                     )
                 }
             }
-            platform.printer()
         }
 
         NavigationTabScaffold(
@@ -155,12 +159,24 @@ class MainScreen: Screen, KoinComponent {
 
             when(selectedItem) {
                 0 -> {
-//                    Button(
-//                        onClick = {
-//                          isPrint = true
+//                    Row {
+//                        Button(
+//                            onClick = {
+//                                platform.printer()
+//                            }
+//                        ) {
+//                            Text("Print Order")
 //                        }
-//                    ) {
-//                        Text("Print Order")
+//
+//                        Spacer(modifier = Modifier.width(10.dp))
+//
+//                        Button(
+//                            onClick = {
+//                                isAddItem = true
+//                            }
+//                        ) {
+//                            Text("Add Item")
+//                        }
 //                    }
 
                     OrderScreen()
