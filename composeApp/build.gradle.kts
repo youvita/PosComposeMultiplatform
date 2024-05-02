@@ -117,6 +117,8 @@ kotlin {
 
             implementation(libs.moko.permission)
 
+            implementation(libs.qr.scanner)
+
         }
 
         iosMain.dependencies {
@@ -165,6 +167,9 @@ android {
     dependencies {
         debugImplementation(libs.compose.ui.tooling)
     }
+}
+dependencies {
+    implementation(libs.androidx.material3.android)
 }
 
 sqldelight {

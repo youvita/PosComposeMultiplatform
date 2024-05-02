@@ -32,6 +32,8 @@ kamel-image = "0.9.4"
 preference = "1.1.1"
 bluetooth = "1.0.0"
 moko = "0.18.0"
+qrScanner = "1.0.2"
+material3Android = "1.2.1"
 
 [libraries]
 constraintlayout-compose-multiplatform = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
@@ -85,6 +87,9 @@ share-preference-no-arg = { module = "com.russhwolf:multiplatform-settings-no-ar
 
 bluetooth = { module = "dev.bluefalcon:blue-falcon", version.ref = "bluetooth" }
 moko-permission = { module = "dev.icerock.moko:permissions-compose", version.ref = "moko" }
+
+qr-scanner = { module = "network.chaintech:qr-kit", version.ref = "qrScanner" }
+androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 
 
 [plugins]

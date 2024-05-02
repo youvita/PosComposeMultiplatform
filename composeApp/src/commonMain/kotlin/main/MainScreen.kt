@@ -20,10 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import core.bluetooth.BluetoothViewModel
+import core.scanner.QrScannerScreen
 import core.theme.ColorDDE3F9
 import core.theme.White
 import dev.icerock.moko.permissions.Permission
@@ -52,6 +54,8 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_notification_me
 import poscomposemultiplatform.composeapp.generated.resources.ic_order_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_setting_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_super_mario_menu
+import qrscanner.QrCodeScanner
+import qrscanner.QrScanner
 import receipt.BillCompanySeal
 import receipt.BillCustomerForm1
 import receipt.BillCustomerForm2
@@ -80,6 +84,8 @@ class MainScreen: Screen, KoinComponent {
         var isAddItem by remember {
             mutableStateOf(false)
         }
+
+        var startBarCodeScan by remember { mutableStateOf(false) }
 
         val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
         val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
@@ -144,6 +150,8 @@ class MainScreen: Screen, KoinComponent {
             }
         }
 
+
+
         NavigationTabScaffold(
             containerColor = ColorDDE3F9,
             navModels = allNavModels
@@ -177,6 +185,20 @@ class MainScreen: Screen, KoinComponent {
 //                        ) {
 //                            Text("Add Item")
 //                        }
+//
+//                        Spacer(modifier = Modifier.width(10.dp))
+//
+//                        Button(
+//                            onClick = {
+//                                startBarCodeScan = true
+//                            }
+//                        ) {
+//                            Text("Scan Item")
+//                        }
+//                    }
+//
+//                    if (startBarCodeScan) {
+//                        QrScannerScreen()
 //                    }
 
                     OrderScreen()
