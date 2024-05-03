@@ -16,6 +16,9 @@ import org.koin.dsl.module
 import org.topteam.pos.PosDatabase
 import platform.BluetoothDeviceFactory
 import platform.DatabaseDriverFactory
+import ui.stock.data.repository.SearchEngineRepositoryImpl
+import ui.stock.domain.repository.SearchEngineRepository
+import ui.stock.presentation.SearchEngineViewModel
 
 
 fun appModule() = module {
@@ -28,6 +31,10 @@ fun appModule() = module {
 
     single<BluetoothViewModel> {
         BluetoothViewModel(blueFalcon = get<BluetoothDeviceFactory>().blueFalcon)
+    }
+
+    single<SearchEngineViewModel> {
+        SearchEngineViewModel(repository = get())
     }
 
     single<LoginViewModel> {
@@ -48,6 +55,10 @@ fun appModule() = module {
 
     single<HistoryRepository> {
         HistoryRepositoryImpl(get())
+    }
+
+    single<SearchEngineRepository> {
+        SearchEngineRepositoryImpl(get())
     }
 
     single<HistoryViewModel> {

@@ -11,6 +11,7 @@ class KoinInit {
                 listOf(
                     platformModule(),
                     appModule(),
+                    httpClientModule
                 ),
             )
             appDeclaration()

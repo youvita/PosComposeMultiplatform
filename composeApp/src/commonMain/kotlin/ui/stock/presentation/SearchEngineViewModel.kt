@@ -1,0 +1,61 @@
+package ui.stock.presentation
+
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
+import core.data.Resource
+import core.data.Status
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import ui.stock.domain.repository.SearchEngineRepository
+
+data class SearchEngineState(
+    var status: Status? = null,
+    var isLoading: Boolean? = null,
+    var data: Unit? = null
+)
+
+class SearchEngineViewModel(
+    private val repository: SearchEngineRepository
+): ScreenModel {
+
+    private val _uiState = MutableStateFlow(SearchEngineState())
+    val uiState: StateFlow<SearchEngineState> = _uiState.asStateFlow()
+
+    fun onSearchClick(keyword: String) {
+        screenModelScope.launch(Dispatchers.Default) {
+            repository.fetchSearchEngine(keyword).collect { result ->
+                when(result) {
+                    is Resource.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                status = result.status,
+                                data = result.data,
+                                isLoading = false
+                            )
+                        }
+                    }
+                    is Resource.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                status = result.status,
+                                isLoading = false
+                            )
+                        }
+                    }
+                    is Resource.Loading -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = true
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+}

@@ -76,6 +76,8 @@ kotlin {
             implementation(libs.sqlDelight.android)
 
             implementation(libs.printer.android)
+
+            implementation(libs.ktor.client.okhttp)
         }
 
         commonMain.dependencies {
@@ -119,6 +121,8 @@ kotlin {
 
             implementation(libs.qr.scanner)
 
+            implementation(libs.bundles.ktor)
+
         }
 
         iosMain.dependencies {
@@ -127,6 +131,8 @@ kotlin {
 
             // sql
             implementation(libs.sqlDelight.native)
+
+            implementation(libs.ktor.client.darwin)
         }
 
     }

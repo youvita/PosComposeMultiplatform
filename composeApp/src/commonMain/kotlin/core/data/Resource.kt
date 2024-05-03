@@ -1,6 +1,6 @@
 package core.data
 
-sealed class Resource<T>(
+sealed class Resource<out T>(
     val status: Status,
     val data: T? = null,
     val code: Int? = null,
