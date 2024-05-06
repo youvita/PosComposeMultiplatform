@@ -8,9 +8,9 @@ import kotlinx.serialization.json.Json
 import org.koin.dsl.module
 
 object Network {
-    const val URL =  "https://raw.githubusercontent.com/piappstudio/resources/main/biggboss/"
+    const val URL =  "https://www.googleapis.com/"
     object EndPoint {
-        const val SHOWS = "json/shows.json"
+        const val SHOWS = "customsearch/v1"
     }
 }
 

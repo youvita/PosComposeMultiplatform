@@ -10,12 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import ui.stock.domain.model.ItemEngine
 import ui.stock.domain.repository.SearchEngineRepository
 
 data class SearchEngineState(
     var status: Status? = null,
     var isLoading: Boolean? = null,
-    var data: Unit? = null
+    var data: ItemEngine? = null
 )
 
 class SearchEngineViewModel(

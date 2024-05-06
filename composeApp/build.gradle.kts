@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.sqlDelight)
     alias(libs.plugins.nativeCocoapods)
 //    kotlin("native.cocoapods")
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 kotlin {
