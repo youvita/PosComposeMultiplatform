@@ -1,7 +1,10 @@
 package menu.data.repository
 
-import menu.domain.model.Menu
+import core.data.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import menu.domain.repository.MenuRepository
+import org.topteam.pos.Menu
 import org.topteam.pos.PosDatabase
 
 class MenuRepositoryImpl(
@@ -10,7 +13,13 @@ class MenuRepositoryImpl(
 
     private val db = posDatabase.appDatabaseQueries
     override suspend fun addMenu(menu: Menu) {
-        db.insertMenu(id = null, name = menu.name, description = menu.description)
+        db.insertMenu(name = menu.name, imageUrl = menu.imageUrl)
     }
+
+    override fun getAllMenu(): Flow<Resource<List<Menu>>> = flow {
+        emit(Resource.Loading())
+        emit(Resource.Success(db.getAllMenu().executeAsList()))
+    }
+
 
 }

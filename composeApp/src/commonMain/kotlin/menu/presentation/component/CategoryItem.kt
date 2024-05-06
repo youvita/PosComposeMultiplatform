@@ -25,6 +25,8 @@ import menu.domain.model.MenuModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import poscomposemultiplatform.composeapp.generated.resources.Res
+import poscomposemultiplatform.composeapp.generated.resources.ic_dessert
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -33,7 +35,7 @@ fun CategoryItem(
     category: MenuModel,
     color: Color = White
 ) {
-    val img = if(category.name == "All") -1 else category.image?: -2
+    val img = if(category.name == "All") -1 else category.imageRes ?: -2
     val name = category.name?: ""
     val mod = modifier
         .height(60.dp)
@@ -70,9 +72,10 @@ fun CategoryItem(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 }) {
+
                     Image(
                         modifier = Modifier.size(24.dp),
-                        painter = if(img == -2) painterResource(DrawableResource(category.imageUrl?:"")) else painterResource(resource = img as DrawableResource),
+                        painter = if(img == -2) painterResource(DrawableResource(category.imageUrl?:"")) else painterResource(resource = Res.drawable.ic_dessert),
                         contentDescription = null,
                         contentScale = ContentScale.Fit
                     )

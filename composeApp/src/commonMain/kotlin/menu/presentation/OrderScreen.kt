@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -60,6 +61,10 @@ fun OrderScreen(
     var selectedMenuIndex by rememberSaveable { mutableIntStateOf(0) }
     var menuList by rememberSaveable {
         mutableStateOf<List<MenuModel>>(arrayListOf(MenuModel(menuId = 0L, name = "All")))
+    }
+
+    LaunchedEffect(orderState?.menus){
+        menuList = orderState?.menus?: arrayListOf(MenuModel(menuId = 0L, name = "All"))
     }
 
     Scaffold(

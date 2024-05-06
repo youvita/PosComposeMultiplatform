@@ -55,10 +55,10 @@ fun EmptyBox(modifier: Modifier = Modifier){
 @OptIn(ExperimentalResourceApi::class)
 val fakeMenu = arrayListOf(
     MenuModel(menuId = 0L, name = "All"),
-    MenuModel(menuId = 1L, name = "Coffee", image = Res.drawable.ic_coffee),
-    MenuModel(menuId = 2L, name = "Juice", image = Res.drawable.ic_juice),
-    MenuModel(menuId = 3L, name = "Snack", image = Res.drawable.ic_snack),
-    MenuModel(menuId = 4L, name = "Dessert", image = Res.drawable.ic_dessert),
+    MenuModel(menuId = 1L, name = "Coffee", imageRes = Res.drawable.ic_coffee.toString()),
+    MenuModel(menuId = 2L, name = "Juice", imageRes = Res.drawable.ic_juice.toString()),
+    MenuModel(menuId = 3L, name = "Snack", imageRes = Res.drawable.ic_snack.toString()),
+    MenuModel(menuId = 4L, name = "Dessert", imageRes = Res.drawable.ic_dessert.toString()),
 )
 
 @OptIn(ExperimentalResourceApi::class)

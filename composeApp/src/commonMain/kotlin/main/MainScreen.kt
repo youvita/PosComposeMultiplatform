@@ -40,15 +40,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import main.component.NavigationTabScaffold
 import main.model.NavModel
-import menu.domain.model.Menu
+import mario.presentation.MarioScreen
 import menu.presentation.MenuViewModel
 import menu.presentation.OrderScreen
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.Resource
+import org.jetbrains.compose.resources.ResourceItem
+import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
+import org.koin.core.component.getScopeId
+import org.koin.core.component.getScopeName
+import org.topteam.pos.Menu
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_background
+import poscomposemultiplatform.composeapp.generated.resources.ic_dessert
 import poscomposemultiplatform.composeapp.generated.resources.ic_history_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_notification_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_order_menu
@@ -80,6 +88,7 @@ class MainScreen: Screen, KoinComponent {
         val pagingState = historyViewModel.pagingState.collectAsState().value
 
         val menuViewModel = get<MenuViewModel>()
+        val orderState = menuViewModel.state.collectAsState().value
 
         var isAddItem by remember {
             mutableStateOf(false)
@@ -130,7 +139,8 @@ class MainScreen: Screen, KoinComponent {
         )
 
         LaunchedEffect(Unit) {
-            menuViewModel.addMenu(Menu(id = 0, name = "Dara", description = "Test"))
+            menuViewModel.addMenu(Menu(id = 0, name = "Cake", imageUrl = null))
+//            menuViewModel.addMenu(Menu(id = 0, name = "Cake", imageRes = Res.drawable.ic_dessert.items_field.iterator().next().path_field, imageUrl = null))
         }
 
         CaptureItem()
@@ -217,7 +227,7 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 3 -> {
-
+                    MarioScreen {  }
                 }
             }
         }

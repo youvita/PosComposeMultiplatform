@@ -2,11 +2,14 @@
 CREATE TABLE Menu (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    description TEXT
+    imageUrl TEXT
 );
 
 insertMenu:
-INSERT INTO Menu(id, name, description) VALUES(?, ?, ?);
+INSERT INTO Menu(name, imageUrl) VALUES(?, ?);
+
+getAllMenu:
+SELECT * FROM Menu;
 
 CREATE TABLE History (
     order_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
