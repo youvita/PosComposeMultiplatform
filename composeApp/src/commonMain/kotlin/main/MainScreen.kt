@@ -4,11 +4,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +34,7 @@ import core.bluetooth.BluetoothViewModel
 import core.scanner.QrScannerScreen
 import core.theme.ColorDDE3F9
 import core.theme.White
+import core.utils.ImageLoader
 import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.compose.BindEffect
@@ -76,6 +83,7 @@ import receipt.BillRowItem
 import receipt.BillTotalItem
 import receipt.CaptureItem
 import setting.domain.model.ItemModel
+import ui.stock.presentation.SearchEngineViewModel
 
 class MainScreen: Screen, KoinComponent {
     @OptIn(ExperimentalResourceApi::class)
@@ -88,7 +96,9 @@ class MainScreen: Screen, KoinComponent {
         val pagingState = historyViewModel.pagingState.collectAsState().value
 
         val menuViewModel = get<MenuViewModel>()
+        val searchViewModel = get<SearchEngineViewModel>()
         val orderState = menuViewModel.state.collectAsState().value
+        val searchState = searchViewModel.state.collectAsState().value
 
         var isAddItem by remember {
             mutableStateOf(false)
@@ -139,7 +149,7 @@ class MainScreen: Screen, KoinComponent {
         )
 
         LaunchedEffect(Unit) {
-            menuViewModel.addMenu(Menu(id = 0, name = "Cake", imageUrl = null))
+//            menuViewModel.addMenu(Menu(id = 0, name = "Cake", imageUrl = null))
 //            menuViewModel.addMenu(Menu(id = 0, name = "Cake", imageRes = Res.drawable.ic_dessert.items_field.iterator().next().path_field, imageUrl = null))
         }
 
@@ -206,9 +216,28 @@ class MainScreen: Screen, KoinComponent {
 //                            Text("Scan Item")
 //                        }
 //                    }
-//
+////
 //                    if (startBarCodeScan) {
-//                        QrScannerScreen()
+//                        QrScannerScreen(
+//                            result = {
+//                                searchViewModel.onSearchClick(it)
+//                                startBarCodeScan = false
+//                            }
+//                        )
+//                    }
+//
+//                    LazyRow(
+//                        contentPadding = PaddingValues(5.dp)
+//                    ) {
+//                        searchState.data?.items?.let {
+//                            items(it) { item ->
+//                                item.image?.thumbnailLink?.let { url ->
+//                                    ImageLoader(
+//                                        image = url
+//                                    )
+//                                }
+//                            }
+//                        }
 //                    }
 
                     OrderScreen()

@@ -35,7 +35,9 @@ import kotlinx.coroutines.launch
 import qrscanner.QrCodeScanner
 
 @Composable
-fun QrScannerScreen() {
+fun QrScannerScreen(
+    result: (String) -> Unit = {}
+) {
     val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
     val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
@@ -81,7 +83,7 @@ fun QrScannerScreen() {
                                 .clip(shape = RoundedCornerShape(size = 14.dp)),
                             flashlightOn = false,
                             onCompletion = {
-
+                                result(it)
                             },
                         )
                     }

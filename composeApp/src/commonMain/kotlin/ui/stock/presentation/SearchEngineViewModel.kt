@@ -23,15 +23,15 @@ class SearchEngineViewModel(
     private val repository: SearchEngineRepository
 ): ScreenModel {
 
-    private val _uiState = MutableStateFlow(SearchEngineState())
-    val uiState: StateFlow<SearchEngineState> = _uiState.asStateFlow()
+    private val _state = MutableStateFlow(SearchEngineState())
+    val state: StateFlow<SearchEngineState> = _state.asStateFlow()
 
     fun onSearchClick(keyword: String) {
         screenModelScope.launch(Dispatchers.Default) {
             repository.fetchSearchEngine(keyword).collect { result ->
                 when(result) {
                     is Resource.Success -> {
-                        _uiState.update {
+                        _state.update {
                             it.copy(
                                 status = result.status,
                                 data = result.data,
@@ -40,7 +40,7 @@ class SearchEngineViewModel(
                         }
                     }
                     is Resource.Error -> {
-                        _uiState.update {
+                        _state.update {
                             it.copy(
                                 status = result.status,
                                 isLoading = false
@@ -48,7 +48,7 @@ class SearchEngineViewModel(
                         }
                     }
                     is Resource.Loading -> {
-                        _uiState.update {
+                        _state.update {
                             it.copy(
                                 isLoading = true
                             )

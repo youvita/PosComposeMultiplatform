@@ -17,7 +17,7 @@ class SearchEngineRepositoryImpl(private val httpClient: HttpClient): SearchEngi
             val response = httpClient.get(Network.URL.plus(Network.EndPoint.SHOWS)) {
                 url {
                     parameters.append("key", "AIzaSyAcwDV797pwi7J43MvQNlYJicCPEJOeuBs")
-                    parameters.append("q", "5449000000996")
+                    parameters.append("q", keyword)
                     parameters.append("cx", "a3a4a06a69c234a9e")
                     parameters.append("imgType", "photo")
                     parameters.append("searchType", "image")

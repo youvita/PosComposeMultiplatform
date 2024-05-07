@@ -16,7 +16,7 @@ fun ImageLoader(
     KamelImage(modifier = modifier,
         resource = asyncPainterResource(data = image),
         contentDescription = null,
-//        contentScale = ContentScale.Crop
+        contentScale = ContentScale.Crop
     )
 
 //    Image(
