@@ -83,6 +83,8 @@ import receipt.BillRowItem
 import receipt.BillTotalItem
 import receipt.CaptureItem
 import setting.domain.model.ItemModel
+import ui.stock.presentation.AddStockScreen
+import ui.stock.presentation.InventoryViewModel
 import ui.stock.presentation.SearchEngineViewModel
 
 class MainScreen: Screen, KoinComponent {
@@ -97,6 +99,7 @@ class MainScreen: Screen, KoinComponent {
 
         val menuViewModel = get<MenuViewModel>()
         val searchViewModel = get<SearchEngineViewModel>()
+        val inventoryViewModel = get<InventoryViewModel>()
         val orderState = menuViewModel.state.collectAsState().value
         val searchState = searchViewModel.state.collectAsState().value
 
@@ -149,7 +152,7 @@ class MainScreen: Screen, KoinComponent {
         )
 
         LaunchedEffect(Unit) {
-//            menuViewModel.addMenu(Menu(id = 0, name = "Cake", imageUrl = null))
+//            menuViewModel.addMenu(Menu(id = 0, name = "Cake", imageUrl = "null"))
 //            menuViewModel.addMenu(Menu(id = 0, name = "Cake", imageRes = Res.drawable.ic_dessert.items_field.iterator().next().path_field, imageUrl = null))
         }
 
@@ -252,7 +255,10 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 2 -> {
-
+                    AddStockScreen(
+                        searchViewModel = searchViewModel,
+                        inventoryViewModel = inventoryViewModel
+                    )
                 }
 
                 3 -> {
