@@ -55,6 +55,33 @@ SELECT * FROM History;
 getHistoryPaging:
 SELECT * FROM History LIMIT ? OFFSET ?;
 
+CREATE TABLE Stock (
+    stock_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER,
+    stock_in INTEGER,
+    stock_out INTEGER,
+    box INTEGER,
+    total INTEGER,
+    date_in TEXT,
+    date_out TEXT
+);
+
+insertStock:
+INSERT INTO Stock(product_id, stock_in, stock_out, box, total, date_in, date_out) VALUES(?, ?, ?, ?, ?, ?, ?);
+
+CREATE TABLE Product (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER,
+    name TEXT,
+    image TEXT,
+    qty INTEGER,
+    price INTEGER,
+    description TEXT
+);
+
+insertProduct:
+INSERT INTO Product(product_id, name, image, qty, price, description) VALUES(?, ?, ?, ?, ?, ?);
+
 
 
 

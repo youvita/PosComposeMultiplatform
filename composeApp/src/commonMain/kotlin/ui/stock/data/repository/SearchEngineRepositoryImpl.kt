@@ -21,6 +21,8 @@ class SearchEngineRepositoryImpl(private val httpClient: HttpClient): SearchEngi
                     parameters.append("cx", "a3a4a06a69c234a9e")
                     parameters.append("imgType", "photo")
                     parameters.append("searchType", "image")
+                    parameters.append("num", "3")
+                    parameters.append("imgSize", "xxlarge")
                 }
             }.body<ItemEngine>()
             Resource.Success(response)
