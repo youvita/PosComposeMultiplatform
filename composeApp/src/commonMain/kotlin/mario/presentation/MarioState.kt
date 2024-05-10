@@ -5,6 +5,7 @@ import menu.domain.model.MenuModel
 import setting.domain.model.ItemModel
 
 data class MarioState(
+    val loading: Boolean = false,
     val status: Status? = null,
     var message: String? = null,
     val menus: List<MenuModel>? = null,

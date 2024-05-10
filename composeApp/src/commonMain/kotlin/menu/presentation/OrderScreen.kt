@@ -70,15 +70,18 @@ fun OrderScreen(
     Scaffold(
         containerColor = Color.Transparent
     ) { paddingValues ->
-        Box(modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
         ) {
-            Row(modifier = Modifier.fillMaxSize()) {
+            Row(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Box(Modifier.weight(2f)) {
                     Column(Modifier.padding(10.dp)) {
 
-                        // menu
+                        // category menu path
                         MenuCategoryForm(menuList){ index ->
                             selectedMenuIndex = index
                             orderEvent(OrderEvent.MenuSelectEvent(menuList[index]))
@@ -86,6 +89,7 @@ fun OrderScreen(
 
                         Spacer(modifier = Modifier.height(10.dp))
 
+                        //item menu path
                         val size = if(menuList.isEmpty()) "0" else menuList[selectedMenuIndex].name
                         Text(
                             modifier = Modifier.padding(vertical = 8.dp),

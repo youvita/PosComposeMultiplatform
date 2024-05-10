@@ -8,11 +8,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import mario.presentation.MarioEvent
 import menu.domain.model.MenuModel
 import menu.domain.repository.MenuRepository
 import org.topteam.pos.Menu
 
-class MenuViewModel(
+class OrderViewModel(
     private val repository: MenuRepository
 ): ScreenModel {
 
@@ -36,6 +37,7 @@ class MenuViewModel(
     }
 
     private fun getMenu() {
+        screenModelScope.launch {
             repository.getAllMenu().onEach {result ->
                 when (result) {
                     is Resource.Success -> {
@@ -60,12 +62,14 @@ class MenuViewModel(
                         )
                     }
                 }
-            }.launchIn(screenModelScope)
-    }
-
-    fun addMenu(menu: Menu) {
-        screenModelScope.launch {
-            repository.addMenu(menu)
+            }
         }
     }
+
+//    fun addMenu(menu: Menu) {
+//        screenModelScope.launch {
+//            repository.addMenu(menu)
+//        }
+//    }
+
 }

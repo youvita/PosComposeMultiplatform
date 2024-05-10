@@ -1,23 +1,32 @@
 package menu.presentation.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.W500
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.preat.peekaboo.image.picker.toImageBitmap
 import core.theme.Shapes
 import core.theme.White
 import core.theme.textStylePrimary12Normal
@@ -28,68 +37,56 @@ import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_dessert
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun CategoryItem(
     modifier: Modifier = Modifier,
     category: MenuModel,
     color: Color = White
 ) {
-    val img = if(category.name == "All") -1 else category.imageRes ?: -2
-    val name = category.name?: ""
-    val mod = modifier
-        .height(60.dp)
-        .widthIn(min = 75.dp)
 
     Card(
-        modifier = mod,
+        modifier = modifier.size(80.dp),
         shape = Shapes.medium,
         colors = CardDefaults.cardColors(color),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
-        if(img == -1){
+
+        if(category.name.equals("all",true)){
             Box(
-                modifier = mod
+                modifier = modifier.size(80.dp),
             ){
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     style = textStylePrimary12Normal(),
-                    text = name,
+                    text = category.name?:"",
+                    fontWeight = W500,
                     textAlign = TextAlign.Center
                 )
             }
         }
+
         else{
-
-            ConstraintLayout(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(vertical = 10.dp, horizontal = 15.dp)
+            Column (
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val (image, label) = createRefs()
-                BoxWithConstraints(modifier = Modifier.constrainAs(image) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }) {
-
+                if (category.imageUrl != null && category.imageUrl!!.isNotEmpty()){
                     Image(
-                        modifier = Modifier.size(24.dp),
-                        painter = if(img == -2) painterResource(DrawableResource(category.imageUrl?:"")) else painterResource(resource = Res.drawable.ic_dessert),
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(shape = RoundedCornerShape(5.dp)),
+                        bitmap = category.imageUrl!!.toImageBitmap(),
                         contentDescription = null,
-                        contentScale = ContentScale.Fit
+                        contentScale = ContentScale.Crop
                     )
                 }
 
                 Text(
-                    modifier = Modifier.constrainAs(label) {
-                        top.linkTo(image.bottom, margin = 8.dp)
-                        start.linkTo(image.start)
-                        end.linkTo(image.end)
-                        bottom.linkTo(parent.bottom)
-                    },
+                    modifier = Modifier.padding(top = 4.dp),
                     style = textStylePrimary12Normal(),
-                    text = name
+                    fontWeight = W500,
+                    text = category.name?:""
                 )
             }
         }

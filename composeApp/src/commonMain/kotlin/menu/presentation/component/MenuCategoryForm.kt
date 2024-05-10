@@ -35,8 +35,10 @@ import menu.presentation.component.utils.fakeMenu
 import menu.domain.model.MenuModel
 
 @Composable
-fun MenuCategoryForm(menuList: List<MenuModel> = arrayListOf(),
-                     onMenuSelect: (Int) -> Unit = {}) {
+fun MenuCategoryForm(
+    menuList: List<MenuModel> = arrayListOf(),
+    onMenuSelect: (Int) -> Unit = {}
+) {
     var selectedItem by rememberSaveable { mutableIntStateOf(0) }
 
     Column(Modifier.fillMaxWidth()) {

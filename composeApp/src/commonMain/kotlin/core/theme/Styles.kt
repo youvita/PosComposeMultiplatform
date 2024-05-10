@@ -1,5 +1,7 @@
 package core.theme
 
+import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -11,36 +13,34 @@ import androidx.compose.ui.unit.sp
 val fontSizeTitle = 14.sp
 val fontSizeContent = 12.sp
 val textInputWidth = 200.dp
-//val textInputColors @Composable get() = TextFieldDefaults.colors(
-//    focusedIndicatorColor = Primary,
-//    focusedContainerColor = White,
-//    unfocusedIndicatorColor = Color(0x26000000),
-//    unfocusedContainerColor = White,
-//    disabledContainerColor = White,
-//    cursorColor = Primary,
-//)
+val textInputColors @Composable get() = TextFieldDefaults.colors(
+    focusedIndicatorColor = PrimaryColor,
+    focusedContainerColor = White,
+    unfocusedIndicatorColor = Color(0x26000000),
+    unfocusedContainerColor = White,
+    disabledContainerColor = White,
+    cursorColor = PrimaryColor,
+)
 
 val hintTextColor = Color(0xFF9E9E9E)
 val labelTextColor = Color(0xFF757373)
 
-//val hintTextStyle = TextStyle(
-//    fontSize = fontSizeContent,
-//    fontWeight = FontWeight.Normal,
-//    fontFamily = GolosText,
-//    color = hintTextColor
-//)
+val hintTextStyle = TextStyle(
+    fontSize = fontSizeContent,
+    fontWeight = FontWeight.Normal,
+    color = hintTextColor
+)
 
-//val labelTextStyle = TextStyle(
-//    fontSize = fontSizeContent,
-//    fontWeight = FontWeight.Normal,
-//    fontFamily = GolosText,
-//    color = labelTextColor
-//)
+val labelTextStyle = TextStyle(
+    fontSize = fontSizeContent,
+    fontWeight = FontWeight.Normal,
+    color = labelTextColor
+)
 
-//val textInputSelectionColors = TextSelectionColors(
-//    handleColor = Primary,
-//    backgroundColor = Color(0x4D0F38EE),
-//)
+val textInputSelectionColors = TextSelectionColors(
+    handleColor = PrimaryColor,
+    backgroundColor = Color(0x4D0F38EE),
+)
 
 enum class Styles {
     HeaderLarge,

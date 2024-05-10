@@ -2,11 +2,17 @@
 CREATE TABLE Menu (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    imageUrl TEXT
+    imageUrl BLOB
 );
 
 insertMenu:
 INSERT INTO Menu(name, imageUrl) VALUES(?, ?);
+
+updateMenu:
+UPDATE Menu SET name = ?, imageUrl = ? WHERE id = ?;
+
+deleteMenu:
+DELETE FROM Menu WHERE id = ?;
 
 getAllMenu:
 SELECT * FROM Menu;

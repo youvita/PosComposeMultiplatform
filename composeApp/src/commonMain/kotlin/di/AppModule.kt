@@ -1,6 +1,5 @@
 package di
 
-import com.russhwolf.settings.Settings
 import core.bluetooth.BluetoothViewModel
 import history.data.repository.HistoryRepositoryImpl
 import history.domain.repository.HistoryRepository
@@ -8,9 +7,10 @@ import history.presentation.HistoryViewModel
 import login.data.repository.LoginRepositoryImpl
 import login.domain.repository.LoginRepository
 import login.presentation.LoginViewModel
+import mario.presentation.MarioViewModel
 import menu.data.repository.MenuRepositoryImpl
 import menu.domain.repository.MenuRepository
-import menu.presentation.MenuViewModel
+import menu.presentation.OrderViewModel
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.topteam.pos.PosDatabase
@@ -41,8 +41,12 @@ fun appModule() = module {
         LoginViewModel(repository = get())
     }
 
-    single<MenuViewModel> {
-        MenuViewModel(repository = get())
+    single<OrderViewModel> {
+        OrderViewModel(repository = get())
+    }
+
+    single<MarioViewModel> {
+        MarioViewModel(repository = get())
     }
 
     single<LoginRepository> {

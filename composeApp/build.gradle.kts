@@ -124,6 +124,12 @@ kotlin {
 
             implementation(libs.bundles.ktor)
 
+            // peekaboo-ui
+            implementation(libs.peekaboo.ui)
+
+            // peekaboo-image-picker
+            implementation(libs.peekaboo.image.picker)
+
         }
 
         iosMain.dependencies {
