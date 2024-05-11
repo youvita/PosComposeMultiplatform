@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import core.data.Resource
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -30,7 +31,7 @@ class OrderViewModel(
     private var saveMenu: MenuModel? = null
 
     private val _state = MutableStateFlow(OrderState())
-    val state: StateFlow<OrderState> get() = _state
+    val state: StateFlow<OrderState> get() = _state.asStateFlow()
 
     init {
         getMenu()
@@ -42,11 +43,15 @@ class OrderViewModel(
                 when (result) {
                     is Resource.Success -> {
                         _state.value = _state.value.copy(
-                            status = null,
+                            status = result.status,
                             menus = result.data?.map {
-                                MenuModel(it.id, it.name, it.imageUrl)
+                                MenuModel(
+                                    menuId = it.id,
+                                    name = it.name,
+                                    imageUrl = it.imageUrl
+                                )
                             },
-                            message = null
+                            message = result.message
                         )
                     }
                     is Resource.Error -> {
@@ -57,19 +62,26 @@ class OrderViewModel(
                     }
                     is Resource.Loading -> {
                         _state.value = _state.value.copy(
-                            status = null,
-                            message = null
+                            status = result.status,
+                            message = result.message
                         )
                     }
                 }
-            }
+            }.launchIn(screenModelScope)
         }
     }
 
-//    fun addMenu(menu: Menu) {
-//        screenModelScope.launch {
-//            repository.addMenu(menu)
-//        }
-//    }
+
+    fun onEvent(event: OrderEvent){
+        when(event) {
+            is OrderEvent.GetMenusEvent -> {
+                getMenu()
+            }
+
+            else -> {
+
+            }
+        }
+    }
 
 }

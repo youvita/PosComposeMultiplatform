@@ -49,6 +49,7 @@ import main.component.NavigationTabScaffold
 import main.model.NavModel
 import mario.presentation.MarioViewModel
 import mario.presentation.TabMarioScreen
+import menu.presentation.OrderEvent
 import menu.presentation.OrderViewModel
 import menu.presentation.OrderScreen
 import org.jetbrains.compose.resources.DrawableResource
@@ -245,7 +246,11 @@ class MainScreen: Screen, KoinComponent {
 //                        }
 //                    }
 
-                    OrderScreen()
+                    orderViewModel.onEvent(OrderEvent.GetMenusEvent)
+                    OrderScreen(
+                        orderState = orderState,
+                        orderEvent = orderViewModel::onEvent
+                    )
                 }
 
                 1 -> {

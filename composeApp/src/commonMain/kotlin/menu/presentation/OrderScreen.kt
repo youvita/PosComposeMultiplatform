@@ -59,12 +59,21 @@ fun OrderScreen(
     var selectedItem by rememberSaveable { mutableIntStateOf(-1) }
     var list by rememberSaveable { mutableStateOf<List<ItemModel>>(emptyList()) }
     var selectedMenuIndex by rememberSaveable { mutableIntStateOf(0) }
-    var menuList by rememberSaveable {
-        mutableStateOf<List<MenuModel>>(arrayListOf(MenuModel(menuId = 0L, name = "All")))
+
+    //add first category menu
+    val categoryMenuList = ArrayList<MenuModel>()
+    categoryMenuList.add(MenuModel(menuId = 0, name = "All"))
+
+    orderState?.menus?.map {
+        categoryMenuList.add(it)
+    }
+
+    var menuList by remember {
+        mutableStateOf<List<MenuModel>>(arrayListOf(MenuModel(menuId = 0, name = "All")))
     }
 
     LaunchedEffect(orderState?.menus){
-        menuList = orderState?.menus?: arrayListOf(MenuModel(menuId = 0L, name = "All"))
+        menuList = categoryMenuList
     }
 
     Scaffold(
