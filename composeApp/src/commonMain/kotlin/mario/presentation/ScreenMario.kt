@@ -4,4 +4,5 @@ sealed class ScreenMario(val route: String) {
     object MainScreen: ScreenMario("main_screen")
     object MenuScreen: ScreenMario("menu_screen")
     object EmployeeScreen: ScreenMario("employee_screen")
+    object ProductStockScreen: ScreenMario("product_stock_screen")
 }

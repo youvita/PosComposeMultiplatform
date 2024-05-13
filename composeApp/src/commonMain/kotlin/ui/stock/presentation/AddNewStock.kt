@@ -1,5 +1,8 @@
 package ui.stock.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,7 +28,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -47,110 +49,117 @@ fun AddNewStock(
     var barCode by remember { mutableStateOf(Long.MIN_VALUE) }
     var barImage by remember { mutableStateOf("") }
 
-    Scaffold {
-
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(0.5f),
-                horizontalArrangement = Arrangement.SpaceBetween
+    Scaffold(
+        modifier = Modifier.padding(20.dp)
+    ) {
+        if (!startBarCodeScan) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
             ) {
-                Text(text = "Add New Stock")
+                Row(
+                    modifier = Modifier.fillMaxWidth(0.5f),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Add New Stock")
 
-                Row {
-                    Button(
-                        onClick = {
+                    Row {
+                        Button(
+                            onClick = {
 
+                            }
+                        ) {
+                            Text(text = "Camera")
                         }
-                    ) {
-                        Text(text = "Camera")
-                    }
-                    Spacer(modifier = Modifier.width(5.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
 
-                    Button(
-                        onClick = {
-                            startBarCodeScan = true
+                        Button(
+                            onClick = {
+                                startBarCodeScan = true
+                            }
+                        ) {
+                            Text(text = "Scan")
                         }
-                    ) {
-                        Text(text = "Scan")
                     }
                 }
-            }
 
-            TextField(
-                value = "",
-                onValueChange = { },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .focusRequester(remember { FocusRequester() }),
-                shape = RoundedCornerShape(10.dp),
-                placeholder = { Text("Product Name") },
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
+                TextField(
+                    value = "",
+                    onValueChange = { },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .focusRequester(remember { FocusRequester() }),
+                    shape = RoundedCornerShape(10.dp),
+                    placeholder = { Text("Product Name") },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
                 )
-            )
 
-            Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-            TextField(
-                value = "",
-                onValueChange = { },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .focusRequester(remember { FocusRequester() }),
-                shape = RoundedCornerShape(10.dp),
-                placeholder = { Text("Quantity") },
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
+                TextField(
+                    value = "",
+                    onValueChange = { },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .focusRequester(remember { FocusRequester() }),
+                    shape = RoundedCornerShape(10.dp),
+                    placeholder = { Text("Quantity") },
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    )
                 )
-            )
 
-            LazyRow(
-                contentPadding = PaddingValues(5.dp)
-            ) {
-                searchState.data?.items?.let {
-                    items(it) { item ->
-                        item.image?.thumbnailLink?.let { url ->
-                            ImageLoader(
-                                modifier = Modifier.size(100.dp).clickable {
-                                    barImage = url
-                                },
-                                image = url
-                            )
+                LazyRow(
+                    contentPadding = PaddingValues(5.dp)
+                ) {
+                    searchState.data?.items?.let {
+                        items(it) { item ->
+                            item.image?.thumbnailLink?.let { url ->
+                                ImageLoader(
+                                    modifier = Modifier.size(100.dp).clickable {
+                                        barImage = url
+                                    },
+                                    image = url
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            Button(
-                onClick = {
-                    val product = Product(product_id = barCode, name = "Product", image = barImage, qty = 1, price = 10, description = "")
-                    inventoryViewModel.onAddProduct(product)
+                Button(
+                    onClick = {
+                        val product = Product(product_id = barCode, name = "Product", image = barImage, qty = 1, price = 10, description = "")
+                        inventoryViewModel.onAddProduct(product)
+                    }
+                ) {
+                    Text(text = "Add")
                 }
-            ) {
-                Text(text = "Add")
             }
         }
 
-        if (startBarCodeScan) {
+        AnimatedVisibility(
+            visible = startBarCodeScan,
+            enter = scaleIn(),
+            exit = scaleOut()
+        ) {
             QrScannerScreen(
                 result = {
+                    startBarCodeScan = false
+
+                    if (it.isEmpty()) return@QrScannerScreen
                     barCode = it.toLong()
                     searchViewModel.onSearchClick(it)
-                    startBarCodeScan = false
                 }
             )
         }
-
-
     }
 
 }

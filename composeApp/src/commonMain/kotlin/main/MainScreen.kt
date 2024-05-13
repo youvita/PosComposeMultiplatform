@@ -262,10 +262,7 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 2 -> {
-                    AddStockScreen(
-                        searchViewModel = searchViewModel,
-                        inventoryViewModel = inventoryViewModel
-                    )
+
                 }
 
                 3 -> {

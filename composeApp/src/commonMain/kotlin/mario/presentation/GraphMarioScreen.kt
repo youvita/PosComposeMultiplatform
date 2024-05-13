@@ -58,6 +58,9 @@ import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_back
 import poscomposemultiplatform.composeapp.generated.resources.img_employee
 import poscomposemultiplatform.composeapp.generated.resources.img_menu
+import ui.stock.presentation.AddStockScreen
+import ui.stock.presentation.InventoryViewModel
+import ui.stock.presentation.SearchEngineViewModel
 
 data class GraphMarioScreen(
     val screenType: String = ScreenMario.MainScreen.route,
@@ -72,6 +75,7 @@ data class GraphMarioScreen(
 
         val navigator = LocalNavigator.currentOrThrow
         var image by remember { mutableStateOf(ImageBitmap(1,1)) }
+
 
         val marioViewModel = get<MarioViewModel>()
         val marioState = marioViewModel.state.collectAsState().value
@@ -114,6 +118,17 @@ data class GraphMarioScreen(
                                         screenType = ScreenMario.EmployeeScreen.route,
                                         wrapContent = false
                                     )
+                                )
+                            }
+                        }
+
+                        item{
+                            MarioItem(
+                                name = "Product & Stock",
+                                image = Res.drawable.img_employee
+                            ) {
+                                navigator.push(
+                                    AddStockScreen()
                                 )
                             }
                         }
@@ -203,6 +218,10 @@ fun MarioToolbar(
 
         ScreenMario.EmployeeScreen.route -> {
             crumb = "Employee Management"
+        }
+
+        ScreenMario.ProductStockScreen.route -> {
+            crumb = "Product & Stock"
         }
     }
 
