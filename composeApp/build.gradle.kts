@@ -124,11 +124,13 @@ kotlin {
 
             implementation(libs.bundles.ktor)
 
-            // peekaboo-ui
-            implementation(libs.peekaboo.ui)
+            implementation(libs.bundles.onseok)
 
-            // peekaboo-image-picker
-            implementation(libs.peekaboo.image.picker)
+//            // peekaboo-ui
+//            implementation(libs.peekaboo.ui)
+//
+//            // peekaboo-image-picker
+//            implementation(libs.peekaboo.image.picker)
 
         }
 

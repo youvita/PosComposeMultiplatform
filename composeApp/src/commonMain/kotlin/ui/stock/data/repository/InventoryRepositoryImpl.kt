@@ -14,7 +14,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
             product_id = stock.product_id,
             stock_in = stock.stock_in,
             stock_out = stock.stock_out,
-            box = stock.box,
+            stock_box = stock.box,
             total = stock.total,
             date_in = stock.date_in,
             date_out = stock.date_out)
@@ -25,9 +25,10 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
             product_id = product.product_id,
             name = product.name,
             image = product.image,
-            qty = product.qty,
             price = product.price,
-            description = product.description
+            discount = product.discount,
+            category_name = product.category_name,
+            cateogry_image = product.category_image
         )
     }
 }

@@ -64,11 +64,12 @@ ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-conte
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 
+onseok-image-picker = { group = "io.github.onseok", name = "peekaboo-image-picker", version.ref = "peekabooUi" }
+onseok-ui = { group = "io.github.onseok", name = "peekaboo-ui", version.ref = "peekabooUi" }
 
 # Sql
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-peekaboo-image-picker = { module = "io.github.onseok:peekaboo-image-picker", version.ref = "peekabooUi" }
-peekaboo-ui = { module = "io.github.onseok:peekaboo-ui", version.ref = "peekabooUi" }
+
 primitive-adapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqlDelight" }
 sqlDelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
 sqlDelight-coroutine = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
@@ -119,3 +120,4 @@ nativeCocoapods = { id = "org.jetbrains.kotlin.native.cocoapods", version.ref = 
 
 [bundles]
 ktor = ["ktor-client-core", "ktor-client-content-negotiation", "ktor-serializtion-kotlinx-json"]
+onseok = ["onseok-image-picker", "onseok-ui"]

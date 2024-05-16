@@ -11,11 +11,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,7 +21,6 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
@@ -138,15 +133,15 @@ class AddStockScreen: Screen, KoinComponent {
             Box(
                 modifier = Modifier.padding(top = 10.dp)
             ) {
-                AnimatedVisibility(
-                    visible = addNewProduct,
-                    enter = fadeIn() + slideInHorizontally(),
-                    exit = fadeOut() + slideOutHorizontally()
+                Card(
+                    modifier = Modifier.fillMaxSize().padding(start = 5.dp, bottom = 5.dp, end = 5.dp),
+                    colors = CardDefaults.cardColors(containerColor = White),
+                    elevation = CardDefaults.cardElevation(2.dp)
                 ) {
-                    Card(
-                        modifier = Modifier.fillMaxSize().padding(start = 5.dp, bottom = 5.dp, end = 5.dp),
-                        colors = CardDefaults.cardColors(containerColor = White),
-                        elevation = CardDefaults.cardElevation(2.dp)
+                    AnimatedVisibility(
+                        visible = addNewProduct,
+                        enter = fadeIn() + slideInHorizontally(),
+                        exit = fadeOut() + slideOutHorizontally()
                     ) {
                         AddNewStock(
                             searchViewModel = searchViewModel,
@@ -156,17 +151,11 @@ class AddStockScreen: Screen, KoinComponent {
                             }
                         )
                     }
-                }
 
-                AnimatedVisibility(
-                    visible = !addNewProduct,
-                    enter = fadeIn() + slideInHorizontally(),
-                    exit = fadeOut() + slideOutHorizontally()
-                ) {
-                    Card(
-                        modifier = Modifier.fillMaxSize().padding(start = 5.dp, bottom = 5.dp, end = 5.dp),
-                        colors = CardDefaults.cardColors(containerColor = White),
-                        elevation = CardDefaults.cardElevation(2.dp)
+                    AnimatedVisibility(
+                        visible = !addNewProduct,
+                        enter = fadeIn() + slideInHorizontally(),
+                        exit = fadeOut() + slideOutHorizontally()
                     ) {
                         Box(
                             modifier = Modifier.padding(20.dp)
@@ -175,8 +164,7 @@ class AddStockScreen: Screen, KoinComponent {
                                 onClick = {
                                     addNewProduct = true
                                     currentScreen = currentScreen.toMutableList().apply { add("New") }
-                                    previousScreen =
-                                        previousScreen.toMutableList().apply { add("Product & Stock") }
+                                    previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
                                 }
                             ) {
                                 Text("+ New Product")

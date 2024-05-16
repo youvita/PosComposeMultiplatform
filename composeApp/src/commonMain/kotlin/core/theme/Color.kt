@@ -36,3 +36,4 @@ val ColorD9D9D9= Color(0xFFD9D9D9);
 val Color000000_15= Color(0x26000000);
 val ColorE7EBFD = Color(0xFFE7EBFD);
 val Color909090 = Color(0xFF909090);
+val ColorE4E4E4 = Color(0xFFE4E4E4);
