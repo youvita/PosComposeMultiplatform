@@ -260,7 +260,7 @@ fun AddNewProduct(
                                                 selectedMenuIndex = index
                                                 selectedItemIndex = -1
                                                 showEditMenu = index != 0
-                                                marioEvent(MarioEvent.GetItemsEvent(item))
+                                                marioEvent(MarioEvent.GetItemsEvent(0))
                                             }
                                             .then(
                                                 if (selectedMenuIndex == index) {

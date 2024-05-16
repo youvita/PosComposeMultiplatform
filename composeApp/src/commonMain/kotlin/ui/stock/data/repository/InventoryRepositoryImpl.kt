@@ -1,5 +1,9 @@
 package ui.stock.data.repository
 
+import core.data.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import org.topteam.pos.Menu
 import org.topteam.pos.PosDatabase
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.Stock
@@ -22,13 +26,20 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 
     override suspend fun addProduct(product: Product) {
         db.insertProduct(
+            menu_id = product.menu_id,
             product_id = product.product_id,
             name = product.name,
             image = product.image,
+            qty = product.qty,
             price = product.price,
             discount = product.discount,
             category_name = product.category_name,
             cateogry_image = product.category_image
         )
+    }
+
+    override suspend fun getProduct(id: Long): Flow<Resource<List<org.topteam.pos.Product>>> = flow {
+        emit(Resource.Loading())
+        emit(Resource.Success(db.getAllProduct(id).executeAsList()))
     }
 }

@@ -64,7 +64,7 @@ val fakeMenu = arrayListOf(
 @OptIn(ExperimentalResourceApi::class)
 val fakeItem = ItemModel(
     menuId = 1,
-    image = Res.drawable.ic_coffee,
+    image_product = byteArrayOf(),
     imageUrl = "https://placehold.co/600x400.png",
     name = "Americano",
     discount = 40,
@@ -97,7 +97,7 @@ val fakeItem = ItemModel(
 val fakeItems: ArrayList<ItemModel> = arrayListOf(
     ItemModel(
         menuId = 1,
-        image = Res.drawable.ic_coffee,
+        image_product = byteArrayOf(),
         imageUrl = "https://placehold.co/600x400.png",
         name = "Americano",
         price = 2.2,
@@ -127,7 +127,7 @@ val fakeItems: ArrayList<ItemModel> = arrayListOf(
 
     ItemModel(
         menuId = 2,
-        image = Res.drawable.ic_juice,
+        image_product = byteArrayOf(),
         imageUrl = "https://placehold.co/600x400.png",
         name = "Juice",
         price = 3.0,

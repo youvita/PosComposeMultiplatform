@@ -9,10 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import mario.presentation.MarioEvent
 import menu.domain.model.MenuModel
 import menu.domain.repository.MenuRepository
-import org.topteam.pos.Menu
 
 class OrderViewModel(
     private val repository: MenuRepository
@@ -48,7 +46,7 @@ class OrderViewModel(
                                 MenuModel(
                                     menuId = it.id,
                                     name = it.name,
-                                    imageUrl = it.imageUrl
+                                    image = it.imageUrl
                                 )
                             },
                             message = result.message

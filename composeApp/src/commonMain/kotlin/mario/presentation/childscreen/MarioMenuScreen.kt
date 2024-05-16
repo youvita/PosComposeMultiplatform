@@ -52,13 +52,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import mario.presentation.component.UpdateItemInformation
 import core.data.Status
 import core.theme.ColorDDE3F9
 import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
 import core.utils.DialogError
-import core.utils.DialogFullScreen
 import core.utils.DialogLoading
 import core.utils.DialogPreview
 import core.utils.DialogSuccess
@@ -70,7 +70,6 @@ import mario.presentation.component.CreateMenu
 import mario.presentation.component.EditItemCollapse
 import mario.presentation.component.EditMenu
 import menu.domain.model.MenuModel
-import menu.presentation.OrderState
 import menu.presentation.component.CategoryItem
 import setting.domain.model.ItemModel
 
@@ -109,6 +108,11 @@ fun MarioMenuScreen(
         if (categoryMenuList.size == 1){
             showEditMenu = false
         }
+    }
+
+    //first request ot all item
+    LaunchedEffect(Unit){
+        marioEvent(MarioEvent.GetItemsEvent(0))
     }
 
     var list by remember { mutableStateOf<List<ItemModel>>(emptyList()) }
@@ -166,11 +170,12 @@ fun MarioMenuScreen(
 
     //show dialog for create Item
     if(showAddItem){
-        DialogFullScreen(
+        DialogPreview(
             title = "Create New Item",
             onClose = { showAddItem = false },
             onDismissRequest = { showAddItem = false },
         ){
+            //content in dialog
             CreateItem(menuList[selectedMenuIndex]){ item, require ->
                 required = require
                 if(!require){
@@ -228,7 +233,7 @@ fun MarioMenuScreen(
                 .fillMaxSize()
         ){
             Row(modifier = Modifier.fillMaxSize()){
-                Column(Modifier.weight(1f)){
+                Column(Modifier.weight(2f)){
                     Box {
                         //category menu path
                         //Display all category menu
@@ -244,7 +249,7 @@ fun MarioMenuScreen(
                                                 selectedMenuIndex = index
                                                 selectedItemIndex = -1
                                                 showEditMenu = index != 0
-                                                marioEvent(MarioEvent.GetItemsEvent(item))
+                                                marioEvent(MarioEvent.GetItemsEvent(item.menuId?:0))
                                             }
                                             .then(
                                                 if (selectedMenuIndex == index) {
@@ -359,13 +364,14 @@ fun MarioMenuScreen(
                     )
 
                     LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Fixed(1),
+                        columns = StaggeredGridCells.Fixed(3),
                         verticalItemSpacing = 8.dp,
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(vertical = 20.dp)
                     ){
+                        //Button add Item menu
                         item {
                             Card(
                                 modifier = Modifier.fillMaxHeight(),
@@ -391,6 +397,7 @@ fun MarioMenuScreen(
                             }
                         }
 
+                        //display all items
                         itemsIndexed(list){ index, item ->
                             CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
                                 Box(modifier = Modifier
@@ -436,15 +443,15 @@ fun MarioMenuScreen(
                 Column(
                     modifier = Modifier
                         .padding(start = 5.dp)
-                        .weight(if (selectedItemIndex == -1) 0.01f else 1f)
+                        .weight(if (selectedItemIndex == -1) 0.001f else 1f)
                 ){
                     AnimatedVisibility(visible = selectedItemIndex > -1 || list.isNotEmpty()) {
                         val item = if(selectedItemIndex == -1) null else list[selectedItemIndex]
-//                        UpdateItemInformation(
-//                            menu = menuList[selectedMenuIndex],
-//                            item = item,
-//                            marioEvent = marioEvent
-//                        )
+                        UpdateItemInformation(
+                            menu = menuList[selectedMenuIndex],
+                            item = item,
+                            marioEvent = marioEvent
+                        )
                     }
                 }
             }

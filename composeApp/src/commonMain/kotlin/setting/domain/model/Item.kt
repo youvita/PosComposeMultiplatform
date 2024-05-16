@@ -27,7 +27,7 @@ fun Item.mapItem(): ItemModel {
     return ItemModel(
         itemId = item_id,
         menuId = menu_id,
-        image = image,
+        image_product = byteArrayOf(),
         imageUrl = image_url,
         qty = qty,
         bookmark = bookmark == 1,

@@ -49,6 +49,7 @@ import com.preat.peekaboo.image.picker.toImageBitmap
 import core.theme.PrimaryColor
 import mario.presentation.childscreen.MarioMenuScreen
 import mario.presentation.component.MarioItem
+import mario.presentation.component.MarioToolbar
 import menu.domain.model.MenuModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -75,7 +76,6 @@ data class GraphMarioScreen(
 
         val navigator = LocalNavigator.currentOrThrow
         var image by remember { mutableStateOf(ImageBitmap(1,1)) }
-
 
         val marioViewModel = get<MarioViewModel>()
         val marioState = marioViewModel.state.collectAsState().value
@@ -199,99 +199,4 @@ data class GraphMarioScreen(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-fun MarioToolbar(
-    title: String = ScreenMario.MainScreen.route,
-    navigator: Navigator? = null
-){
-    var crumb by rememberSaveable { mutableStateOf(title) }
 
-    when(title){
-        ScreenMario.MainScreen.route -> {
-            crumb = ""
-        }
-
-        ScreenMario.MenuScreen.route -> {
-            crumb = "Menu Management"
-        }
-
-        ScreenMario.EmployeeScreen.route -> {
-            crumb = "Employee Management"
-        }
-
-        ScreenMario.ProductStockScreen.route -> {
-            crumb = "Product & Stock"
-        }
-    }
-
-    if(crumb.isEmpty()){
-        androidx.compose.material3.Text(
-            modifier = Modifier.padding(6.dp),
-            text = "Super Mario (admin)",
-            style = TextStyle(
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        )
-    }
-    else{
-        Row {
-            Image(
-                painter = painterResource(resource = Res.drawable.ic_back),
-                contentDescription = "",
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        }
-                    ) {
-                        navigator?.pop()
-                    }
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember {
-                            MutableInteractionSource()
-                        }
-                    ) {
-                        navigator?.pop()
-                    },
-                text = "Super Mario (admin)",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = PrimaryColor
-                )
-            )
-
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = " / ",
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFBABABA)
-                )
-            )
-
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = crumb,
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-            )
-        }
-    }
-}

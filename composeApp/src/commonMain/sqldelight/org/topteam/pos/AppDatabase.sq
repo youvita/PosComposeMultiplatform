@@ -71,9 +71,11 @@ INSERT INTO Stock(product_id, stock_in, stock_out, stock_box, total, date_in, da
 
 CREATE TABLE Product (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    menu_id INTEGER,
     product_id INTEGER,
     name TEXT,
     image TEXT,
+    qty INTEGER,
     price INTEGER,
     discount INTEGER,
     category_name TEXT,
@@ -81,8 +83,9 @@ CREATE TABLE Product (
 );
 
 insertProduct:
-INSERT INTO Product(product_id, name, image, price, discount, category_name, cateogry_image) VALUES(?, ?, ?, ?, ?,?,?);
+INSERT INTO Product(menu_id,product_id, name, image, qty, price, discount, category_name, cateogry_image) VALUES(?,?, ?, ?,?, ?, ?,?,?);
 
-
+getAllProduct:
+SELECT * FROM Product WHERE menu_id = ?;
 
 

@@ -49,7 +49,10 @@ fun appModule() = module {
     }
 
     single<MarioViewModel> {
-        MarioViewModel(repository = get())
+        MarioViewModel(
+            repositoryMenu = get(),
+            repositoryInventory = get()
+        )
     }
 
     single<InventoryViewModel> {

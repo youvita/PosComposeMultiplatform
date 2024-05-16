@@ -1,13 +1,15 @@
 package setting.domain.model
 
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import poscomposemultiplatform.composeapp.generated.resources.Res
+import poscomposemultiplatform.composeapp.generated.resources.ic_dessert
 
-data class ItemModel @OptIn(ExperimentalResourceApi::class) constructor(
+data class ItemModel constructor(
     var itemId: Long? = null,
     var menuId: Long? = null,
-    var image: DrawableResource? = null,
+    var image_product: ByteArray? = null,
     var imageUrl: String? = null,
+    var itemCode: Long? = null,
     var name: String? = null,
     var description: String? = null,
     var remark: String? = null,
@@ -25,7 +27,7 @@ data class ItemModel @OptIn(ExperimentalResourceApi::class) constructor(
 fun ItemModel.mapItem(): Item {
     return Item(
         menu_id = menuId,
-        image = image,
+        image = Res.drawable.ic_dessert,
         image_url = imageUrl,
         name = name,
         description = description,
@@ -46,7 +48,7 @@ fun ItemModel.mapUpdateItem(): Item {
     return Item(
         item_id = itemId?: -1,
         menu_id = menuId,
-        image = image,
+        image = Res.drawable.ic_dessert,
         image_url = imageUrl,
         name = name,
         description = description,

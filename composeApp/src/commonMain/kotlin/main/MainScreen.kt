@@ -246,7 +246,6 @@ class MainScreen: Screen, KoinComponent {
 //                        }
 //                    }
 
-                    orderViewModel.onEvent(OrderEvent.GetMenusEvent)
                     OrderScreen(
                         orderState = orderState,
                         orderEvent = orderViewModel::onEvent

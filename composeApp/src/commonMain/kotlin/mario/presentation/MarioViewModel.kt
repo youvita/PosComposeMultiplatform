@@ -3,20 +3,22 @@ package mario.presentation
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import core.data.Resource
-import core.data.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import mario.presentation.MarioEvent
 import menu.domain.model.MenuModel
 import menu.domain.repository.MenuRepository
 import org.topteam.pos.Menu
+import setting.domain.model.ItemModel
+import ui.stock.domain.model.Product
+import ui.stock.domain.repository.InventoryRepository
 
 class MarioViewModel(
-    private val repository: MenuRepository
+    private val repositoryMenu: MenuRepository,
+    private val repositoryInventory: InventoryRepository
 ): ScreenModel {
 
     private var totalAmount: Double = 0.0
@@ -40,7 +42,7 @@ class MarioViewModel(
 
     private fun getMenu() {
         screenModelScope.launch {
-            repository.getAllMenu().onEach {result ->
+            repositoryMenu.getAllMenu().onEach {result ->
                 when (result) {
                     is Resource.Success -> {
                         _state.value = _state.value.copy(
@@ -48,7 +50,7 @@ class MarioViewModel(
                                 MenuModel(
                                     menuId = it.id,
                                     name = it.name,
-                                    imageUrl = it.imageUrl
+                                    image = it.imageUrl
                                 )
                             },
                             message = result.message,
@@ -74,7 +76,7 @@ class MarioViewModel(
 
     private fun addMenu(menu: Menu) {
         screenModelScope.launch {
-            repository.addMenu(menu).onEach {result ->
+            repositoryMenu.addMenu(menu).onEach {result ->
                 when (result) {
                     is Resource.Success -> {
                         _state.value = _state.value.copy(
@@ -99,7 +101,7 @@ class MarioViewModel(
 
     private fun updateMenu(menu: Menu) {
         screenModelScope.launch {
-            repository.updateMenu(menu).onEach {result ->
+            repositoryMenu.updateMenu(menu).onEach {result ->
                 when (result) {
                     is Resource.Success -> {
                         _state.value = _state.value.copy(
@@ -124,7 +126,7 @@ class MarioViewModel(
 
     private fun deleteMenu(id: Long) {
         screenModelScope.launch {
-            repository.deleteMenu(id).onEach {result ->
+            repositoryMenu.deleteMenu(id).onEach {result ->
                 when (result) {
                     is Resource.Success -> {
                         _state.value = _state.value.copy(
@@ -147,11 +149,73 @@ class MarioViewModel(
         }
     }
 
+    fun onAddProduct(product: Product) {
+        screenModelScope.launch {
+            repositoryInventory.addProduct(product)
+//
+//            val stock = Stock(
+//                product_id = product.product_id,
+//                stock_in = +1,
+//                stock_out = 0,
+//                box = 0,
+//                total = +1,
+//                date_in = "",
+//                date_out = ""
+//            )
+//            repositoryInventory.addStock(stock)
+        }
+    }
+
+    fun getProduct(id: Long) {
+        screenModelScope.launch {
+            repositoryInventory.getProduct(id).onEach {result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _state.value = _state.value.copy(
+                            items = result.data?.map {
+                                ItemModel(
+                                    itemCode = it.menu_id,
+                                    name = it.name,
+                                    itemId = it.product_id,
+                                    image_product = it.cateogry_image,
+                                    imageUrl = it.image,
+                                    qty = it.qty?.toInt(),
+                                    price = it.price?.toDouble()
+                                )
+                            },
+                            message = result.message,
+                            loading = false
+                        )
+                        println(">>>>> get all item ${result.data?.size}")
+
+                    }
+                    is Resource.Error -> {
+
+                    }
+                    is Resource.Loading -> {
+                    }
+                }
+            }.launchIn(screenModelScope)
+        }
+    }
+
 
     fun onEvent(event: MarioEvent){
         when(event) {
             is MarioEvent.AddItemEvent -> {
-
+                onAddProduct(
+                    Product(
+                        menu_id = event.item.menuId?:0,
+                        product_id = event.item.itemCode?:0,
+                        name = event.item.name?:"",
+                        image = event.item.imageUrl.toString(),
+                        category_image = event.item.image_product?: byteArrayOf(),
+                        qty = event.item.qty?.toLong()!!,
+                        category_name = "No yet",
+                        price = event.item.price?.toLong()!!,
+                        discount = 0
+                    )
+                )
             }
 
             is MarioEvent.AddMenuEvent -> {
@@ -159,7 +223,7 @@ class MarioViewModel(
                     Menu(
                         event.menu.menuId?:0,
                         event.menu.name?:"",
-                        event.menu.imageUrl
+                        event.menu.image
                     )
                 )
             }
@@ -169,7 +233,7 @@ class MarioViewModel(
                     Menu(
                         event.menu.menuId?:1,
                         event.menu.name?:"",
-                        event.menu.imageUrl
+                        event.menu.image
                     )
                 )
             }
@@ -191,7 +255,7 @@ class MarioViewModel(
             }
 
             is MarioEvent.GetItemsEvent -> {
-
+                getProduct(event.id)
             }
 
             is MarioEvent.ClearEvent -> {

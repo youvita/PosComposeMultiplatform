@@ -40,6 +40,7 @@ import core.theme.White
 import core.utils.RedRippleTheme
 import customer.presentation.CustomerEvent
 import customer.presentation.CustomerState
+import history.presentation.HistoryEvent
 import menu.presentation.component.utils.EmptyBox
 import menu.domain.model.MenuModel
 import menu.presentation.component.ItemView
@@ -74,6 +75,10 @@ fun OrderScreen(
 
     LaunchedEffect(orderState?.menus){
         menuList = categoryMenuList
+    }
+
+    LaunchedEffect(Unit){
+        orderEvent(OrderEvent.GetMenusEvent)
     }
 
     Scaffold(

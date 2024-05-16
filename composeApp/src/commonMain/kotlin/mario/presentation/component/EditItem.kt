@@ -47,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.preat.peekaboo.image.picker.toImageBitmap
 import core.theme.Shapes
 import core.theme.White
 import core.utils.RedRippleTheme
@@ -57,6 +58,8 @@ import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_cash
 import poscomposemultiplatform.composeapp.generated.resources.ic_dessert
+import poscomposemultiplatform.composeapp.generated.resources.ic_empty
+import poscomposemultiplatform.composeapp.generated.resources.ic_unknown
 import setting.domain.model.ItemModel
 import setting.domain.model.ItemOption
 
@@ -77,6 +80,7 @@ fun EditItemCollapse(
         bookmark = item?.bookmark?: false
     }
 
+    //each card item
     Card(
         modifier = modifier,
         shape = Shapes.medium,
@@ -91,15 +95,28 @@ fun EditItemCollapse(
                     .padding(16.dp)
             ) {
 
-                Image(
-                    painter = painterResource(resource = Res.drawable.ic_cash),
-                    contentDescription = "avatar",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(Shapes.medium)
-                        .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
-                )
+                if (item?.image_product != null && item.image_product!!.isNotEmpty()){
+                    Image(
+                        bitmap = item.image_product!!.toImageBitmap(),
+                        contentDescription = "avatar",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(Shapes.medium)
+                            .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
+                    )
+                }
+                else {
+                    Image(
+                        painter = painterResource(Res.drawable.ic_unknown),
+                        contentDescription = "avatar",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(Shapes.medium)
+                            .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(10.dp))
 
@@ -110,42 +127,26 @@ fun EditItemCollapse(
                     Text(
                         text = item?.name?: "Unknown",
                         style = TextStyle(
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
                     )
 
-                    if(discount > 0){
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(
-                            text = "$discount% off",
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = "Qty : ${item?.qty}",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Gray
                         )
-                    }
-
+                    )
 
                     Spacer(modifier = Modifier.height(5.dp))
 
                     FlowRow(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ){
-                        if(discount > 0){
-                            Text(
-                                text = price.dollar(),
-                                style = TextStyle(
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Gray,
-                                    textDecoration = TextDecoration.LineThrough
-                                )
-                            )
-
-                        }
-
-                        Spacer(modifier = Modifier.width(5.dp))
 
                         Text(
                             text = (price - (discount percentOf price)).dollar(),
@@ -174,319 +175,319 @@ fun EditItemCollapse(
                         }
                 )
             }
-
-            AnimatedVisibility(visible = selected){
-                Column {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.wrapContentSize()
-                    ){
-                        // Mood
-                        if(!item?.mood.isNullOrEmpty()){
-                            Column(
-                                Modifier
-                                    .padding(10.dp)
-                                    .weight(1f)) {
-                                Text(
-                                    text = "Mood",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                                OptionItem(options = item?.mood)
-                            }
-                        }
-
-                        // Size
-                        if(!item?.size.isNullOrEmpty()){
-                            Column(
-                                Modifier
-                                    .padding(10.dp)
-                                    .weight(1f)) {
-                                Text(
-                                    text = "Size",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                                OptionItem(options = item?.size)
-                            }
-                        }
-                    }
-
-                    Row{
-                        // Sugar
-                        if(!item?.sugar.isNullOrEmpty()){
-                            Column(
-                                Modifier
-                                    .padding(10.dp)
-                                    .weight(1f)) {
-                                Text(
-                                    text = "Sugar",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                                OptionItem(options = item?.sugar)
-                            }
-                        }
-
-
-                        // Ice
-                        if(!item?.ice.isNullOrEmpty()){
-                            Column(
-                                Modifier
-                                    .padding(10.dp)
-                                    .weight(1f)) {
-                                Text(
-                                    text = "Ice",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                                OptionItem(options = item?.ice)
-                            }
-                        }
-                    }
-                }
-            }
+//
+//            AnimatedVisibility(visible = selected){
+//                Column {
+//                    Row(
+//                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+//                        modifier = Modifier.wrapContentSize()
+//                    ){
+//                        // Mood
+//                        if(!item?.mood.isNullOrEmpty()){
+//                            Column(
+//                                Modifier
+//                                    .padding(10.dp)
+//                                    .weight(1f)) {
+//                                Text(
+//                                    text = "Mood",
+//                                    style = TextStyle(
+//                                        fontSize = 13.sp,
+//                                        fontWeight = FontWeight.Bold
+//                                    )
+//                                )
+//                                OptionItem(options = item?.mood)
+//                            }
+//                        }
+//
+//                        // Size
+//                        if(!item?.size.isNullOrEmpty()){
+//                            Column(
+//                                Modifier
+//                                    .padding(10.dp)
+//                                    .weight(1f)) {
+//                                Text(
+//                                    text = "Size",
+//                                    style = TextStyle(
+//                                        fontSize = 13.sp,
+//                                        fontWeight = FontWeight.Bold
+//                                    )
+//                                )
+//                                OptionItem(options = item?.size)
+//                            }
+//                        }
+//                    }
+//
+//                    Row{
+//                        // Sugar
+//                        if(!item?.sugar.isNullOrEmpty()){
+//                            Column(
+//                                Modifier
+//                                    .padding(10.dp)
+//                                    .weight(1f)) {
+//                                Text(
+//                                    text = "Sugar",
+//                                    style = TextStyle(
+//                                        fontSize = 13.sp,
+//                                        fontWeight = FontWeight.Bold
+//                                    )
+//                                )
+//                                OptionItem(options = item?.sugar)
+//                            }
+//                        }
+//
+//
+//                        // Ice
+//                        if(!item?.ice.isNullOrEmpty()){
+//                            Column(
+//                                Modifier
+//                                    .padding(10.dp)
+//                                    .weight(1f)) {
+//                                Text(
+//                                    text = "Ice",
+//                                    style = TextStyle(
+//                                        fontSize = 13.sp,
+//                                        fontWeight = FontWeight.Bold
+//                                    )
+//                                )
+//                                OptionItem(options = item?.ice)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
-@Composable
-fun EditItemExpand(
-    item: ItemModel? = null,
-    onBookmark: (Boolean) -> Unit = {}
-){
-    val discount = item?.discount?: 0
-    val price = item?.price?: 0.0
-
-    var bookmark by rememberSaveable { mutableStateOf(false) }
-
-    LaunchedEffect(item){
-        bookmark = item?.bookmark?: false
-    }
-
-    Card(
-        shape = Shapes.medium,
-        colors = CardDefaults.cardColors(White),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ){
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(White)
-                    .padding(16.dp)
-            ) {
-
-                Image(
-                    painter = painterResource(Res.drawable.ic_dessert),
-                    contentDescription = "avatar",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(Shapes.medium)
-                        .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = item?.name?: "Unknown",
-                        style = TextStyle(
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-
-                    if(discount > 0){
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(
-                            text = "$discount% off",
-                            style = TextStyle(
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
-
-
-                    Spacer(modifier = Modifier.height(5.dp))
-
-                    FlowRow(
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                    ){
-                        if(discount > 0){
-                            Text(
-                                text = price.dollar(),
-                                style = TextStyle(
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.Gray,
-                                    textDecoration = TextDecoration.LineThrough
-                                )
-                            )
-
-                        }
-
-                        Spacer(modifier = Modifier.width(5.dp))
-
-                        Text(
-                            text = (price - (discount percentOf price)).dollar(),
-                            style = TextStyle(
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
-                }
-
-                Icon(
-                    imageVector = if(bookmark) Icons.Rounded.Star else Icons.Filled.Star,
-                    contentDescription = "bookmark",
-                    tint = Color(0xFFFFD600),
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clickable(
-                            indication = null,
-                            interactionSource = remember {
-                                MutableInteractionSource()
-                            }
-                        ) {
-                            bookmark = !bookmark
-                            onBookmark(bookmark)
-                        }
-                )
-            }
-
-            Column {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.wrapContentSize()
-                ){
-                    // Mood
-                    if(!item?.mood.isNullOrEmpty()){
-                        Column(
-                            Modifier
-                                .padding(10.dp)
-                                .weight(1f)) {
-                            Text(
-                                text = "Mood",
-                                style = TextStyle(
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
-                            OptionItem(options = item?.mood)
-                        }
-                    }
-
-
-                    // Size
-                    if(!item?.size.isNullOrEmpty()) {
-                        Column(
-                            Modifier
-                                .padding(10.dp)
-                                .weight(1f)
-                        ) {
-                            Text(
-                                text = "Size",
-                                style = TextStyle(
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
-                            OptionItem(options = item?.size)
-                        }
-                    }
-                }
-
-                Row {
-                    // Sugar
-                    if (!item?.sugar.isNullOrEmpty()) {
-                        Column(
-                            Modifier
-                                .padding(10.dp)
-                                .weight(1f)
-                        ) {
-                            Text(
-                                text = "Sugar",
-                                style = TextStyle(
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
-                            OptionItem(options = item?.sugar)
-                        }
-                    }
-
-                    // Ice
-                    if (!item?.ice.isNullOrEmpty()) {
-                        Column(
-                            Modifier
-                                .padding(10.dp)
-                                .weight(1f)
-                        ) {
-                            Text(
-                                text = "Ice",
-                                style = TextStyle(
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            )
-                            OptionItem(options = item?.ice)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
-@Composable
-private fun OptionItem(options: List<ItemOption>? = null){
-    FlowRow{
-        repeat(options?.size?: 0){ index ->
-            val item = options?.get(index) ?: return@FlowRow
-
-            CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
-                Box(modifier = Modifier
-                    .padding(4.dp)
-                    .size(30.dp)
-                    .aspectRatio(1f)
-                    .background(Color(0xFFEFEFEF), shape = CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val img = item.image
-                    if(img != null){
-                        Image(
-                            modifier = Modifier.size(16.dp),
-                            painter = painterResource(img),
-                            contentDescription = ""
-                        )
-                    }else{
-                        Text(
-                            text = item.option?: "",
-                            style = TextStyle(
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
+//@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
+//@Composable
+//fun EditItemExpand(
+//    item: ItemModel? = null,
+//    onBookmark: (Boolean) -> Unit = {}
+//){
+//    val discount = item?.discount?: 0
+//    val price = item?.price?: 0.0
+//
+//    var bookmark by rememberSaveable { mutableStateOf(false) }
+//
+//    LaunchedEffect(item){
+//        bookmark = item?.bookmark?: false
+//    }
+//
+//    Card(
+//        shape = Shapes.medium,
+//        colors = CardDefaults.cardColors(White),
+//        elevation = CardDefaults.cardElevation(2.dp)
+//    ){
+//        Column {
+//            Row(
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .background(White)
+//                    .padding(16.dp)
+//            ) {
+//
+//                Image(
+//                    painter = painterResource(Res.drawable.ic_dessert),
+//                    contentDescription = "avatar",
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier
+//                        .size(64.dp)
+//                        .clip(Shapes.medium)
+//                        .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
+//                )
+//
+//                Spacer(modifier = Modifier.width(10.dp))
+//
+//                Column(
+//                    modifier = Modifier.weight(1f),
+//                    verticalArrangement = Arrangement.Center
+//                ) {
+//                    Text(
+//                        text = item?.name?: "Unknown",
+//                        style = TextStyle(
+//                            fontSize = 13.sp,
+//                            fontWeight = FontWeight.Bold
+//                        )
+//                    )
+//
+//                    if(discount > 0){
+//                        Spacer(modifier = Modifier.height(5.dp))
+//                        Text(
+//                            text = "$discount% off",
+//                            style = TextStyle(
+//                                fontSize = 12.sp,
+//                                fontWeight = FontWeight.Bold
+//                            )
+//                        )
+//                    }
+//
+//
+//                    Spacer(modifier = Modifier.height(5.dp))
+//
+//                    FlowRow(
+//                        verticalArrangement = Arrangement.spacedBy(10.dp),
+//                    ){
+//                        if(discount > 0){
+//                            Text(
+//                                text = price.dollar(),
+//                                style = TextStyle(
+//                                    fontSize = 15.sp,
+//                                    fontWeight = FontWeight.Bold,
+//                                    color = Color.Gray,
+//                                    textDecoration = TextDecoration.LineThrough
+//                                )
+//                            )
+//
+//                        }
+//
+//                        Spacer(modifier = Modifier.width(5.dp))
+//
+//                        Text(
+//                            text = (price - (discount percentOf price)).dollar(),
+//                            style = TextStyle(
+//                                fontSize = 15.sp,
+//                                fontWeight = FontWeight.Bold
+//                            )
+//                        )
+//                    }
+//                }
+//
+//                Icon(
+//                    imageVector = if(bookmark) Icons.Rounded.Star else Icons.Filled.Star,
+//                    contentDescription = "bookmark",
+//                    tint = Color(0xFFFFD600),
+//                    modifier = Modifier
+//                        .size(28.dp)
+//                        .clickable(
+//                            indication = null,
+//                            interactionSource = remember {
+//                                MutableInteractionSource()
+//                            }
+//                        ) {
+//                            bookmark = !bookmark
+//                            onBookmark(bookmark)
+//                        }
+//                )
+//            }
+//
+//            Column {
+//                Row(
+//                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+//                    modifier = Modifier.wrapContentSize()
+//                ){
+//                    // Mood
+//                    if(!item?.mood.isNullOrEmpty()){
+//                        Column(
+//                            Modifier
+//                                .padding(10.dp)
+//                                .weight(1f)) {
+//                            Text(
+//                                text = "Mood",
+//                                style = TextStyle(
+//                                    fontSize = 13.sp,
+//                                    fontWeight = FontWeight.Bold
+//                                )
+//                            )
+//                            OptionItem(options = item?.mood)
+//                        }
+//                    }
+//
+//
+//                    // Size
+//                    if(!item?.size.isNullOrEmpty()) {
+//                        Column(
+//                            Modifier
+//                                .padding(10.dp)
+//                                .weight(1f)
+//                        ) {
+//                            Text(
+//                                text = "Size",
+//                                style = TextStyle(
+//                                    fontSize = 13.sp,
+//                                    fontWeight = FontWeight.Bold
+//                                )
+//                            )
+//                            OptionItem(options = item?.size)
+//                        }
+//                    }
+//                }
+//
+//                Row {
+//                    // Sugar
+//                    if (!item?.sugar.isNullOrEmpty()) {
+//                        Column(
+//                            Modifier
+//                                .padding(10.dp)
+//                                .weight(1f)
+//                        ) {
+//                            Text(
+//                                text = "Sugar",
+//                                style = TextStyle(
+//                                    fontSize = 13.sp,
+//                                    fontWeight = FontWeight.Bold
+//                                )
+//                            )
+//                            OptionItem(options = item?.sugar)
+//                        }
+//                    }
+//
+//                    // Ice
+//                    if (!item?.ice.isNullOrEmpty()) {
+//                        Column(
+//                            Modifier
+//                                .padding(10.dp)
+//                                .weight(1f)
+//                        ) {
+//                            Text(
+//                                text = "Ice",
+//                                style = TextStyle(
+//                                    fontSize = 13.sp,
+//                                    fontWeight = FontWeight.Bold
+//                                )
+//                            )
+//                            OptionItem(options = item?.ice)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
+//@Composable
+//private fun OptionItem(options: List<ItemOption>? = null){
+//    FlowRow{
+//        repeat(options?.size?: 0){ index ->
+//            val item = options?.get(index) ?: return@FlowRow
+//
+//            CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
+//                Box(modifier = Modifier
+//                    .padding(4.dp)
+//                    .size(30.dp)
+//                    .aspectRatio(1f)
+//                    .background(Color(0xFFEFEFEF), shape = CircleShape),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    val img = item.image
+//                    if(img != null){
+//                        Image(
+//                            modifier = Modifier.size(16.dp),
+//                            painter = painterResource(img),
+//                            contentDescription = ""
+//                        )
+//                    }else{
+//                        Text(
+//                            text = item.option?: "",
+//                            style = TextStyle(
+//                                fontSize = 9.sp,
+//                                fontWeight = FontWeight.Bold
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}

@@ -11,7 +11,7 @@ sealed class MarioEvent {
     data class DeleteItemEvent(val item: ItemModel): MarioEvent()
     data class DeleteMenuEvent(val menuId: Long): MarioEvent()
     data class BookmarkItemEvent(val item: ItemModel): MarioEvent()
-    data class GetItemsEvent(val menu: MenuModel?) : MarioEvent()
+    data class GetItemsEvent(val id: Long) : MarioEvent()
     object GetMenusEvent: MarioEvent()
     object ClearEvent: MarioEvent()
 }
