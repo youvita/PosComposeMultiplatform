@@ -22,6 +22,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +39,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import core.theme.PrimaryColor
 import core.theme.White
+import mario.presentation.MarioViewModel
+import mario.presentation.childscreen.MarioMenuScreen
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
@@ -54,11 +57,13 @@ class AddStockScreen: Screen, KoinComponent {
 
         val searchViewModel = get<SearchEngineViewModel>()
         val inventoryViewModel = get<InventoryViewModel>()
+        val marioViewModel = get<MarioViewModel>()
 
         var addNewProduct by remember { mutableStateOf(false) }
-
         var previousScreen by mutableStateOf(listOf("Super Mario (admin)"))
         var currentScreen by mutableStateOf(listOf("Product & Stock"))
+
+        val marioState = marioViewModel.state.collectAsState().value
 
         Scaffold(
             modifier = Modifier.padding(10.dp),
@@ -157,19 +162,15 @@ class AddStockScreen: Screen, KoinComponent {
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
-                        Box(
-                            modifier = Modifier.padding(20.dp)
-                        ) {
-                            Button(
-                                onClick = {
-                                    addNewProduct = true
-                                    currentScreen = currentScreen.toMutableList().apply { add("New") }
-                                    previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
-                                }
-                            ) {
-                                Text("+ New Product")
+                        AddNewProduct(
+                            marioState = marioState,
+                            marioEvent = marioViewModel::onEvent,
+                            callBack = {
+                                addNewProduct = true
+                                currentScreen = currentScreen.toMutableList().apply { add("New") }
+                                previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
                             }
-                        }
+                        )
                     }
                 }
             }

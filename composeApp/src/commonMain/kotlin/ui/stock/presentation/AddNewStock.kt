@@ -22,6 +22,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
@@ -50,6 +52,7 @@ import core.theme.PrimaryColor
 import core.theme.White
 import core.utils.ImageLoader
 import core.utils.LineWrapper
+import core.utils.PrimaryButton
 import core.utils.TextInputDefault
 import core.utils.TextInputNormal
 import io.ktor.utils.io.core.toByteArray
@@ -116,8 +119,9 @@ fun AddNewStock(
 
                         Spacer(modifier = Modifier.weight(1f))
 
-                        Button(
-                            onClick = {
+                        PrimaryButton(
+                            text = "Save Product",
+                            callBack = {
                                 val product = Product(
                                     product_id = barCode,
                                     name = name,
@@ -130,10 +134,10 @@ fun AddNewStock(
                                 inventoryViewModel.onAddProduct(product)
                                 callback()
                             }
-                        ) {
-                            Text(text = "Save Product")
-                        }
+                        )
                     }
+
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     LineWrapper()
 
