@@ -10,5 +10,6 @@ interface InventoryRepository {
     suspend fun addStock(stock: Stock)
 
     suspend fun addProduct(product: Product)
-    suspend fun getProduct(id: Long): Flow<Resource<List<org.topteam.pos.Product>>>
+    suspend fun getProduct(id: Long): Flow<Resource<List<Product>>>
+    suspend fun getStock(): Flow<Resource<List<Stock>>>
 }

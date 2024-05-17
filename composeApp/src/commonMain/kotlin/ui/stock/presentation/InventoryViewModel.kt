@@ -7,15 +7,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductStock
 import ui.stock.domain.model.Stock
 import ui.stock.domain.repository.InventoryRepository
 
 data class InventoryState(
     var status: Status? = null,
     var isLoading: Boolean? = null,
-    var data: Unit? = null
+    var data: List<ProductStock>? = null
 )
 
 class InventoryViewModel(
@@ -25,20 +27,33 @@ class InventoryViewModel(
     private val _state = MutableStateFlow(SearchEngineState())
     val state: StateFlow<SearchEngineState> = _state.asStateFlow()
 
+    private val _stateStock = MutableStateFlow(InventoryState())
+    val stateStock: StateFlow<InventoryState> = _stateStock.asStateFlow()
+
     fun onAddProduct(product: Product) {
         screenModelScope.launch {
             repository.addProduct(product)
 
             val stock = Stock(
-                product_id = product.product_id,
-                stock_in = +1,
-                stock_out = 0,
-                box = 0,
-                total = +1,
-                date_in = "",
-                date_out = ""
+                productId = product.product_id,
+                stockIn = +1,
+                stockOut = 0,
+                stockBox = 0,
+                stockTotal = +1,
+                dateIn = "",
+                dateOut = ""
             )
             repository.addStock(stock)
+        }
+    }
+
+    fun onGetStock() {
+        screenModelScope.launch {
+            repository.getStock().collect { stock ->
+                _stateStock.value = _stateStock.value.copy(
+//                    data = stock.data
+                )
+            }
         }
     }
 

@@ -55,7 +55,7 @@ SELECT * FROM History;
 getHistoryPaging:
 SELECT * FROM History LIMIT ? OFFSET ?;
 
-CREATE TABLE Stock (
+CREATE TABLE StockEntity (
     stock_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     product_id INTEGER,
     stock_in INTEGER,
@@ -67,9 +67,12 @@ CREATE TABLE Stock (
 );
 
 insertStock:
-INSERT INTO Stock(product_id, stock_in, stock_out, stock_box, total, date_in, date_out) VALUES(?, ?, ?, ?, ?, ?, ?);
+INSERT INTO StockEntity(product_id, stock_in, stock_out, stock_box, total, date_in, date_out) VALUES(?, ?, ?, ?, ?, ?, ?);
 
-CREATE TABLE Product (
+getStock:
+SELECT * FROM StockEntity;
+
+CREATE TABLE ProductEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     menu_id INTEGER,
     product_id INTEGER,
@@ -83,9 +86,9 @@ CREATE TABLE Product (
 );
 
 insertProduct:
-INSERT INTO Product(menu_id,product_id, name, image, qty, price, discount, category_name, cateogry_image) VALUES(?,?, ?, ?,?, ?, ?,?,?);
+INSERT INTO ProductEntity(menu_id,product_id, name, image, qty, price, discount, category_name, cateogry_image) VALUES(?,?, ?, ?,?, ?, ?,?,?);
 
 getAllProduct:
-SELECT * FROM Product WHERE menu_id = ?;
+SELECT * FROM ProductEntity WHERE menu_id = ?;
 
 

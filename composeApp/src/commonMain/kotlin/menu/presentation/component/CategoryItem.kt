@@ -61,14 +61,14 @@ fun CategoryItem(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (category.image != null && category.image!!.isNotEmpty()){
-                    Image(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(shape = RoundedCornerShape(5.dp)),
-                        bitmap = category.image!!.toImageBitmap(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
+//                    Image(
+//                        modifier = Modifier
+//                            .size(40.dp)
+//                            .clip(shape = RoundedCornerShape(5.dp)),
+//                        bitmap = category.image!!.toImageBitmap(),
+//                        contentDescription = null,
+//                        contentScale = ContentScale.Crop
+//                    )
                 }
 
                 Text(

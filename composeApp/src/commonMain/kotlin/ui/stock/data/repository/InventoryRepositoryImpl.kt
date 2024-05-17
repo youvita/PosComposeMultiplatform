@@ -1,9 +1,15 @@
 package ui.stock.data.repository
 
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToOneNotNull
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import core.data.Resource
+import core.mapper.toProduct
+import core.mapper.toStock
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
-import org.topteam.pos.Menu
+import kotlinx.coroutines.flow.map
 import org.topteam.pos.PosDatabase
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.Stock
@@ -15,13 +21,13 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 
     override suspend fun addStock(stock: Stock) {
         db.insertStock(
-            product_id = stock.product_id,
-            stock_in = stock.stock_in,
-            stock_out = stock.stock_out,
-            stock_box = stock.box,
-            total = stock.total,
-            date_in = stock.date_in,
-            date_out = stock.date_out)
+            product_id = stock.productId,
+            stock_in = stock.stockIn,
+            stock_out = stock.stockOut,
+            stock_box = stock.stockBox,
+            total = stock.stockTotal,
+            date_in = stock.dateIn,
+            date_out = stock.dateOut)
     }
 
     override suspend fun addProduct(product: Product) {
@@ -38,8 +44,15 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         )
     }
 
-    override suspend fun getProduct(id: Long): Flow<Resource<List<org.topteam.pos.Product>>> = flow {
+    override suspend fun getProduct(id: Long): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())
-        emit(Resource.Success(db.getAllProduct(id).executeAsList()))
+        val result = db.getAllProduct(id).executeAsList().map { it.toProduct() }
+        emit(Resource.Success(result))
+    }
+
+    override suspend fun getStock(): Flow<Resource<List<Stock>>> = flow {
+        emit(Resource.Loading())
+        val result = db.getStock().executeAsList().map { it.toStock() }
+        emit(Resource.Success(result))
     }
 }

@@ -177,7 +177,7 @@ class MarioViewModel(
                                     itemCode = it.menu_id,
                                     name = it.name,
                                     itemId = it.product_id,
-                                    image_product = it.cateogry_image,
+                                    image_product = it.category_image,
                                     imageUrl = it.image,
                                     qty = it.qty?.toInt(),
                                     price = it.price?.toDouble()

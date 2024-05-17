@@ -123,9 +123,11 @@ fun AddNewStock(
                             text = "Save Product",
                             callBack = {
                                 val product = Product(
+                                    menu_id = 0,
                                     product_id = barCode,
                                     name = name,
                                     image = barImage,
+                                    qty = 0,
                                     price = price,
                                     discount = discount,
                                     category_name = category,
