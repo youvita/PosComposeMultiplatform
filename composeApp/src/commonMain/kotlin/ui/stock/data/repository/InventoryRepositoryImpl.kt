@@ -3,15 +3,17 @@ package ui.stock.data.repository
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneNotNull
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import com.preat.peekaboo.image.picker.toImageBitmap
 import core.data.Resource
 import core.mapper.toProduct
-import core.mapper.toStock
+import io.ktor.client.request.forms.formData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import org.topteam.pos.PosDatabase
 import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductStock
 import ui.stock.domain.model.Stock
 import ui.stock.domain.repository.InventoryRepository
 
@@ -50,9 +52,22 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         emit(Resource.Success(result))
     }
 
-    override suspend fun getStock(): Flow<Resource<List<Stock>>> = flow {
+    override suspend fun getStock(): Flow<Resource<List<ProductStock>>> = flow {
         emit(Resource.Loading())
-        val result = db.getStock().executeAsList().map { it.toStock() }
-        emit(Resource.Success(result))
+        val result = db.getProductStock().executeAsList()
+        val productStock = mutableListOf<ProductStock>()
+        for (item in result) {
+            val match = ProductStock(
+                stockId = item.stock_id,
+                stockIn = item.stock_in,
+                stockOut = item.stock_out,
+                stockTotal = item.stock_box,
+                productId = item.product_id,
+                productName = item.name,
+                productImage = item.image?.toImageBitmap(),
+            )
+            productStock.add(match)
+        }
+        emit(Resource.Success(productStock))
     }
 }

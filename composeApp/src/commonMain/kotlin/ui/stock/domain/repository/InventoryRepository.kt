@@ -4,6 +4,7 @@ import core.data.Resource
 import kotlinx.coroutines.flow.Flow
 import org.topteam.pos.Menu
 import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductStock
 import ui.stock.domain.model.Stock
 
 interface InventoryRepository {
@@ -11,5 +12,5 @@ interface InventoryRepository {
 
     suspend fun addProduct(product: Product)
     suspend fun getProduct(id: Long): Flow<Resource<List<Product>>>
-    suspend fun getStock(): Flow<Resource<List<Stock>>>
+    suspend fun getStock(): Flow<Resource<List<ProductStock>>>
 }

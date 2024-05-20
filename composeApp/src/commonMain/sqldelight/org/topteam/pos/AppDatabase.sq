@@ -69,15 +69,16 @@ CREATE TABLE StockEntity (
 insertStock:
 INSERT INTO StockEntity(product_id, stock_in, stock_out, stock_box, total, date_in, date_out) VALUES(?, ?, ?, ?, ?, ?, ?);
 
-getStock:
-SELECT * FROM StockEntity;
+getProductStock:
+SELECT * FROM StockEntity JOIN ProductEntity ON StockEntity.product_id = ProductEntity.product_id;
 
 CREATE TABLE ProductEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     menu_id INTEGER,
     product_id INTEGER,
     name TEXT,
-    image TEXT,
+    image BLOB,
+    imageUrl TEXT,
     qty INTEGER,
     price INTEGER,
     discount INTEGER,

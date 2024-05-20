@@ -27,8 +27,8 @@ class InventoryViewModel(
     private val _state = MutableStateFlow(SearchEngineState())
     val state: StateFlow<SearchEngineState> = _state.asStateFlow()
 
-    private val _stateStock = MutableStateFlow(InventoryState())
-    val stateStock: StateFlow<InventoryState> = _stateStock.asStateFlow()
+    private val _stateProductStock = MutableStateFlow(InventoryState())
+    val stateProductStock: StateFlow<InventoryState> = _stateProductStock.asStateFlow()
 
     fun onAddProduct(product: Product) {
         screenModelScope.launch {
@@ -47,11 +47,11 @@ class InventoryViewModel(
         }
     }
 
-    fun onGetStock() {
+    fun onGetProductStock() {
         screenModelScope.launch {
             repository.getStock().collect { stock ->
-                _stateStock.value = _stateStock.value.copy(
-//                    data = stock.data
+                _stateProductStock.value = _stateProductStock.value.copy(
+                    data = stock.data
                 )
             }
         }

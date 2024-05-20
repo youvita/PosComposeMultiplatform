@@ -178,7 +178,7 @@ class MarioViewModel(
                                     name = it.name,
                                     itemId = it.product_id,
                                     image_product = it.category_image,
-                                    imageUrl = it.image,
+                                    imageUrl = it.imageUrl,
                                     qty = it.qty?.toInt(),
                                     price = it.price?.toDouble()
                                 )
@@ -208,7 +208,8 @@ class MarioViewModel(
                         menu_id = event.item.menuId?:0,
                         product_id = event.item.itemCode?:0,
                         name = event.item.name?:"",
-                        image = event.item.imageUrl.toString(),
+                        image = event.item.image_product,
+                        imageUrl = event.item.imageUrl,
                         category_image = event.item.image_product?: byteArrayOf(),
                         qty = event.item.qty?.toLong()!!,
                         category_name = "No yet",
