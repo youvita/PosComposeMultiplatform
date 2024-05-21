@@ -35,11 +35,12 @@ class InventoryViewModel(
             repository.addProduct(product)
 
             val stock = Stock(
+                stockId = 0,
                 productId = product.product_id,
-                stockIn = +1,
+                stockIn = 0,
                 stockOut = 0,
                 stockBox = 0,
-                stockTotal = +1,
+                stockTotal = product.discount,
                 dateIn = "",
                 dateOut = ""
             )
@@ -50,6 +51,7 @@ class InventoryViewModel(
     fun onGetProductStock() {
         screenModelScope.launch {
             repository.getStock().collect { stock ->
+                println(">>>>> ${stock.data?.size}")
                 _stateProductStock.value = _stateProductStock.value.copy(
                     data = stock.data
                 )

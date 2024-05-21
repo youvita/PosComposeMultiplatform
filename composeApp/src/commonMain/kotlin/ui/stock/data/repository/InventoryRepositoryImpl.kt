@@ -6,11 +6,13 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.preat.peekaboo.image.picker.toImageBitmap
 import core.data.Resource
 import core.mapper.toProduct
+import core.mapper.toStock
 import io.ktor.client.request.forms.formData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.DateTimeUnit
 import org.topteam.pos.PosDatabase
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductStock
@@ -22,14 +24,21 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
     private val db = posDatabase.appDatabaseQueries
 
     override suspend fun addStock(stock: Stock) {
+        var item = stock
+        val result = db.getStockByProductId(stock.productId).executeAsList()
+        if (result.isNotEmpty()) {
+            item = result.last().toStock()
+        }
         db.insertStock(
+            stock_id = item.stockId?.plus(1),
             product_id = stock.productId,
-            stock_in = stock.stockIn,
-            stock_out = stock.stockOut,
-            stock_box = stock.stockBox,
-            total = stock.stockTotal,
-            date_in = stock.dateIn,
-            date_out = stock.dateOut)
+            stock_in = item.stockIn?.plus(1),
+            stock_out = item.stockOut,
+            stock_box = item.stockBox,
+            total = item.stockIn?.plus(1),
+            date_in = item.dateIn,
+            date_out = item.dateOut
+        )
     }
 
     override suspend fun addProduct(product: Product) {
@@ -56,7 +65,9 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         emit(Resource.Loading())
         val result = db.getProductStock().executeAsList()
         val productStock = mutableListOf<ProductStock>()
+        println(">>>> size::: ${result.size}")
         for (item in result) {
+            println(">>>> item:::: ${item.product_id}")
             val match = ProductStock(
                 stockId = item.stock_id,
                 stockIn = item.stock_in,

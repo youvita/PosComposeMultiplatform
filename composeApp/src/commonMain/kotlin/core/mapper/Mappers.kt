@@ -4,9 +4,10 @@ import org.topteam.pos.ProductEntity
 import org.topteam.pos.StockEntity
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductStock
+import ui.stock.domain.model.Stock
 
-fun StockEntity.toProductStock(): ProductStock {
-    return ProductStock(
+fun StockEntity.toStock(): Stock {
+    return Stock(
         productId = product_id,
         stockId = stock_id,
         stockIn = stock_in,
