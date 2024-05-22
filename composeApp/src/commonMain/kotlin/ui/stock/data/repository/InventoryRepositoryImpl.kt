@@ -25,12 +25,19 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 
     override suspend fun addStock(stock: Stock) {
         var item = stock
-        val result = db.getStockByProductId(stock.productId).executeAsList()
+        val result = db.getStockByProductId(item.productId).executeAsList()
         if (result.isNotEmpty()) {
             item = result.last().toStock()
+        } else {
+            val lastId = db.getStockId().executeAsList()
+            if (lastId.isNotEmpty()) {
+                item = lastId.last().toStock()
+            }
         }
+
+        println(">>>> ${item.stockId}")
         db.insertStock(
-            stock_id = item.stockId?.plus(1),
+            stock_id = item.stockId?.plus(1).takeIf { item.stockId?.let { it > 0 } == true } ?: 1,
             product_id = stock.productId,
             stock_in = item.stockIn?.plus(1),
             stock_out = item.stockOut,
