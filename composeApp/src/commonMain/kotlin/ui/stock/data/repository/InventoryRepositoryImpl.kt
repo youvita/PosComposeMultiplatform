@@ -4,6 +4,7 @@ import com.preat.peekaboo.image.picker.toImageBitmap
 import core.data.Resource
 import core.mapper.toProduct
 import core.mapper.toStock
+import core.utils.getCurrentDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.Clock
@@ -30,7 +31,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                     stock.stockOut,
                     stock.stockBox,
                     stock.stockTotal?.plus(1),
-                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString(),
+                    getCurrentDateTime(),
                     stock.dateOut,
                     id
                 )
@@ -42,7 +43,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 stock_out = 0,
                 stock_box = 0,
                 total = 1,
-                date_in = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.toString(),
+                date_in = getCurrentDateTime(),
                 date_out = ""
             )
         }
@@ -77,6 +78,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 productId = item.product_id,
                 productName = item.name,
                 productImage = item.image?.toImageBitmap(),
+                dateIn = item.date_in
             )
             productStock.add(match)
         }

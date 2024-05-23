@@ -1,10 +1,7 @@
 package ui.stock.presentation
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,31 +17,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.preat.peekaboo.image.picker.toImageBitmap
-import core.theme.ColorE4E4E4
-import core.theme.PrimaryColor
 import core.theme.Styles
 import core.theme.White
 import core.utils.calculateWeight
 import core.utils.getTextStyle
 import history.presentation.component.LineWrapper
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
-import poscomposemultiplatform.composeapp.generated.resources.Res
-import poscomposemultiplatform.composeapp.generated.resources.ic_profie
 import ui.stock.domain.model.ProductStock
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun StockInformation(
     state: InventoryState
@@ -53,7 +40,7 @@ fun StockInformation(
     Box(
         modifier = Modifier.fillMaxWidth().background(White).padding(start = 20.dp, top = 30.dp)
     ) {
-        val columnList = listOf("No", "", "Product Name", "SKU", "Stock In", "Stock Out", "Total")
+        val columnList = listOf("No", "", "Product Name", "SKU", "Stock In", "Stock Out", "Total", "Date")
         val rowList = state.data
 
         val columnWeight = remember { MutableList(columnList.size) { 0f } } //column header weight
@@ -162,6 +149,7 @@ private fun getColumnValue(item: ProductStock, index: Int): String {
         3 -> item.productId.toString()
         4 -> item.stockIn.toString()
         5 -> item.stockOut.toString()
-        else -> item.stockTotal.toString()
+        6 -> item.stockTotal.toString()
+        else -> item.dateIn.toString()
     }
 }

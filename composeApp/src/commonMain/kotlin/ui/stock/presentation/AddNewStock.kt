@@ -35,6 +35,7 @@ import androidx.compose.material3.TabRowDefaults.primaryContentColor
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,8 +64,21 @@ import core.utils.ImageLoader
 import core.utils.LineWrapper
 import core.utils.PrimaryButton
 import core.utils.TextInputDefault
+import core.utils.getCurrentDateTime
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.UtcOffset
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.format.FormatStringsInDatetimeFormats
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.format.char
+import kotlinx.datetime.format.format
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -74,7 +88,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_profie
 import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
 import ui.stock.domain.model.Product
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, FormatStringsInDatetimeFormats::class)
 @Composable
 fun AddNewStock(
     searchViewModel: SearchEngineViewModel,
@@ -116,6 +130,11 @@ fun AddNewStock(
         "Product Detail",
         "Stock"
     )
+
+    LaunchedEffect(true) {
+        println(getCurrentDateTime())
+    }
+
 
     Scaffold(
         modifier = Modifier.padding(end = 20.dp)
