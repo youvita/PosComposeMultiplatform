@@ -287,3 +287,4 @@ data class DottedShape(
     })
 }
 fun Double.dollar(): String = if (this == 0.0) "$0.00" else "$${this}"
+

@@ -63,6 +63,9 @@ import core.utils.ImageLoader
 import core.utils.LineWrapper
 import core.utils.PrimaryButton
 import core.utils.TextInputDefault
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
@@ -164,9 +167,7 @@ fun AddNewStock(
                                     imageUrl = barImage,
                                     qty = 0,
                                     price = price,
-                                    discount = discount,
-                                    category_name = category,
-                                    category_image = byteImage,
+                                    discount = discount
                                 )
                                 inventoryViewModel.onAddProduct(product)
                                 callback()

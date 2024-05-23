@@ -3,7 +3,6 @@ package core.mapper
 import org.topteam.pos.ProductEntity
 import org.topteam.pos.StockEntity
 import ui.stock.domain.model.Product
-import ui.stock.domain.model.ProductStock
 import ui.stock.domain.model.Stock
 
 fun StockEntity.toStock(): Stock {
@@ -25,8 +24,6 @@ fun ProductEntity.toProduct(): Product {
         imageUrl = imageUrl,
         qty = qty,
         price = price,
-        discount = discount,
-        category_name = category_name,
-        category_image = cateogry_image
+        discount = discount
     )
 }

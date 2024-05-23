@@ -8,7 +8,5 @@ data class Product(
     val imageUrl: String?,
     val qty: Long?,
     val price: Long?,
-    val discount: Long?,
-    val category_name: String?,
-    val category_image: ByteArray? = null
+    val discount: Long?
 )
