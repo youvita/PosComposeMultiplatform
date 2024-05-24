@@ -61,6 +61,7 @@ import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
 import core.utils.ImageLoader
+import core.utils.InputUtil
 import core.utils.LineWrapper
 import core.utils.PrimaryButton
 import core.utils.TextInputDefault
@@ -102,8 +103,8 @@ fun AddNewStock(
     var barCode by remember { mutableStateOf(Long.MIN_VALUE) }
     var barImage by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf(Long.MIN_VALUE) }
-    var discount by remember { mutableStateOf(Long.MIN_VALUE) }
+    var price by remember { mutableStateOf("") }
+    var discount by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
 //    var stockBox by remember { mutableStateOf(Long.MIN_VALUE) }
 //    var stockQty by remember { mutableStateOf(Long.MIN_VALUE) }
@@ -175,23 +176,28 @@ fun AddNewStock(
                             }
                         }
 
-                        PrimaryButton(
-                            text = "Save Product",
-                            callBack = {
-                                val product = Product(
-                                    menu_id = 0,
-                                    product_id = barCode,
-                                    name = name,
-                                    image = byteImage,
-                                    imageUrl = barImage,
-                                    qty = 0,
-                                    price = price,
-                                    discount = discount
-                                )
-                                inventoryViewModel.onAddProduct(product)
-                                callback()
-                            }
-                        )
+                        AnimatedVisibility(
+                            visible = tabIndex == 0
+                        ) {
+                            PrimaryButton(
+                                text = "Save Product",
+                                callBack = {
+                                    val product = Product(
+                                        menuId = 0,
+                                        productId = barCode,
+                                        name = name,
+                                        image = byteImage,
+                                        imageUrl = barImage,
+                                        qty = "0",
+                                        price = price,
+                                        discount = discount
+                                    )
+                                    inventoryViewModel.onAddProduct(product)
+                                    callback()
+                                }
+                            )
+                        }
+
                     }
 
                     LineWrapper(modifier = Modifier.padding(start = 20.dp))
@@ -236,8 +242,11 @@ fun AddNewStock(
                                             text = barCode.toString().takeIf { barCode > 0 } ?: "",
                                             placeholder = "Barcode",
                                             onValueChange = {
-                                                barCode = it.toLong()
-                                            }
+                                                if (it.isNotEmpty()) {
+                                                    barCode = it.toLong()
+                                                }
+                                            },
+                                            keyboardType = KeyboardType.Number
                                         )
                                     }
 
@@ -267,14 +276,12 @@ fun AddNewStock(
 
                                         TextInputDefault(
                                             modifier = Modifier.fillMaxWidth(),
-                                            text = price.toString().takeIf { price > 0 } ?: "",
+                                            text = price,
                                             placeholder = "Enter Price",
                                             onValueChange = {
-                                                if (it.isNotEmpty()) {
-                                                    price = it.toLong()
-                                                }
+                                                price = it
                                             },
-                                            keyboardType = KeyboardType.Number
+                                            keyboardType = KeyboardType.Decimal
                                         )
                                     }
 
@@ -287,10 +294,10 @@ fun AddNewStock(
 
                                         TextInputDefault(
                                             modifier = Modifier.fillMaxWidth(),
-                                            text = discount.toString().takeIf { discount > 0 } ?: "",
+                                            text = discount,
                                             placeholder = "Enter Discount",
                                             onValueChange = {
-                                                discount = it.toLong()
+                                                discount = it
                                             },
                                             keyboardType = KeyboardType.Number
                                         )

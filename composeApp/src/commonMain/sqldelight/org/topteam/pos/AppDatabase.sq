@@ -76,7 +76,7 @@ getStockByProductId:
 SELECT * FROM StockEntity WHERE product_id = ?;
 
 getProductStock:
-SELECT * FROM StockEntity JOIN ProductEntity ON StockEntity.product_id = ProductEntity.product_id GROUP BY StockEntity.product_id;
+SELECT * FROM StockEntity JOIN ProductEntity ON StockEntity.product_id = ProductEntity.product_id GROUP BY StockEntity.product_id ORDER BY stock_id ASC;
 
 CREATE TABLE ProductEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -85,13 +85,13 @@ CREATE TABLE ProductEntity (
     name TEXT,
     image BLOB,
     imageUrl TEXT,
-    qty INTEGER,
-    price INTEGER,
-    discount INTEGER
+    qty TEXT,
+    price TEXT,
+    discount TEXT
 );
 
 insertProduct:
-INSERT INTO ProductEntity(menu_id,product_id, name, image, qty, price, discount) VALUES(?,?, ?, ?,?, ?, ?);
+INSERT INTO ProductEntity(menu_id,product_id, name, image, imageUrl, qty, price, discount) VALUES(?,?,?, ?, ?,?, ?, ?);
 
 getAllProduct:
 SELECT * FROM ProductEntity WHERE menu_id = ?;

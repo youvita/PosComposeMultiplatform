@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import core.theme.Styles
 import core.theme.White
+import core.utils.ImageLoader
 import core.utils.calculateWeight
 import core.utils.getTextStyle
 import history.presentation.component.LineWrapper
@@ -116,6 +117,21 @@ fun StockInformation(
                                                     contentDescription = null,
                                                     contentScale = ContentScale.FillBounds
                                                 )
+                                            }
+                                        }
+                                    }
+                                    item.productImageUrl?.let {
+                                        if (it.isNotEmpty()) {
+                                            Box(
+                                                modifier = Modifier.weight(0.4f),
+                                                contentAlignment = Alignment.CenterEnd
+                                            ) {
+                                                Card(
+                                                    modifier = Modifier.size(42.dp),
+                                                    shape = RoundedCornerShape(10.dp)
+                                                ) {
+                                                    ImageLoader(image = it)
+                                                }
                                             }
                                         }
                                     }

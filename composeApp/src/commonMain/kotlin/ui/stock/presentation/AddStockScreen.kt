@@ -158,6 +158,8 @@ class AddStockScreen: Screen, KoinComponent {
                             inventoryViewModel = inventoryViewModel,
                             callback = {
                                 addNewProduct = false
+                                currentScreen = currentScreen.toMutableList().apply { removeLast() }
+                                previousScreen = previousScreen.toMutableList().apply { removeLast() }
                             }
                         )
                     }

@@ -7,10 +7,6 @@ import core.mapper.toStock
 import core.utils.getCurrentDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
-import kotlinx.datetime.toLocalDateTime
 import org.topteam.pos.PosDatabase
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductStock
@@ -21,12 +17,12 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
     private val db = posDatabase.appDatabaseQueries
 
     override suspend fun addProduct(product: Product) {
-        val result = db.getStockByProductId(product.product_id).executeAsList()
+        val result = db.getStockByProductId(product.productId).executeAsList()
         if (result.isNotEmpty()) {
             val stock = result.last().toStock()
             stock.stockId?.let { id ->
                 db.updateStock(
-                    product.product_id,
+                    product.productId,
                     stock.stockIn?.plus(1),
                     stock.stockOut,
                     stock.stockBox,
@@ -38,7 +34,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
             }
         } else {
             db.insertStock(
-                product_id = product.product_id,
+                product_id = product.productId,
                 stock_in = 1,
                 stock_out = 0,
                 stock_box = 0,
@@ -49,10 +45,11 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         }
 
         db.insertProduct(
-            menu_id = product.menu_id,
-            product_id = product.product_id,
+            menu_id = product.menuId,
+            product_id = product.productId,
             name = product.name,
             image = product.image,
+            imageUrl = product.imageUrl,
             qty = product.qty,
             price = product.price,
             discount = product.discount
@@ -78,6 +75,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 productId = item.product_id,
                 productName = item.name,
                 productImage = item.image?.toImageBitmap(),
+                productImageUrl = item.imageUrl,
                 dateIn = item.date_in
             )
             productStock.add(match)

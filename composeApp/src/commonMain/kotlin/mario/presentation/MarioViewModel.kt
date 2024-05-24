@@ -174,9 +174,9 @@ class MarioViewModel(
                         _state.value = _state.value.copy(
                             items = result.data?.map {
                                 ItemModel(
-                                    itemCode = it.menu_id,
+                                    itemCode = it.menuId,
                                     name = it.name,
-                                    itemId = it.product_id,
+                                    itemId = it.productId,
                                     image_product = it.image,
                                     imageUrl = it.imageUrl,
                                     qty = it.qty?.toInt(),
@@ -205,14 +205,14 @@ class MarioViewModel(
             is MarioEvent.AddItemEvent -> {
                 onAddProduct(
                     Product(
-                        menu_id = event.item.menuId?:0,
-                        product_id = event.item.itemCode?:0,
+                        menuId = event.item.menuId?:0,
+                        productId = event.item.itemCode?:0,
                         name = event.item.name?:"",
                         image = event.item.image_product,
                         imageUrl = event.item.imageUrl,
-                        qty = event.item.qty?.toLong()!!,
-                        price = event.item.price?.toLong()!!,
-                        discount = 0
+                        qty = event.item.qty.toString(),
+                        price = event.item.price.toString(),
+                        discount = ""
                     )
                 )
             }

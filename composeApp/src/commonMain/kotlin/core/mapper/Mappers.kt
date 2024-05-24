@@ -17,13 +17,13 @@ fun StockEntity.toStock(): Stock {
 
 fun ProductEntity.toProduct(): Product {
     return Product(
-        menu_id = menu_id,
-        product_id = product_id,
+        menuId = menu_id,
+        productId = product_id,
         name = name,
         image = image,
         imageUrl = imageUrl,
-        qty = qty,
-        price = price,
-        discount = discount
+        qty = qty.toString(),
+        price = price.toString(),
+        discount = discount.toString()
     )
 }
