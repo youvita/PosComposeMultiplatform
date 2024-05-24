@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import menu.domain.model.MenuModel
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductStock
 import ui.stock.domain.repository.InventoryRepository
@@ -14,7 +15,8 @@ import ui.stock.domain.repository.InventoryRepository
 data class InventoryState(
     var status: Status? = null,
     var isLoading: Boolean? = null,
-    var data: List<ProductStock>? = null
+    var data: List<ProductStock>? = null,
+    var menu: List<MenuModel>? = null
 )
 
 class InventoryViewModel(
@@ -42,5 +44,17 @@ class InventoryViewModel(
             }
         }
     }
+
+    fun onGetMenu() {
+        screenModelScope.launch {
+            repository.getMenu().collect { stock ->
+                println(">>>> $stock")
+                _stateProductStock.value = _stateProductStock.value.copy(
+                    menu = stock.data
+                )
+            }
+        }
+    }
+
 
 }

@@ -1,21 +1,21 @@
 
-CREATE TABLE Menu (
+CREATE TABLE MenuEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    name TEXT,
     imageUrl BLOB
 );
 
 insertMenu:
-INSERT INTO Menu(name, imageUrl) VALUES(?, ?);
+INSERT INTO MenuEntity(name, imageUrl) VALUES(?, ?);
 
 updateMenu:
-UPDATE Menu SET name = ?, imageUrl = ? WHERE id = ?;
+UPDATE MenuEntity SET name = ?, imageUrl = ? WHERE id = ?;
 
 deleteMenu:
-DELETE FROM Menu WHERE id = ?;
+DELETE FROM MenuEntity WHERE id = ?;
 
 getAllMenu:
-SELECT * FROM Menu;
+SELECT * FROM MenuEntity;
 
 CREATE TABLE History (
     order_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

@@ -2,11 +2,13 @@ package ui.stock.data.repository
 
 import com.preat.peekaboo.image.picker.toImageBitmap
 import core.data.Resource
+import core.mapper.toMenu
 import core.mapper.toProduct
 import core.mapper.toStock
 import core.utils.getCurrentDateTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import menu.domain.model.MenuModel
 import org.topteam.pos.PosDatabase
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductStock
@@ -81,5 +83,11 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
             productStock.add(match)
         }
         emit(Resource.Success(productStock))
+    }
+
+    override suspend fun getMenu(): Flow<Resource<List<MenuModel>>> = flow {
+        emit(Resource.Loading())
+        val result = db.getAllMenu().executeAsList().map { it.toMenu() }
+        emit(Resource.Success(result))
     }
 }

@@ -62,7 +62,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.component.getScopeId
 import org.koin.core.component.getScopeName
-import org.topteam.pos.Menu
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_background
 import poscomposemultiplatform.composeapp.generated.resources.ic_dessert

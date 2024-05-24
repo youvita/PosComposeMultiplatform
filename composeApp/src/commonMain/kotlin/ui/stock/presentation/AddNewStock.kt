@@ -21,12 +21,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TabRow
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Tab
@@ -81,6 +84,7 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.format
 import kotlinx.datetime.toLocalDateTime
+import menu.presentation.component.CategoryItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
@@ -110,6 +114,8 @@ fun AddNewStock(
 //    var stockQty by remember { mutableStateOf(Long.MIN_VALUE) }
     var byteImage by remember { mutableStateOf<ByteArray?>(null) }
     var indexSelected by remember { mutableStateOf(-1) }
+
+    var isSelectCategory by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val singleImagePicker = rememberImagePickerLauncher(
@@ -310,15 +316,41 @@ fun AddNewStock(
 
                                         Spacer(modifier = Modifier.height(5.dp))
 
-                                        TextInputDefault(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            text = category,
-                                            placeholder = "Select Category",
-                                            onValueChange = {
-                                                category = it
-                                            },
-                                            keyboardType = KeyboardType.Number
-                                        )
+//                                        TextInputDefault(
+//                                            modifier = Modifier.fillMaxWidth(),
+//                                            text = category,
+//                                            placeholder = "Select Category",
+//                                            onValueChange = {
+//                                                category = it
+//                                            },
+//                                            keyboardType = KeyboardType.Number
+//                                        )
+
+                                        Button(
+                                            onClick = {
+                                                isSelectCategory = !isSelectCategory
+                                                inventoryViewModel.onGetMenu()
+                                            }
+                                        ) {
+                                            Text(text = "Select Category")
+                                        }
+
+                                        AnimatedVisibility(
+                                            visible = isSelectCategory
+                                        ) {
+                                            LazyRow(
+                                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                            ) {
+                                                stockState.menu?.let {
+                                                    itemsIndexed(it) { _, item ->
+                                                        CategoryItem(
+                                                            modifier = Modifier.fillMaxWidth(),
+                                                            category = item
+                                                        )
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
 
 //                                Spacer(modifier = Modifier.height(10.dp))

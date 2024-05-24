@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import menu.domain.model.MenuModel
 import menu.domain.repository.MenuRepository
-import org.topteam.pos.Menu
 import setting.domain.model.ItemModel
 import ui.stock.domain.model.Product
 import ui.stock.domain.repository.InventoryRepository
@@ -48,9 +47,9 @@ class MarioViewModel(
                         _state.value = _state.value.copy(
                             menus = result.data?.map {
                                 MenuModel(
-                                    menuId = it.id,
+                                    menuId = it.menuId,
                                     name = it.name,
-                                    image = it.imageUrl
+                                    image = it.image
                                 )
                             },
                             message = result.message,
@@ -74,7 +73,7 @@ class MarioViewModel(
         }
     }
 
-    private fun addMenu(menu: Menu) {
+    private fun addMenu(menu: MenuModel) {
         screenModelScope.launch {
             repositoryMenu.addMenu(menu).onEach {result ->
                 when (result) {
@@ -99,7 +98,7 @@ class MarioViewModel(
         }
     }
 
-    private fun updateMenu(menu: Menu) {
+    private fun updateMenu(menu: MenuModel) {
         screenModelScope.launch {
             repositoryMenu.updateMenu(menu).onEach {result ->
                 when (result) {
@@ -219,20 +218,20 @@ class MarioViewModel(
 
             is MarioEvent.AddMenuEvent -> {
                 addMenu(
-                    Menu(
-                        event.menu.menuId?:0,
-                        event.menu.name?:"",
-                        event.menu.image
+                    MenuModel(
+                        menuId = event.menu.menuId?:0,
+                        name = event.menu.name?:"",
+                        image = event.menu.image
                     )
                 )
             }
 
             is MarioEvent.UpdateMenuEvent -> {
                 updateMenu(
-                    Menu(
-                        event.menu.menuId?:1,
-                        event.menu.name?:"",
-                        event.menu.image
+                    MenuModel(
+                        menuId = event.menu.menuId?:1,
+                        name = event.menu.name?:"",
+                        image = event.menu.image
                     )
                 )
             }

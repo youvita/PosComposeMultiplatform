@@ -2,10 +2,11 @@ package menu.data.repository
 
 import core.data.Resource
 import core.data.Status
+import core.mapper.toMenu
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import menu.domain.model.MenuModel
 import menu.domain.repository.MenuRepository
-import org.topteam.pos.Menu
 import org.topteam.pos.PosDatabase
 
 class MenuRepositoryImpl(
@@ -13,7 +14,7 @@ class MenuRepositoryImpl(
 ): MenuRepository {
 
     private val db = posDatabase.appDatabaseQueries
-    override suspend fun addMenu(menu: Menu): Flow<Resource<Unit>> {
+    override suspend fun addMenu(menu: MenuModel): Flow<Resource<Unit>> {
 
 //        if (result == Status.SUCCESS) {
 //            emit(Resource.Success(result.data))
@@ -21,16 +22,18 @@ class MenuRepositoryImpl(
 //        if (result.status == Status.ERROR) {
 //            emit(Resource.Error(result.code, result.message))
 //        }
-        val dataInput = db.insertMenu(name = menu.name, imageUrl = menu.imageUrl)
+        val dataInput = db.insertMenu(name = menu.name, imageUrl = menu.image)
 
         return flow {
             emit(Resource.Success(dataInput))
         }
     }
 
-    override suspend fun updateMenu(menu: Menu): Flow<Resource<Unit>> = flow {
-        val dataUpdate = db.updateMenu(name = menu.name, imageUrl = menu.imageUrl, menu.id)
-        emit(Resource.Success(dataUpdate))
+    override suspend fun updateMenu(menu: MenuModel): Flow<Resource<Unit>> = flow {
+        menu.menuId?.let {
+            val dataUpdate = db.updateMenu(name = menu.name, imageUrl = menu.image, it)
+            emit(Resource.Success(dataUpdate))
+        }
     }
 
     override suspend fun deleteMenu(id: Long): Flow<Resource<Unit>> = flow {
@@ -39,9 +42,9 @@ class MenuRepositoryImpl(
     }
 //        db.insertMenu(name = menu.name, imageUrl = menu.imageUrl)
 
-    override suspend fun getAllMenu(): Flow<Resource<List<Menu>>> = flow {
+    override suspend fun getAllMenu(): Flow<Resource<List<MenuModel>>> = flow {
         emit(Resource.Loading())
-        emit(Resource.Success(db.getAllMenu().executeAsList()))
+        emit(Resource.Success(db.getAllMenu().executeAsList().map { it.toMenu() }))
     }
 
 

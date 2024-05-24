@@ -44,9 +44,9 @@ class OrderViewModel(
                             status = result.status,
                             menus = result.data?.map {
                                 MenuModel(
-                                    menuId = it.id,
+                                    menuId = it.menuId,
                                     name = it.name,
-                                    image = it.imageUrl
+                                    image = it.image
                                 )
                             },
                             message = result.message
