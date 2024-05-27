@@ -14,6 +14,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TabRow
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Tab
@@ -51,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -84,11 +87,14 @@ import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.format.char
 import kotlinx.datetime.format.format
 import kotlinx.datetime.toLocalDateTime
+import menu.domain.model.MenuModel
 import menu.presentation.component.CategoryItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_camera
+import poscomposemultiplatform.composeapp.generated.resources.ic_down
 import poscomposemultiplatform.composeapp.generated.resources.ic_profie
 import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
 import ui.stock.domain.model.Product
@@ -116,6 +122,7 @@ fun AddNewStock(
     var indexSelected by remember { mutableStateOf(-1) }
 
     var isSelectCategory by remember { mutableStateOf(false) }
+    var menuSelected by remember { mutableStateOf<MenuModel?>(null) }
 
     val scope = rememberCoroutineScope()
     val singleImagePicker = rememberImagePickerLauncher(
@@ -189,7 +196,7 @@ fun AddNewStock(
                                 text = "Save Product",
                                 callBack = {
                                     val product = Product(
-                                        menuId = 0,
+                                        menuId = menuSelected?.menuId,
                                         productId = barCode,
                                         name = name,
                                         image = byteImage,
@@ -327,67 +334,80 @@ fun AddNewStock(
 //                                        )
 
                                         Button(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = Shapes.medium,
+                                            colors = ButtonDefaults.buttonColors(containerColor = White),
+                                            border = BorderStroke(1.dp, color = ColorE4E4E4),
+                                            contentPadding = PaddingValues(start = 0.dp, top = 5.dp, bottom = 5.dp, end = 0.dp),
                                             onClick = {
                                                 isSelectCategory = !isSelectCategory
                                                 inventoryViewModel.onGetMenu()
                                             }
                                         ) {
-                                            Text(text = "Select Category")
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth().padding(10.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                Row {
+                                                    menuSelected?.image?.let {
+                                                        Image(
+                                                            modifier = Modifier.size(24.dp),
+                                                            bitmap = it.toImageBitmap(),
+                                                            contentDescription = null
+                                                        )
+                                                    }
+
+                                                    Spacer(modifier = Modifier.width(5.dp))
+
+                                                    menuSelected?.name?.let {
+                                                        Text(text = it, color = Black)
+                                                    }
+
+                                                }
+
+                                                Image(
+                                                    painter = painterResource(resource = Res.drawable.ic_down),
+                                                    colorFilter = ColorFilter.tint(color = Black),
+                                                    contentDescription = null
+                                                )
+                                            }
+
                                         }
 
-                                        AnimatedVisibility(
-                                            visible = isSelectCategory
+                                        Spacer(modifier = Modifier.height(5.dp))
+
+                                        Card(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            shape = RoundedCornerShape(10.dp),
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = White
+                                            ),
+                                            elevation = CardDefaults.cardElevation(1.dp)
                                         ) {
-                                            LazyRow(
-                                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                            AnimatedVisibility(
+                                                visible = isSelectCategory
                                             ) {
-                                                stockState.menu?.let {
-                                                    itemsIndexed(it) { _, item ->
-                                                        CategoryItem(
-                                                            modifier = Modifier.fillMaxWidth(),
-                                                            category = item
-                                                        )
+                                                LazyRow(
+                                                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                                    contentPadding = PaddingValues(10.dp)
+                                                ) {
+                                                    stockState.menu?.let {
+                                                        itemsIndexed(it) { _, item ->
+                                                            CategoryItem(
+                                                                modifier = Modifier.fillMaxWidth()
+                                                                    .clickable {
+                                                                         menuSelected = item
+                                                                },
+                                                                category = item
+                                                            )
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
+
                                     }
 
-//                                Spacer(modifier = Modifier.height(10.dp))
-//
-//                                Column {
-//                                    Text(text = "Stock as Box")
-//
-//                                    Spacer(modifier = Modifier.height(5.dp))
-//
-//                                    TextInputDefault(
-//                                        modifier = Modifier.fillMaxWidth(),
-//                                        text = stockBox.toString().takeIf { stockBox > 0 } ?: "",
-//                                        placeholder = "Enter Box",
-//                                        onValueChange = {
-//                                            stockBox = it.toLong()
-//                                        },
-//                                        keyboardType = KeyboardType.Number
-//                                    )
-//                                }
-//
-//                                Spacer(modifier = Modifier.height(10.dp))
-//
-//                                Column {
-//                                    Text(text = "Stock Qty")
-//
-//                                    Spacer(modifier = Modifier.height(5.dp))
-//
-//                                    TextInputDefault(
-//                                        modifier = Modifier.fillMaxWidth(),
-//                                        text = stockQty.toString().takeIf { stockQty > 0 } ?: "",
-//                                        placeholder = "Enter Quality",
-//                                        onValueChange = {
-//                                            stockQty = it.toLong()
-//                                        },
-//                                        keyboardType = KeyboardType.Number
-//                                    )
-//                                }
 
                                     Spacer(modifier = Modifier.height(20.dp))
                                 }
