@@ -1,4 +1,4 @@
-package history.presentation.component
+package orderhistory.presentation.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth

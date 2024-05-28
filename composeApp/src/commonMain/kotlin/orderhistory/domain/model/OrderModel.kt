@@ -1,9 +1,8 @@
-package history.domain.model
+package orderhistory.domain.model
 
 data class OrderModel(
     var order_id: Long? = null,
     var customer_id: Long? = null,
-    var table_id: Long? = null,
     var order_no: Long? = null,
     var queue_no: Long? = null,
     var date: String? = null,

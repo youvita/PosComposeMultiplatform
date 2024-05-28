@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.ButtonDefaults
@@ -52,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.preat.peekaboo.image.picker.toImageBitmap
 import core.theme.ColorDDE3F9
 import core.theme.PrimaryColor
 import core.theme.Shapes
@@ -63,6 +65,12 @@ import menu.presentation.OrderEvent
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import poscomposemultiplatform.composeapp.generated.resources.Res
+import poscomposemultiplatform.composeapp.generated.resources.ic_bookmark_check
+import poscomposemultiplatform.composeapp.generated.resources.ic_bookmark_uncheck
+import poscomposemultiplatform.composeapp.generated.resources.ic_dessert
+import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
+import poscomposemultiplatform.composeapp.generated.resources.ic_unknown
 import setting.domain.model.ItemModel
 import setting.domain.model.ItemOption
 
@@ -77,17 +85,12 @@ fun ItemView(
     val discount = item?.discount?: 0
     val price = item?.price?: 0.0
     
-    val orderItem = remember { mutableStateOf(item?.copy()) }
-    var reset by rememberSaveable { mutableStateOf(false) }
-    var hot by rememberSaveable { mutableStateOf(false) }
-    var bookmark by rememberSaveable { mutableStateOf(false) }
+    val orderItem = remember { mutableStateOf(item) }
+    var reset by remember { mutableStateOf(false) }
+    var bookmark by remember { mutableStateOf(false) }
 
     LaunchedEffect(item){
         bookmark = item?.bookmark?: false
-
-        if(item?.mood?.isNotEmpty() == true){
-            hot = "hot".equals(item.mood?.get(0)?.option ?: "", true)
-        }
     }
 
     Card(
@@ -104,15 +107,39 @@ fun ItemView(
                     .padding(16.dp)
             ) {
 
-                Image(
-                    painter = painterResource(resource = DrawableResource(item?.imageUrl?:"")),
-                    contentDescription = "avatar",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(shape = Shapes.medium)
-                        .border(width = 0.5.dp, shape = Shapes.medium, color = Color(0xFFE4E4E4))
-                )
+//                Image(
+//                    painter = painterResource(resource = DrawableResource(item?.imageUrl?:"")),
+//                    contentDescription = "avatar",
+//                    contentScale = ContentScale.Crop,
+//                    modifier = Modifier
+//                        .size(64.dp)
+//                        .clip(shape = Shapes.medium)
+//                        .border(width = 0.5.dp, shape = Shapes.medium, color = Color(0xFFE4E4E4))
+//                )
+
+
+                if (item?.image_product != null && item.image_product!!.isNotEmpty()){
+                    Image(
+                        bitmap = item.image_product!!.toImageBitmap(),
+                        contentDescription = "avatar",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(Shapes.medium)
+                            .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
+                    )
+                }
+                else {
+                    Image(
+                        painter = painterResource(Res.drawable.ic_unknown),
+                        contentDescription = "avatar",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(Shapes.medium)
+                            .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
+                    )
+                }
 
                 Spacer(modifier = Modifier.width(10.dp))
 
@@ -123,7 +150,7 @@ fun ItemView(
                     Text(
                         text = item?.name?: "Unknown",
                         style = TextStyle(
-                            fontSize = 13.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold
                         )
                     )
@@ -138,7 +165,6 @@ fun ItemView(
                             )
                         )
                     }
-
 
                     Spacer(modifier = Modifier.height(5.dp))
 
@@ -156,9 +182,8 @@ fun ItemView(
                                 )
                             )
 
+                            Spacer(modifier = Modifier.width(5.dp))
                         }
-
-                        Spacer(modifier = Modifier.width(5.dp))
 
                         Text(
                             text = (price - (discount percentOf price)).dollar(),
@@ -168,14 +193,23 @@ fun ItemView(
                             )
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = "Qty : ${item?.qty}",
+                        style = TextStyle(
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Gray
+                        )
+                    )
                 }
 
-                Icon(
-                    imageVector = if(bookmark) Icons.Rounded.Star else Icons.Filled.Star,
+                Image(
+                    painter = if(bookmark) painterResource(Res.drawable.ic_bookmark_check) else painterResource(Res.drawable.ic_bookmark_uncheck),
                     contentDescription = "bookmark",
-                    tint = Color(0xFFFFD600),
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(24.dp)
                         .clickable(
                             indication = null,
                             interactionSource = remember {
@@ -193,102 +227,13 @@ fun ItemView(
 
             AnimatedVisibility(visible = selected){
                 Column {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        modifier = Modifier.wrapContentSize()
-                    ){
-                        // Mood
-                        if(!item?.mood.isNullOrEmpty()){
-                            Column(
-                                Modifier
-                                    .padding(10.dp)
-                                    .weight(1f)) {
-                                Text(
-                                    text = "Mood",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                                OptionItem(options = item?.mood, reset = reset){
-                                    if(it != null && item != null){
-                                        orderItem.value = orderItem.value?.copy(mood = arrayListOf(it))
-                                        reset = false
-                                        hot = "hot".equals(it.option, true)
-                                    }
-                                }
-                            }
-                        }
-
-                        // Size
-                        if(!item?.size.isNullOrEmpty()){
-                            Column(
-                                Modifier
-                                    .padding(10.dp)
-                                    .weight(1f)) {
-                                Text(
-                                    text = "Size",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                                OptionItem(options = item?.size, reset = reset){
-                                    if(it != null && item != null){
-                                        orderItem.value = orderItem.value?.copy(size = arrayListOf(it))
-                                        reset = false
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Row{
-                        // Sugar
-                        if(!item?.sugar.isNullOrEmpty()){
-                            Column(
-                                Modifier
-                                    .padding(10.dp)
-                                    .weight(1f)) {
-                                Text(
-                                    text = "Sugar",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                                OptionItem(options = item?.sugar, reset = reset){
-                                    if(it != null && item != null){
-                                        orderItem.value = orderItem.value?.copy(sugar = arrayListOf(it))
-                                        reset = false
-                                    }
-                                }
-                            }
-                        }
-
-
-                        // Ice
-                        if(!item?.ice.isNullOrEmpty() && !hot){
-                            Column(
-                                Modifier
-                                    .padding(10.dp)
-                                    .weight(1f)) {
-                                Text(
-                                    text = "Ice",
-                                    style = TextStyle(
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                )
-                                OptionItem(options = item?.ice, reset = reset){
-                                    if(it != null && item != null){
-                                        orderItem.value = orderItem.value?.copy(ice = arrayListOf(it))
-                                        reset = false
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp),
+                        text = "Product SKU: ${item?.product_id}",
+                        style = TextStyle(
+                            fontSize = 15.sp,
+                        )
+                    )
 
                     OutlinedButton(
                         onClick = {
@@ -314,67 +259,6 @@ fun ItemView(
                             text = "Add to Billing",
                             style = TextStyle(
                                 fontSize = 15.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
-@Composable
-private fun OptionItem(options: List<ItemOption>? = null,
-                       reset: Boolean = false,
-                       onOptionChanged: (ItemOption?) -> Unit = {}){
-    var selectedItem by rememberSaveable { mutableIntStateOf(0) }
-
-    LaunchedEffect(reset){
-        if(reset) selectedItem = 0
-    }
-
-    FlowRow{
-        repeat(options?.size?: 0){ index ->
-            val item = options?.get(index) ?: return@FlowRow
-
-            CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
-                Box(modifier = Modifier
-                    .padding(4.dp)
-                    .size(30.dp)
-                    .aspectRatio(1f)
-                    .background(Color(0xFFEFEFEF), shape = CircleShape)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) {
-                        selectedItem = index
-                        onOptionChanged(item)
-                    }
-                    .then(
-                        if (selectedItem == index) {
-                            Modifier
-                                .background(color = ColorDDE3F9, shape = CircleShape)
-                                .border(1.dp, color = PrimaryColor, shape = CircleShape)
-                        } else {
-                            Modifier
-                        }
-                    ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    val img = item.image
-                    if(img != null){
-                        Image(
-                            modifier = Modifier.size(16.dp),
-                            painter = painterResource(resource = img),
-                            contentDescription = ""
-                        )
-                    }else{
-                        Text(
-                            text = item.option?: "",
-                            style = TextStyle(
-                                fontSize = 9.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         )

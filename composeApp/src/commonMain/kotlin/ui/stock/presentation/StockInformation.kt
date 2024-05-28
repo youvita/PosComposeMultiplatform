@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import core.theme.Styles
 import core.theme.White
 import core.utils.ImageLoader
+import core.utils.LineWrapper
 import core.utils.calculateWeight
 import core.utils.getTextStyle
-import history.presentation.component.LineWrapper
 import ui.stock.domain.model.ProductStock
 
 @Composable

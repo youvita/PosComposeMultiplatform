@@ -7,6 +7,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_dessert
 data class ItemModel constructor(
     var itemId: Long? = null,
     var menuId: Long? = null,
+    var product_id: Long? = null,
     var image_product: ByteArray? = null,
     var imageUrl: String? = null,
     var itemCode: Long? = null,
@@ -16,6 +17,7 @@ data class ItemModel constructor(
     var discount: Int? = null,
     var price: Double? = null,
     var qty: Int? = null,
+    var qtySelected: Int? = 1,
     var bookmark: Boolean? = false,
     var mood: List<ItemOption>? = null,
     var size: List<ItemOption>? = null,

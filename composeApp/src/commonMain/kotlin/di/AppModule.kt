@@ -1,9 +1,9 @@
 package di
 
 import core.bluetooth.BluetoothViewModel
-import history.data.repository.HistoryRepositoryImpl
-import history.domain.repository.HistoryRepository
-import history.presentation.HistoryViewModel
+import orderhistory.data.repository.HistoryRepositoryImpl
+import orderhistory.domain.repository.OrderHistoryRepository
+import orderhistory.presentation.OrderHistoryViewModel
 import login.data.repository.LoginRepositoryImpl
 import login.domain.repository.LoginRepository
 import login.presentation.LoginViewModel
@@ -45,7 +45,11 @@ fun appModule() = module {
     }
 
     single<OrderViewModel> {
-        OrderViewModel(repository = get())
+        OrderViewModel(
+            repository = get(),
+            repositoryInventory = get(),
+            orderHistoryRepository = get()
+        )
     }
 
     single<MarioViewModel> {
@@ -67,7 +71,7 @@ fun appModule() = module {
         MenuRepositoryImpl(get())
     }
 
-    single<HistoryRepository> {
+    single<OrderHistoryRepository> {
         HistoryRepositoryImpl(get())
     }
 
@@ -79,8 +83,8 @@ fun appModule() = module {
         InventoryRepositoryImpl(get())
     }
 
-    single<HistoryViewModel> {
-        HistoryViewModel(historyRepository = get())
+    single<OrderHistoryViewModel> {
+        OrderHistoryViewModel(orderHistoryRepository = get())
     }
 }
 

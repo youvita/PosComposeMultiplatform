@@ -24,11 +24,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,18 +40,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import menu.presentation.component.utils.DialogCustomer
 import core.theme.ColorD9D9D9
 import core.theme.ColorDDE3F9
 import core.theme.PrimaryColor
-import core.theme.RedBg
 import core.theme.Shapes
 import core.theme.White
 import core.utils.DottedShape
@@ -62,6 +56,7 @@ import core.utils.dollar
 import customer.domain.model.CustomerModel
 import customer.presentation.CustomerEvent
 import customer.presentation.CustomerState
+import menu.domain.model.BillModel
 import menu.presentation.OrderEvent
 import menu.presentation.OrderState
 import menu.presentation.component.utils.EmptyBox
@@ -111,109 +106,109 @@ fun OrderBillsForm(
         .background(White)
     ){
         Column(modifier = Modifier.weight(1f, fill = true)){
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Column(Modifier.padding(horizontal = 16.dp)) {
-
-                FlowRow(
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ){
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically),
-                        text = "Customer Information",
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-
-                    if(selectedCustomer.customer_id == null){
-                        OutlinedButton(
-                            enabled = true,
-                            onClick = {
-                                showCustomerDialog = true
-                                customerEvent(CustomerEvent.GetAllCustomersEvent)
-                            },
-                            colors = ButtonDefaults.elevatedButtonColors(
-                                containerColor = Color(0xB7C1F2B0),
-                                contentColor = Color(0xFF318B0A)
-                            ),
-                            border = null,
-                            contentPadding = PaddingValues(8.dp),
-                            shape = Shapes.medium,
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Rounded.Add,
-                                contentDescription = "add customer",
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Text(
-                                text = "Add customer",
-                                style = TextStyle(
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Normal
-                                )
-                            )
-                        }
-                    }
-                }
-
-                if(selectedCustomer.customer_id != null){
-                    val cus = selectedCustomer.name
-                    var phone = selectedCustomer.phone_number
-                    phone = if(phone.isNullOrEmpty()) "" else "#$phone"
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(shape = Shapes.medium)
-                            .background(ColorDDE3F9)
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .weight(1f)
-                                .align(Alignment.CenterVertically),
-                            text = cus + phone,
-                            style = TextStyle(
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.Normal
-                            )
-                        )
-
-                        OutlinedButton(
-                            enabled = true,
-                            onClick = {
-                                selectedCustomer = CustomerModel()
-                            },
-                            colors = ButtonDefaults.elevatedButtonColors(
-                                containerColor = RedBg,
-                                contentColor = Red
-                            ),
-                            border = null,
-                            contentPadding = PaddingValues(9.dp),
-                            shape = Shapes.medium,
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-                        ) {
-                            Text(
-                                text = "Remove",
-                                style = TextStyle(
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.Normal
-                                ),
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                    }
-                }
-            }
+//            Spacer(modifier = Modifier.height(16.dp))
+//
+//            Column(Modifier.padding(horizontal = 16.dp)) {
+//
+//                FlowRow(
+//                    verticalArrangement = Arrangement.spacedBy(10.dp),
+//                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+//                ){
+//                    Text(
+//                        modifier = Modifier
+//                            .align(Alignment.CenterVertically),
+//                        text = "Customer Information",
+//                        style = TextStyle(
+//                            fontSize = 20.sp,
+//                            fontWeight = FontWeight.Bold
+//                        )
+//                    )
+//
+//                    if(selectedCustomer.customer_id == null){
+//                        OutlinedButton(
+//                            enabled = true,
+//                            onClick = {
+//                                showCustomerDialog = true
+//                                customerEvent(CustomerEvent.GetAllCustomersEvent)
+//                            },
+//                            colors = ButtonDefaults.elevatedButtonColors(
+//                                containerColor = Color(0xB7C1F2B0),
+//                                contentColor = Color(0xFF318B0A)
+//                            ),
+//                            border = null,
+//                            contentPadding = PaddingValues(8.dp),
+//                            shape = Shapes.medium,
+//                            modifier = Modifier
+//                                .align(Alignment.CenterVertically)
+//                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+//                        ) {
+//                            Icon(
+//                                imageVector = Icons.Rounded.Add,
+//                                contentDescription = "add customer",
+//                                modifier = Modifier.size(16.dp)
+//                            )
+//                            Text(
+//                                text = "Add customer",
+//                                style = TextStyle(
+//                                    fontSize = 14.sp,
+//                                    fontWeight = FontWeight.Normal
+//                                )
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                if(selectedCustomer.customer_id != null){
+//                    val cus = selectedCustomer.name
+//                    var phone = selectedCustomer.phone_number
+//                    phone = if(phone.isNullOrEmpty()) "" else "#$phone"
+//                    Row(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .clip(shape = Shapes.medium)
+//                            .background(ColorDDE3F9)
+//                            .padding(8.dp)
+//                    ) {
+//                        Text(
+//                            modifier = Modifier
+//                                .weight(1f)
+//                                .align(Alignment.CenterVertically),
+//                            text = cus + phone,
+//                            style = TextStyle(
+//                                fontSize = 15.sp,
+//                                fontWeight = FontWeight.Normal
+//                            )
+//                        )
+//
+//                        OutlinedButton(
+//                            enabled = true,
+//                            onClick = {
+//                                selectedCustomer = CustomerModel()
+//                            },
+//                            colors = ButtonDefaults.elevatedButtonColors(
+//                                containerColor = RedBg,
+//                                contentColor = Red
+//                            ),
+//                            border = null,
+//                            contentPadding = PaddingValues(9.dp),
+//                            shape = Shapes.medium,
+//                            modifier = Modifier
+//                                .align(Alignment.CenterVertically)
+//                                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+//                        ) {
+//                            Text(
+//                                text = "Remove",
+//                                style = TextStyle(
+//                                    fontSize = 12.sp,
+//                                    fontWeight = FontWeight.Normal
+//                                ),
+//                                maxLines = 2,
+//                                overflow = TextOverflow.Ellipsis
+//                            )
+//                        }
+//                    }
+//                }
+//            }
 
             Row(
                 modifier = Modifier
@@ -222,14 +217,14 @@ fun OrderBillsForm(
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Text(
-                    text = "Bill No ${orderState?.bill?.billNo?: 0}",
+                    text = "Bill No ${orderState?.bill?.billNo}",
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
-                    text = "Queue #${orderState?.bill?.queue?: 0}",
+                    text = "Queue #${orderState?.queue_no}",
                     style = TextStyle(
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
@@ -247,8 +242,9 @@ fun OrderBillsForm(
                         OrderItem(
                             item = item,
                             onQtyChanged = {
-                                item.qty = it
-                                orderEvent(OrderEvent.QuantityChangeEvent(item))
+//                                item.qty = it
+//                                orderEvent(OrderEvent.QuantityChangeEvent(item))
+                                  orderEvent(OrderEvent.QuantityChangeEvent(item,it))
                             },
                             onRemove = {
                                 orderEvent(OrderEvent.OnRemoveOrder(it))
@@ -279,7 +275,7 @@ fun OrderBillsForm(
                     )
                 )
                 Text(
-                    text = "${orderState?.bill?.totalItem?: 0} items / Qty ${orderState?.bill?.qty?: 0}",
+                    text = "${orderState?.bill?.totalItem?: 0} items / Qty ${orderState?.bill?.totalQty?: 0}",
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal
@@ -388,6 +384,7 @@ fun OrderBillsForm(
 
             Spacer(modifier = Modifier.height(10.dp))
 
+            //payment method
             FlowRow(
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ){
@@ -492,9 +489,13 @@ fun OrderBillsForm(
                 Spacer(modifier = Modifier.width(5.dp))
 
                 OutlinedButton(
-                    enabled = list.isNotEmpty() && selectedCustomer.customer_id == null,
+                    enabled = list.isNotEmpty(),
                     onClick = {
-                        orderEvent(OrderEvent.PlaceOrderEvent)
+                        orderEvent(OrderEvent.PlaceOrderEvent(
+                            BillModel()
+                        ))
+                        //insert ProductOrderEntity
+                        //insert OrderEntity
                     },
                     colors = ButtonDefaults.elevatedButtonColors(
                         containerColor = PrimaryColor,

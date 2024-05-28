@@ -24,8 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import core.theme.Color000000_15
-import history.presentation.HistoryEvent
-import history.presentation.PagingState
+import orderhistory.presentation.OrderHistoryEvent
+import orderhistory.presentation.PagingState
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
@@ -43,7 +43,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_to_first_availa
 @Composable
 fun PaginationContent(
     pagingState: PagingState,
-    historyEvent: (HistoryEvent) -> Unit = {}
+    historyEvent: (OrderHistoryEvent) -> Unit = {}
 ) {
 
 //    val pagingState = historyViewModel.pagingState.value
@@ -57,7 +57,7 @@ fun PaginationContent(
 
         //set limit page
         PageLimitDropDown(limitRow = pagingState.limitRow){
-            historyEvent(HistoryEvent.SetLimitRow(it))
+            historyEvent(OrderHistoryEvent.SetLimitRow(it))
         }
 
         Text(text = "${pagingState.currentPage}-${pagingState.totalPage} of ${pagingState.allRow}")
@@ -66,7 +66,7 @@ fun PaginationContent(
         IconButton(
             onClick = {
                 if ((pagingState.currentPage ?: 0) > 1){
-                    historyEvent(HistoryEvent.NextPage(
+                    historyEvent(OrderHistoryEvent.NextPage(
                         offset = 0,
                         totalPage = pagingState.totalPage,
                         currentPage = 1
@@ -89,7 +89,7 @@ fun PaginationContent(
         IconButton(
             onClick = {
                 if ((pagingState.currentPage ?: 1) >= 2){ //if currentPage = 1 can't back previous more
-                    historyEvent(HistoryEvent.NextPage(
+                    historyEvent(OrderHistoryEvent.NextPage(
                         offset = pagingState.currentPage.minus(2).times(pagingState.limitRow),
                         totalPage = pagingState.totalPage,
                         currentPage = pagingState.currentPage.minus(1)
@@ -112,7 +112,7 @@ fun PaginationContent(
         IconButton(
             onClick = {
                 if ((pagingState.currentPage)+1 <= (pagingState.totalPage ?: 0)){
-                    historyEvent(HistoryEvent.NextPage(
+                    historyEvent(OrderHistoryEvent.NextPage(
                         offset = pagingState.currentPage.times(pagingState.limitRow),
                         totalPage = pagingState.totalPage,
                         currentPage = pagingState.currentPage.plus(1)
@@ -135,7 +135,7 @@ fun PaginationContent(
         IconButton(
             onClick = {
                 if ((pagingState.totalPage?:0) > (pagingState.currentPage ?: 0)){
-                    historyEvent(HistoryEvent.NextPage(
+                    historyEvent(OrderHistoryEvent.NextPage(
                         offset = pagingState.totalPage.minus(1).times(pagingState.limitRow),
                         totalPage = pagingState.totalPage,
                         currentPage = pagingState.totalPage

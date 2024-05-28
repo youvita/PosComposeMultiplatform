@@ -1,4 +1,4 @@
-package history.presentation.component
+package orderhistory.presentation.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column

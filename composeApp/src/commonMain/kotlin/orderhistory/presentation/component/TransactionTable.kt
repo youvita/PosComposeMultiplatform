@@ -1,4 +1,4 @@
-package history.presentation.component
+package orderhistory.presentation.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -33,9 +33,9 @@ import core.theme.ColorProgress
 import core.theme.DarkGreen
 import core.theme.PrimaryColor
 import core.theme.textStyleBlack14Medium
-import history.domain.model.TransactionHistory
-import history.presentation.HistoryEvent
-import history.presentation.HistoryState
+import orderhistory.domain.model.TransactionHistory
+import orderhistory.presentation.OrderHistoryEvent
+import orderhistory.presentation.OrderHistoryState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -43,14 +43,14 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun TransactionTable(
     modifier: Modifier = Modifier,
-    state: HistoryState? = null,
-    historyEvent: (HistoryEvent) -> Unit = {}
+    state: OrderHistoryState? = null,
+    historyEvent: (OrderHistoryEvent) -> Unit = {}
 ) {
     val context = Locale.current
-    val columnHeaderList = listOf("Bill No", "Date", "Order By", "Table", "Total", "Status")
+    val columnHeaderList = listOf("Bill No", "Date", "Order By", "Discount", "Total", "Status")
     val rowList = arrayListOf<TransactionHistory>()
     state?.orderList?.forEach{
-        rowList.add(TransactionHistory(it.order_no.toString(), it.date, "Dara (Cashier)", it.table_id.toString(), "$${it.total}", it.status,it.order_id))
+        rowList.add(TransactionHistory(it.order_no.toString(), it.date, "Dara (Cashier)", it.discount.toString(), "$${it.total}", it.status))
     }
 
 //    val rowList = listOf(
@@ -103,7 +103,7 @@ fun TransactionTable(
                         modifier = Modifier
                             .clickable {
                                 //get order detail
-                                historyEvent(HistoryEvent.GetOrderDetail(transaction.orderId?:0))
+                                historyEvent(OrderHistoryEvent.GetOrderDetail(transaction.orderId?:0))
                             }
                     ) {
                         Row(
@@ -138,7 +138,7 @@ private fun getColumnValue(transaction: TransactionHistory, index: Int): String?
         0 -> transaction.billNo
         1 -> transaction.date
         2 -> transaction.orderBy
-        3 -> transaction.table?: "-"
+        3 -> transaction.discount?: "-"
         4 -> transaction.total
         5 -> transaction.status
         else -> null

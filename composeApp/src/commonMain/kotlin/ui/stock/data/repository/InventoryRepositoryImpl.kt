@@ -60,7 +60,13 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 
     override suspend fun getProduct(id: Long): Flow<Resource<List<Product>>> = flow {
         emit(Resource.Loading())
-        val result = db.getAllProduct(id).executeAsList().map { it.toProduct() }
+        val result = db.getProductByMenuId(id).executeAsList().map { it.toProduct() }
+        emit(Resource.Success(result))
+    }
+
+    override suspend fun getAllProduct(): Flow<Resource<List<Product>>> = flow {
+        emit(Resource.Loading())
+        val result = db.getAllProduct().executeAsList().map { it.toProduct() }
         emit(Resource.Success(result))
     }
 

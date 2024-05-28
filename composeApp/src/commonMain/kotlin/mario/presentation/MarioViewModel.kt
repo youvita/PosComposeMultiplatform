@@ -198,6 +198,38 @@ class MarioViewModel(
         }
     }
 
+    fun getAllProduct() {
+        screenModelScope.launch {
+            repositoryInventory.getAllProduct().onEach {result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _state.value = _state.value.copy(
+                            items = result.data?.map {
+                                ItemModel(
+                                    menuId  = it.menuId,
+                                    name = it.name,
+                                    product_id = it.productId,
+                                    image_product = it.image,
+                                    imageUrl = it.imageUrl,
+                                    qty = it.qty?.toInt(),
+                                    price = it.price?.toDouble()
+                                )
+                            },
+                            message = result.message,
+                        )
+                        println(">>>>> get all item ${result.data?.size}")
+
+                    }
+                    is Resource.Error -> {
+
+                    }
+                    is Resource.Loading -> {
+                    }
+                }
+            }.launchIn(screenModelScope)
+        }
+    }
+
 
     fun onEvent(event: MarioEvent){
         when(event) {
@@ -253,7 +285,11 @@ class MarioViewModel(
             }
 
             is MarioEvent.GetItemsEvent -> {
-                getProduct(event.id)
+                if (event.id == 0L){
+                    getAllProduct()
+                } else {
+                    getProduct(event.id)
+                }
             }
 
             is MarioEvent.ClearEvent -> {

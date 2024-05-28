@@ -2,6 +2,7 @@ package menu.presentation.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -43,6 +44,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.preat.peekaboo.image.picker.toImageBitmap
 import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
@@ -54,31 +56,23 @@ import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_add_circle
 import poscomposemultiplatform.composeapp.generated.resources.ic_remove_circle
+import poscomposemultiplatform.composeapp.generated.resources.ic_unknown
 import setting.domain.model.ItemModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
 @Composable
-fun OrderItem(item: ItemModel? = null,
-              onRemove: (ItemModel) -> Unit = {},
-              onQtyChanged: (Int) -> Unit? = {}
+fun OrderItem(
+    item: ItemModel? = null,
+    onRemove: (ItemModel) -> Unit = {},
+    onQtyChanged: (Int) -> Unit? = {}
 ){
     val focusManager = LocalFocusManager.current
-    var qty by rememberSaveable { mutableIntStateOf(1) }
     val discount = item?.discount ?: 0
     val price = item?.price ?: 0.0
-
-
-    val moods =  item?.mood?: arrayListOf()
-    val mood: String? = if(moods.isEmpty()) "" else moods[0].option
 
     val sizes = item?.size?: arrayListOf()
     val size: String = if(sizes.isEmpty()) "" else "Size " + sizes[0].option
 
-    val ices = item?.ice?: arrayListOf()
-    val ice: String = if(ices.isEmpty()) "" else "Ice " + ices[0].option
-
-    val sugars = item?.sugar?: arrayListOf()
-    val sugar: String = if(sugars.isEmpty()) "" else "Sugar " + sugars[0].option
 
     Row(
         modifier = Modifier
@@ -86,14 +80,27 @@ fun OrderItem(item: ItemModel? = null,
             .background(White)
             .padding(16.dp)
     ) {
-        Image(
-            painter = painterResource(resource = DrawableResource(item?.imageUrl?:"")),
-            contentDescription = "avatar",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(64.dp)
-                .clip(Shapes.medium)
-        )
+        if (item?.image_product != null && item.image_product!!.isNotEmpty()){
+            Image(
+                bitmap = item.image_product!!.toImageBitmap(),
+                contentDescription = "avatar",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(Shapes.medium)
+            )
+        }
+        else {
+            Image(
+                painter = painterResource(Res.drawable.ic_unknown),
+                contentDescription = "avatar",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(Shapes.medium)
+                    .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
+            )
+        }
 
         Spacer(modifier = Modifier.width(10.dp))
 
@@ -108,16 +115,6 @@ fun OrderItem(item: ItemModel? = null,
                     fontWeight = FontWeight.Bold
                 )
             )
-
-            val options = listOfNotNull(mood, size, sugar, ice)
-            Text(
-                text = options.joinToString(" • "),
-                style = TextStyle(
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Normal
-                )
-            )
-
 
             if(discount > 0){
                 Text(
@@ -163,35 +160,48 @@ fun OrderItem(item: ItemModel? = null,
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
+                        //minus qty item 1
                         Icon(
                             modifier = Modifier
-                                .size(20.dp)
+                                .size(24.dp)
                                 .clickable(
                                     indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
+                                    interactionSource = remember { MutableInteractionSource() },
                                 ) {
-                                    qty = if (qty.dec() < 1) 1 else qty.dec()
-                                    onQtyChanged(qty)
+                                    //qty change
+                                    if ((item?.qtySelected ?: 1) <= 1){
+                                        if (item != null) {
+                                            onRemove(item)
+                                        }
+                                    } else {
+                                        onQtyChanged((item?.qtySelected ?: 1).dec())
+                                    }
                                 },
                             painter = painterResource(resource = Res.drawable.ic_remove_circle),
-                            contentDescription = "arrow",
+                            contentDescription = "minus",
                             tint = PrimaryColor
                         )
 
+                        //show qty item
                         BasicTextField(
                             modifier = Modifier
                                 .width(IntrinsicSize.Min)
                                 .padding(horizontal = 0.dp)
                                 .align(Alignment.CenterVertically),
-                            value = qty.toString(),
+//                            value = qty.toString(),
+                            value = item?.qtySelected.toString(),
                             onValueChange = {
-                                qty = if(it.isEmpty())
-                                    0
-                                else
-                                    it.toInt()
+                                val qtyChange =
+                                    if(it.isEmpty())
+                                        0
+                                    else if (it.toInt() >= (item?.qty ?: 0))
+                                        item?.qty?:0
+                                    else
+                                        it.toInt()
+                                onQtyChanged(qtyChange)
                             },
                             textStyle = TextStyle(
-                                fontSize = 14.sp,
+                                fontSize = 15.sp,
                                 fontWeight = FontWeight.Normal,
                                 color = PrimaryColor
                             ),
@@ -200,41 +210,71 @@ fun OrderItem(item: ItemModel? = null,
                                 imeAction = ImeAction.Done
                             ),
                             keyboardActions = KeyboardActions(onDone = {
-                                qty = if(qty <= 0) 1 else qty
+                                val qtyChange =
+                                    if((item?.qtySelected ?: 1) <= 0) 1
+                                    else if ((item?.qtySelected ?: 1) >= (item?.qty ?: 0)) {
+                                        item?.qty?:0
+                                    } else (item?.qtySelected ?: 1)
                                 focusManager.clearFocus()
                             }),
                         )
 
+                        //plus qty item 1
                         Icon(
                             modifier = Modifier
-                                .size(20.dp)
+                                .size(24.dp)
                                 .clickable(
                                     indication = null,
-                                    interactionSource = remember { MutableInteractionSource() }
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    enabled = (item?.qtySelected ?: 1) < (item?.qty ?: 0)
                                 ) {
-                                    qty = qty.inc()
-                                    onQtyChanged(qty)
+                                    onQtyChanged((item?.qtySelected ?: 1).inc())
                                 },
                             painter = painterResource(resource = Res.drawable.ic_add_circle),
-                            contentDescription = "arrow",
-                            tint = PrimaryColor
+                            contentDescription = "plus",
+                            tint = PrimaryColor.takeIf { (item?.qtySelected ?: 1) < (item?.qty ?: 0) }?: Color.Gray
+                        )
+
+                        //remove item product from order
+                        Icon(
+                            imageVector = Icons.Rounded.Delete,
+                            contentDescription = "remove cart",
+                            tint = Color.Red,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable {
+                                    if (item != null) {
+                                        onRemove(item)
+                                    }
+                                }
                         )
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = "Qty : ${item?.qty}",
+                style = TextStyle(
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Gray
+                )
+            )
         }
 
-        Icon(
-            imageVector = Icons.Rounded.Delete,
-            contentDescription = "remove cart",
-            tint = Color.Red,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable {
-                    if (item != null) {
-                        onRemove(item)
-                    }
-                }
-        )
+        //remove item product from order
+//        Icon(
+//            imageVector = Icons.Rounded.Delete,
+//            contentDescription = "remove cart",
+//            tint = Color.Red,
+//            modifier = Modifier
+//                .size(24.dp)
+//                .clickable {
+//                    if (item != null) {
+//                        onRemove(item)
+//                    }
+//                }
+//        )
     }
 }

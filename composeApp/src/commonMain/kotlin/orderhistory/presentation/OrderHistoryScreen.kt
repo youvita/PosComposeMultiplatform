@@ -1,4 +1,4 @@
-package history.presentation
+package orderhistory.presentation
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.topteam.pos.ui.features.history.presentation.component.PaginationContent
 import core.theme.PrimaryColor
 import core.theme.White
-import history.presentation.component.TransactionTable
+import orderhistory.presentation.component.TransactionTable
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -64,10 +64,10 @@ import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(
-    historyState: HistoryState,
+fun OrderHistoryScreen(
+    orderHistoryState: OrderHistoryState,
     pagingState: PagingState,
-    historyEvent: (HistoryEvent) -> Unit = {}
+    historyEvent: (OrderHistoryEvent) -> Unit = {}
 ) {
 
     var isInputEmpty by remember { mutableStateOf(true) }
@@ -99,7 +99,7 @@ fun HistoryScreen(
     }
 
     LaunchedEffect(Unit){
-        historyEvent(HistoryEvent.GetOrderHistoryEvent)
+        historyEvent(OrderHistoryEvent.GetOrderOrderHistoryEvent)
     }
 
     Scaffold(
@@ -138,10 +138,10 @@ fun HistoryScreen(
                         ){
                             //Input Search
                             TextField(
-                                value = historyState?.searchText?:"",
+                                value = orderHistoryState?.searchText?:"",
 //                                value = "",
                                 onValueChange = {
-                                    historyEvent(HistoryEvent.SearchEvent(it))
+                                    historyEvent(OrderHistoryEvent.SearchEventOrder(it))
                                     isInputEmpty = it.isEmpty() },
                                 modifier = Modifier
                                     .weight(3f)
@@ -157,7 +157,7 @@ fun HistoryScreen(
                                             tint = PrimaryColor,
                                             modifier = Modifier.clickable {
                                                 // Handle clear action
-                                                historyEvent(HistoryEvent.ClearEvent)
+                                                historyEvent(OrderHistoryEvent.ClearEventOrder)
                                                 isInputEmpty = true
                                             }
                                         )
@@ -327,7 +327,7 @@ fun HistoryScreen(
                         Box(modifier = Modifier.weight(1f)){
                             //Table
                             TransactionTable(
-                                state = historyState,
+                                state = orderHistoryState,
                                 historyEvent = historyEvent
                             )
                         }
