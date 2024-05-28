@@ -65,9 +65,19 @@ class AddStockScreen: Screen, KoinComponent {
         var currentScreen by mutableStateOf(listOf("Product & Stock"))
 
         val marioState = marioViewModel.state.collectAsState().value
+        val productState = inventoryViewModel.stateProduct.collectAsState().value
 
         LaunchedEffect(true) {
             inventoryViewModel.onGetProductStock()
+            inventoryViewModel.onGetProduct(0)
+        }
+
+        LaunchedEffect(productState.isLoading) {
+            productState.data?.let {
+                for (i in it.indices) {
+                    println(">>>> ${it[i].name}")
+                }
+            }
         }
 
         Scaffold(
@@ -170,12 +180,17 @@ class AddStockScreen: Screen, KoinComponent {
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
                         AddNewProduct(
+                            productState = productState,
                             marioState = marioState,
                             marioEvent = marioViewModel::onEvent,
                             callBack = {
                                 addNewProduct = true
                                 currentScreen = currentScreen.toMutableList().apply { add("New") }
                                 previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
+                            },
+                            menuClick = {
+                                println("<<<< $it")
+                                inventoryViewModel.onGetProduct(it)
                             }
                         )
                     }

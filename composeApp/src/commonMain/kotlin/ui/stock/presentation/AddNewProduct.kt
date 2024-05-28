@@ -79,8 +79,10 @@ import setting.domain.model.ItemModel
 @Composable
 fun AddNewProduct(
     marioState: MarioState? = null,
+    productState: ProductState? = null,
     marioEvent: (MarioEvent) -> Unit = {},
-    callBack: () -> Unit = {}
+    callBack: () -> Unit = {},
+    menuClick: (Long) -> Unit = {}
 ) {
 
     var menuOptionSize by remember { mutableStateOf(Size(74.0f, 0.0f)) }
@@ -260,7 +262,11 @@ fun AddNewProduct(
                                                 selectedMenuIndex = index
                                                 selectedItemIndex = -1
                                                 showEditMenu = index != 0
-                                                marioEvent(MarioEvent.GetItemsEvent(0))
+//                                                marioEvent(MarioEvent.GetItemsEvent(0))
+                                                item.menuId?.let {
+                                                    menuClick(it)
+                                                }
+
                                             }
                                             .then(
                                                 if (selectedMenuIndex == index) {
@@ -374,79 +380,95 @@ fun AddNewProduct(
                         )
                     )
 
-                    LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Fixed(1),
-                        verticalItemSpacing = 8.dp,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(vertical = 20.dp)
-                    ){
-                        item {
-                            Card(
-                                modifier = Modifier.fillMaxHeight(),
-                                shape = Shapes.medium,
-                                colors = CardDefaults.cardColors(PrimaryColor),
-                                elevation = CardDefaults.cardElevation(2.dp)
-                            ){
-                                IconButton(
-                                    modifier = Modifier
-                                        .padding(24.dp)
-                                        .fillMaxSize(),
-                                    onClick = {
-                                        showAddItem = true
-                                        selectedItemIndex = -1
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Add,
-                                        contentDescription = "",
-                                        tint = Color(0xFFFFFFFF)
-                                    )
-                                }
-                            }
-                        }
-
-                        itemsIndexed(list){ index, item ->
-                            CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
-                                Box(modifier = Modifier
-                                    .animateItemPlacement()
-                                    .clickable(
-                                        indication = null,
-                                        interactionSource = remember { MutableInteractionSource() }
-                                    ) {
-                                        selectedItemIndex = if (selectedItemIndex == index) {
-                                            -1
-                                        } else index
-                                    }
-                                    .then(
-                                        if (selectedItemIndex == index) {
-                                            Modifier
-                                                .background(
-                                                    color = White,
-                                                    shape = Shapes.medium
-                                                )
-                                                .border(
-                                                    1.dp,
-                                                    color = PrimaryColor,
-                                                    shape = Shapes.medium
-                                                )
-                                        } else {
-                                            Modifier
-                                        }
-                                    )
-                                ){
-                                    EditItemCollapse(
-                                        item = item,
-                                        selected = selectedItemIndex == index
-                                    ){
-                                        item.bookmark = it
-                                        marioEvent(MarioEvent.BookmarkItemEvent(item))
-                                    }
-                                }
-                            }
-                        }
+                    productState?.let { product ->
+//                        product.data?.let {
+//                            for (i in it.indices) {
+//                                println(">>>> ${it[i].name}")
+//                            }
+//                        }
+                        ProductInformation(
+                            state = product
+                        )
                     }
+
+
+//                    LazyVerticalStaggeredGrid(
+//                        columns = StaggeredGridCells.Fixed(1),
+//                        verticalItemSpacing = 8.dp,
+//                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .padding(vertical = 20.dp)
+//                    ){
+//                        item {
+////                            Card(
+////                                modifier = Modifier.fillMaxHeight(),
+////                                shape = Shapes.medium,
+////                                colors = CardDefaults.cardColors(PrimaryColor),
+////                                elevation = CardDefaults.cardElevation(2.dp)
+////                            ){
+////                                IconButton(
+////                                    modifier = Modifier
+////                                        .padding(24.dp)
+////                                        .fillMaxSize(),
+////                                    onClick = {
+////                                        showAddItem = true
+////                                        selectedItemIndex = -1
+////                                    }
+////                                ) {
+////                                    Icon(
+////                                        imageVector = Icons.Rounded.Add,
+////                                        contentDescription = "",
+////                                        tint = Color(0xFFFFFFFF)
+////                                    )
+////                                }
+////                            }
+//                        }
+//
+//
+//                        productState?.data?.let {
+//                            itemsIndexed(it){ index, item ->
+//                                CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
+//                                    Box(modifier = Modifier
+//                                        .animateItemPlacement()
+//                                        .clickable(
+//                                            indication = null,
+//                                            interactionSource = remember { MutableInteractionSource() }
+//                                        ) {
+//                                            selectedItemIndex = if (selectedItemIndex == index) {
+//                                                -1
+//                                            } else index
+//                                        }
+//                                        .then(
+//                                            if (selectedItemIndex == index) {
+//                                                Modifier
+//                                                    .background(
+//                                                        color = White,
+//                                                        shape = Shapes.medium
+//                                                    )
+//                                                    .border(
+//                                                        1.dp,
+//                                                        color = PrimaryColor,
+//                                                        shape = Shapes.medium
+//                                                    )
+//                                            } else {
+//                                                Modifier
+//                                            }
+//                                        )
+//                                    ){
+////                                        EditItemCollapse(
+////                                            item = item,
+////                                            selected = selectedItemIndex == index
+////                                        ){
+////                                            item.bookmark = it
+////                                            marioEvent(MarioEvent.BookmarkItemEvent(item))
+////                                        }
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                    }
                 }
 
                 Column(

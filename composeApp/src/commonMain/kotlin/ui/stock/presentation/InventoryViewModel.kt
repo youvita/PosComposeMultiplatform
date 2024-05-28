@@ -2,10 +2,12 @@ package ui.stock.presentation
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import core.data.Resource
 import core.data.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import menu.domain.model.MenuModel
 import ui.stock.domain.model.Product
@@ -19,6 +21,12 @@ data class InventoryState(
     var menu: List<MenuModel>? = null
 )
 
+data class ProductState(
+    var status: Status? = null,
+    var isLoading: Boolean? = null,
+    var data: List<Product>? = null
+)
+
 class InventoryViewModel(
     private val repository: InventoryRepository
 ): ScreenModel {
@@ -28,6 +36,9 @@ class InventoryViewModel(
 
     private val _stateProductStock = MutableStateFlow(InventoryState())
     val stateProductStock: StateFlow<InventoryState> = _stateProductStock.asStateFlow()
+
+    private val _stateProduct = MutableStateFlow(ProductState())
+    val stateProduct: StateFlow<ProductState> = _stateProduct.asStateFlow()
 
     fun onAddProduct(product: Product) {
         screenModelScope.launch {
@@ -48,11 +59,59 @@ class InventoryViewModel(
     fun onGetMenu() {
         screenModelScope.launch {
             repository.getMenu().collect { stock ->
-                println(">>>> $stock")
                 _stateProductStock.value = _stateProductStock.value.copy(
                     menu = stock.data
                 )
             }
+        }
+    }
+
+    fun onGetProduct(menuId: Long) {
+        screenModelScope.launch {
+            if (menuId > 0) {
+                repository.getProduct(menuId).collect { product ->
+                    when (product) {
+                        is Resource.Success -> {
+                            _stateProduct.value = _stateProduct.value.copy(
+                                data = product.data,
+                                isLoading = false
+                            )
+                        }
+                        is Resource.Error -> {
+                            _stateProduct.value = _stateProduct.value.copy(
+                                isLoading = false
+                            )
+                        }
+                        is Resource.Loading -> {
+                            _stateProduct.value = _stateProduct.value.copy(
+                                isLoading = true
+                            )
+                        }
+                    }
+                }
+            } else {
+                repository.getAllProduct().collect { product ->
+                    when (product) {
+                        is Resource.Success -> {
+                            _stateProduct.value = _stateProduct.value.copy(
+                                data = product.data,
+                                isLoading = false
+                            )
+                        }
+                        is Resource.Error -> {
+                            _stateProduct.value = _stateProduct.value.copy(
+                                isLoading = false
+                            )
+                        }
+                        is Resource.Loading -> {
+                            _stateProduct.value = _stateProduct.value.copy(
+                                isLoading = true
+                            )
+                        }
+                    }
+                }
+            }
+
         }
     }
 
