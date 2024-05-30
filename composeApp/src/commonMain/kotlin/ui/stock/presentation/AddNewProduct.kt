@@ -74,12 +74,13 @@ import mario.presentation.component.EditMenu
 import menu.domain.model.MenuModel
 import menu.presentation.component.CategoryItem
 import setting.domain.model.ItemModel
+import ui.stock.domain.model.Product
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddNewProduct(
     marioState: MarioState? = null,
-    productState: ProductState? = null,
+    data: List<Product>? = null,
     marioEvent: (MarioEvent) -> Unit = {},
     callBack: () -> Unit = {},
     menuClick: (Long) -> Unit = {}
@@ -380,14 +381,14 @@ fun AddNewProduct(
                         )
                     )
 
-                    productState?.let { product ->
-//                        product.data?.let {
-//                            for (i in it.indices) {
-//                                println(">>>> ${it[i].name}")
-//                            }
-//                        }
+                    data?.let { product ->
+
+                            for (i in product.indices) {
+                                println(">>>>fffff ${product[i].name}")
+                            }
+
                         ProductInformation(
-                            state = product
+                            data = data
                         )
                     }
 

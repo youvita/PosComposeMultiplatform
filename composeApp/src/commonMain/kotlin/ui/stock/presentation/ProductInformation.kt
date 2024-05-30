@@ -19,7 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,29 +33,35 @@ import core.utils.LineWrapper
 import core.utils.calculateWeight
 import core.utils.getTextStyle
 import ui.stock.domain.model.Product
-import ui.stock.domain.model.ProductStock
 
 @Composable
 fun ProductInformation(
-    state: ProductState
+    data: List<Product>? = null
 ) {
     Box(
         modifier = Modifier.fillMaxWidth().background(White).padding(start = 20.dp, top = 30.dp)
     ) {
         val columnList = listOf("No", "", "Product Name", "SKU", "Stock In")
-        val rowList = state.data
-
         val columnWeight = remember { MutableList(columnList.size) { 0f } } //column header weight
 
         for (index in columnList.indices) {
-
-            val columnValues =  rowList?.let { productStock -> productStock.map { getColumnValue(it, index) } } //get all value column list each index of header
+            val columnValues = data.let { productStock ->
+                productStock?.map {
+                    getColumnValue(
+                        it,
+                        rowIndex = 0,
+                        colIndex = index
+                    )
+                }
+            } //get all value column list each index of header
             val columnSorted = columnValues?.sortedByDescending { it.length } // short length of string to get the biggest. Then we will use it for calculateWeight to make table suitable
 
             //each columnHeaderWeight
             columnWeight[index] = calculateWeight(
                 (
-                        if ((columnSorted?.firstOrNull()?.length ?: 0) > columnList[index].length) columnSorted?.firstOrNull()?.length
+                        if ((columnSorted?.firstOrNull()?.length
+                                ?: 0) > columnList[index].length
+                        ) columnSorted?.firstOrNull()?.length
                         else columnList[index].length
                         ) ?: columnList[index].length
             )
@@ -70,9 +75,10 @@ fun ProductInformation(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.Top
             ) {
-                columnList.forEachIndexed { columnIndex , item ->
+                columnList.forEachIndexed { columnIndex, item ->
                     Text(
-                        modifier = Modifier.weight(0.4f.takeIf { columnIndex == 1 } ?: columnWeight[columnIndex]),
+                        modifier = Modifier.weight(0.4f.takeIf { columnIndex == 1 }
+                            ?: columnWeight[columnIndex]),
                         text = item,
                         textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 }
                     )
@@ -91,8 +97,7 @@ fun ProductInformation(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                rowList?.forEachIndexed { _, item ->
-
+                data?.forEachIndexed { rowIndex, item ->
                     Column(
                         modifier = Modifier.fillMaxWidth()
                     ) {
@@ -140,13 +145,17 @@ fun ProductInformation(
                                 } else {
                                     Text(
                                         modifier = Modifier.weight(columnWeight[columnIndex]),
-                                        text = getColumnValue(item, columnIndex),
+                                        text = getColumnValue(item, rowIndex + 1, columnIndex),
                                         style = getTextStyle(typography = Styles.BodyMedium),
                                         textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 }
                                     )
                                 }
 
-                                if (columnIndex != columnList.size - 1) Spacer(modifier = Modifier.width(10.dp))
+                                if (columnIndex != columnList.size - 1) Spacer(
+                                    modifier = Modifier.width(
+                                        10.dp
+                                    )
+                                )
                             }
                         }
 
@@ -159,12 +168,12 @@ fun ProductInformation(
     }
 }
 
-private fun getColumnValue(item: Product, index: Int): String {
-    return when (index) {
-        0 -> item.productId.toString()
+private fun getColumnValue(item: Product, rowIndex: Int, colIndex: Int): String {
+    return when (colIndex) {
+        0 -> rowIndex.toString()
         1 -> " "
         2 -> item.name.toString()
-        3 -> item.price.toString()
+        3 -> item.productId.toString()
         else -> item.discount.toString()
     }
 }

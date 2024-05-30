@@ -236,6 +236,7 @@ class MarioViewModel(
             is MarioEvent.AddItemEvent -> {
                 onAddProduct(
                     Product(
+                        id = event.item.itemId?:0,
                         menuId = event.item.menuId?:0,
                         productId = event.item.itemCode?:0,
                         name = event.item.name?:"",

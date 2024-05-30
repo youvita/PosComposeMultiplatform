@@ -72,14 +72,6 @@ class AddStockScreen: Screen, KoinComponent {
             inventoryViewModel.onGetProduct(0)
         }
 
-        LaunchedEffect(productState.isLoading) {
-            productState.data?.let {
-                for (i in it.indices) {
-                    println(">>>> ${it[i].name}")
-                }
-            }
-        }
-
         Scaffold(
             modifier = Modifier.padding(10.dp),
             backgroundColor = Color.Transparent,
@@ -180,7 +172,7 @@ class AddStockScreen: Screen, KoinComponent {
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
                         AddNewProduct(
-                            productState = productState,
+                            data = productState.data,
                             marioState = marioState,
                             marioEvent = marioViewModel::onEvent,
                             callBack = {
@@ -189,7 +181,6 @@ class AddStockScreen: Screen, KoinComponent {
                                 previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
                             },
                             menuClick = {
-                                println("<<<< $it")
                                 inventoryViewModel.onGetProduct(it)
                             }
                         )

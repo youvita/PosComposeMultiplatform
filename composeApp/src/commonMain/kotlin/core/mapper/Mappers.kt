@@ -19,6 +19,7 @@ fun StockEntity.toStock(): Stock {
 
 fun ProductEntity.toProduct(): Product {
     return Product(
+        id = id,
         menuId = menu_id,
         productId = product_id,
         name = name,
