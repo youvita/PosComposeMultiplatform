@@ -75,14 +75,14 @@ import menu.domain.model.MenuModel
 import menu.presentation.component.CategoryItem
 import setting.domain.model.ItemModel
 import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductMenu
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AddNewProduct(
     marioState: MarioState? = null,
-    data: List<Product>? = null,
+    data: List<ProductMenu>? = null,
     marioEvent: (MarioEvent) -> Unit = {},
-    callBack: () -> Unit = {},
+    callBack: (ProductMenu?) -> Unit = {},
     menuClick: (Long) -> Unit = {}
 ) {
 
@@ -224,7 +224,7 @@ fun AddNewProduct(
     }
 
     Scaffold(
-        modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 10.dp),
+        modifier = Modifier.padding(top = 10.dp),
         containerColor = Color.Transparent
     ){ paddingValues ->
         Box(
@@ -235,20 +235,24 @@ fun AddNewProduct(
             Row(modifier = Modifier.fillMaxSize()){
                 Column(Modifier.weight(1f)){
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp),
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         PrimaryButton(
                             text = "New Product",
                             icon = Icons.Rounded.Add,
-                            callBack = callBack
+                            callBack = {
+                                callBack(null)
+                            }
                         )
                     }
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    Box {
+                    Box(
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                    ) {
                         //category menu path
                         //Display all category menu
                         LazyRow(
@@ -256,40 +260,46 @@ fun AddNewProduct(
                         ) {
                             itemsIndexed(menuList) { index, item ->
                                 CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme) {
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(Shapes.medium)
-                                            .clickable {
-                                                selectedMenuIndex = index
-                                                selectedItemIndex = -1
-                                                showEditMenu = index != 0
+                                    Card(
+                                        shape = Shapes.medium,
+                                        colors = CardDefaults.cardColors(ColorDDE3F9),
+                                        elevation = CardDefaults.cardElevation(2.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(Shapes.medium)
+                                                .clickable {
+                                                    selectedMenuIndex = index
+                                                    selectedItemIndex = -1
+                                                    showEditMenu = index != 0
 //                                                marioEvent(MarioEvent.GetItemsEvent(0))
-                                                item.menuId?.let {
-                                                    menuClick(it)
-                                                }
+                                                    item.menuId?.let {
+                                                        menuClick(it)
+                                                    }
 
-                                            }
-                                            .then(
-                                                if (selectedMenuIndex == index) {
-                                                    Modifier
-                                                        .background(
-                                                            color = ColorDDE3F9,
-                                                            shape = Shapes.medium
-                                                        )
-                                                        .border(
-                                                            2.dp,
-                                                            color = PrimaryColor,
-                                                            shape = Shapes.medium
-                                                        )
-                                                } else {
-                                                    Modifier
                                                 }
+                                                .then(
+                                                    if (selectedMenuIndex == index) {
+                                                        Modifier
+                                                            .background(
+                                                                color = ColorDDE3F9,
+                                                                shape = Shapes.medium
+                                                            )
+                                                            .border(
+                                                                2.dp,
+                                                                color = PrimaryColor,
+                                                                shape = Shapes.medium
+                                                            )
+                                                    } else {
+                                                        Modifier
+                                                    }
+                                                )
+                                        ){
+                                            CategoryItem(
+                                                category = item,
+                                                color = if(selectedMenuIndex == index) ColorDDE3F9 else White
                                             )
-                                    ){
-                                        CategoryItem(
-                                            category = item,
-                                            color = if(selectedMenuIndex == index) ColorDDE3F9 else White
-                                        )
+                                        }
                                     }
                                 }
                             }
@@ -373,8 +383,8 @@ fun AddNewProduct(
                     //item menu path
                     val size = if(menuList.isEmpty()) "0" else menuList[selectedMenuIndex].name
                     Text(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        text = "${list.size} $size in Menu",
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+                        text = "${data?.size} $size in Menu",
                         style = TextStyle(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
@@ -382,13 +392,11 @@ fun AddNewProduct(
                     )
 
                     data?.let { product ->
-
-                            for (i in product.indices) {
-                                println(">>>>fffff ${product[i].name}")
-                            }
-
                         ProductInformation(
-                            data = data
+                            data = product,
+                            onItemClick = {
+                                callBack(it)
+                            }
                         )
                     }
 
@@ -472,20 +480,20 @@ fun AddNewProduct(
 //                    }
                 }
 
-                Column(
-                    modifier = Modifier
-                        .padding(start = 5.dp)
-                        .weight(if (selectedItemIndex == -1) 0.01f else 1f)
-                ){
-                    AnimatedVisibility(visible = selectedItemIndex > -1 || list.isNotEmpty()) {
-                        val item = if(selectedItemIndex == -1) null else list[selectedItemIndex]
-//                        UpdateItemInformation(
-//                            menu = menuList[selectedMenuIndex],
-//                            item = item,
-//                            marioEvent = marioEvent
-//                        )
-                    }
-                }
+//                Column(
+//                    modifier = Modifier
+//                        .padding(start = 5.dp)
+//                        .weight(if (selectedItemIndex == -1) 0.01f else 1f)
+//                ){
+//                    AnimatedVisibility(visible = selectedItemIndex > -1 || list.isNotEmpty()) {
+//                        val item = if(selectedItemIndex == -1) null else list[selectedItemIndex]
+////                        UpdateItemInformation(
+////                            menu = menuList[selectedMenuIndex],
+////                            item = item,
+////                            marioEvent = marioEvent
+////                        )
+//                    }
+//                }
             }
         }
     }

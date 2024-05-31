@@ -35,9 +35,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.primaryContentColor
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,30 +64,13 @@ import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
 import core.utils.ImageLoader
-import core.utils.InputUtil
 import core.utils.LineWrapper
 import core.utils.PrimaryButton
 import core.utils.TextInputDefault
 import core.utils.getCurrentDateTime
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.UtcOffset
-import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeComponents
-import kotlinx.datetime.format.DateTimeFormat
-import kotlinx.datetime.format.FormatStringsInDatetimeFormats
-import kotlinx.datetime.format.Padding
-import kotlinx.datetime.format.byUnicodePattern
-import kotlinx.datetime.format.char
-import kotlinx.datetime.format.format
-import kotlinx.datetime.toLocalDateTime
 import menu.domain.model.MenuModel
 import menu.presentation.component.CategoryItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_camera
@@ -98,10 +78,12 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_down
 import poscomposemultiplatform.composeapp.generated.resources.ic_profie
 import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
 import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductMenu
 
-@OptIn(ExperimentalResourceApi::class, FormatStringsInDatetimeFormats::class)
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AddNewStock(
+    productItem: ProductMenu? = null,
     searchViewModel: SearchEngineViewModel,
     inventoryViewModel: InventoryViewModel,
     callback: () -> Unit
@@ -110,19 +92,19 @@ fun AddNewStock(
     val stockState = inventoryViewModel.stateProductStock.collectAsState().value
 
     var startBarCodeScan by remember { mutableStateOf(false) }
-    var barCode by remember { mutableStateOf(Long.MIN_VALUE) }
+    var barCode by remember { mutableStateOf(productItem?.productId ?: 0) }
     var barImage by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var price by remember { mutableStateOf("") }
-    var discount by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(productItem?.name) }
+    var price by remember { mutableStateOf(productItem?.price) }
+    var discount by remember { mutableStateOf(productItem?.discount) }
     var category by remember { mutableStateOf("") }
 //    var stockBox by remember { mutableStateOf(Long.MIN_VALUE) }
 //    var stockQty by remember { mutableStateOf(Long.MIN_VALUE) }
-    var byteImage by remember { mutableStateOf<ByteArray?>(null) }
+    var byteImage by remember { mutableStateOf(productItem?.image) }
     var indexSelected by remember { mutableStateOf(-1) }
 
     var isSelectCategory by remember { mutableStateOf(false) }
-    var menuSelected by remember { mutableStateOf<MenuModel?>(null) }
+    var menuSelected by remember { mutableStateOf<MenuModel?>(MenuModel(menuId = productItem?.menuId, name = productItem?.menuName, image = productItem?.menuImage)) }
 
     val scope = rememberCoroutineScope()
     val singleImagePicker = rememberImagePickerLauncher(
@@ -272,7 +254,7 @@ fun AddNewStock(
 
                                         TextInputDefault(
                                             modifier = Modifier.fillMaxWidth(),
-                                            text = name,
+                                            text = name.orEmpty(),
                                             placeholder = "Enter Product Name",
                                             onValueChange = {
                                                 name = it
@@ -289,7 +271,7 @@ fun AddNewStock(
 
                                         TextInputDefault(
                                             modifier = Modifier.fillMaxWidth(),
-                                            text = price,
+                                            text = price.orEmpty(),
                                             placeholder = "Enter Price",
                                             onValueChange = {
                                                 price = it
@@ -307,7 +289,7 @@ fun AddNewStock(
 
                                         TextInputDefault(
                                             modifier = Modifier.fillMaxWidth(),
-                                            text = discount,
+                                            text = discount.orEmpty(),
                                             placeholder = "Enter Discount",
                                             onValueChange = {
                                                 discount = it
@@ -351,9 +333,10 @@ fun AddNewStock(
                                                 Row {
                                                     menuSelected?.image?.let {
                                                         Image(
-                                                            modifier = Modifier.size(24.dp),
+                                                            modifier = Modifier.size(24.dp).clip(shape = RoundedCornerShape(5.dp)),
                                                             bitmap = it.toImageBitmap(),
-                                                            contentDescription = null
+                                                            contentDescription = null,
+                                                            contentScale = ContentScale.Crop
                                                         )
                                                     }
 
@@ -396,7 +379,8 @@ fun AddNewStock(
                                                             CategoryItem(
                                                                 modifier = Modifier.fillMaxWidth()
                                                                     .clickable {
-                                                                         menuSelected = item
+                                                                        menuSelected = item
+                                                                        isSelectCategory = false
                                                                 },
                                                                 category = item
                                                             )
@@ -591,7 +575,6 @@ fun AddNewStock(
         ) {
             QrScannerScreen(
                 result = {
-                    println(">>>>>> $it")
                     startBarCodeScan = false
 
                     if (it.isEmpty()) return@QrScannerScreen

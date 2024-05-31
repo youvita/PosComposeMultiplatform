@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flow
 import menu.domain.model.MenuModel
 import org.topteam.pos.PosDatabase
 import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductMenu
 import ui.stock.domain.model.ProductStock
 import ui.stock.domain.repository.InventoryRepository
 
@@ -58,16 +59,48 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         )
     }
 
-    override suspend fun getProduct(id: Long): Flow<Resource<List<Product>>> = flow {
+    override suspend fun getProduct(id: Long): Flow<Resource<List<ProductMenu>>> = flow {
         emit(Resource.Loading())
-        val result = db.getProductByMenuId(id).executeAsList().map { it.toProduct() }
-        emit(Resource.Success(result))
+        val result = db.getProductByMenuId(id).executeAsList()
+        val productMenu = mutableListOf<ProductMenu>()
+        for (item in result) {
+            val match = ProductMenu(
+                menuId = item.id,
+                menuName = item.menuName,
+                menuImage = item.menuImage,
+                productId = item.product_id,
+                name = item.name,
+                image = item.image,
+                imageUrl = item.imageUrl,
+                qty = item.qty,
+                price = item.price,
+                discount = item.discount
+            )
+            productMenu.add(match)
+        }
+        emit(Resource.Success(productMenu))
     }
 
-    override suspend fun getAllProduct(): Flow<Resource<List<Product>>> = flow {
+    override suspend fun getAllProduct(): Flow<Resource<List<ProductMenu>>> = flow {
         emit(Resource.Loading())
-        val result = db.getAllProduct().executeAsList().map { it.toProduct() }
-        emit(Resource.Success(result))
+        val result = db.getAllProduct().executeAsList()
+        val productMenu = mutableListOf<ProductMenu>()
+        for (item in result) {
+            val match = ProductMenu(
+                menuId = item.id,
+                menuName = item.menuName,
+                menuImage = item.menuImage,
+                productId = item.product_id,
+                name = item.name,
+                image = item.image,
+                imageUrl = item.imageUrl,
+                qty = item.qty,
+                price = item.price,
+                discount = item.discount
+            )
+            productMenu.add(match)
+        }
+        emit(Resource.Success(productMenu))
     }
 
     override suspend fun getStock(): Flow<Resource<List<ProductStock>>> = flow {

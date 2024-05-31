@@ -5,6 +5,7 @@ import org.topteam.pos.MenuEntity
 import org.topteam.pos.ProductEntity
 import org.topteam.pos.StockEntity
 import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductMenu
 import ui.stock.domain.model.Stock
 
 fun StockEntity.toStock(): Stock {
@@ -17,10 +18,12 @@ fun StockEntity.toStock(): Stock {
     )
 }
 
-fun ProductEntity.toProduct(): Product {
-    return Product(
+fun ProductEntity.toProduct(): ProductMenu {
+    return ProductMenu(
         id = id,
         menuId = menu_id,
+        menuName = name,
+        menuImage = image,
         productId = product_id,
         name = name,
         image = image,
@@ -34,7 +37,7 @@ fun ProductEntity.toProduct(): Product {
 fun MenuEntity.toMenu(): MenuModel {
     return MenuModel(
         menuId = id,
-        name = name,
-        image = imageUrl
+        name = menuName,
+        image = menuImage
     )
 }

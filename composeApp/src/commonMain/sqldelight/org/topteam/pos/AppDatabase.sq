@@ -1,15 +1,15 @@
 
 CREATE TABLE MenuEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    imageUrl BLOB
+    menuName TEXT,
+    menuImage BLOB
 );
 
 insertMenu:
-INSERT INTO MenuEntity(name, imageUrl) VALUES(?, ?);
+INSERT INTO MenuEntity(menuName, menuImage) VALUES(?, ?);
 
 updateMenu:
-UPDATE MenuEntity SET name = ?, imageUrl = ? WHERE id = ?;
+UPDATE MenuEntity SET menuName = ?, menuImage = ? WHERE id = ?;
 
 deleteMenu:
 DELETE FROM MenuEntity WHERE id = ?;
@@ -58,10 +58,10 @@ insertProduct:
 INSERT INTO ProductEntity(menu_id,product_id, name, image, imageUrl, qty, price, discount) VALUES(?,?,?, ?, ?,?, ?, ?);
 
 getProductByMenuId:
-SELECT * FROM ProductEntity WHERE menu_id = ?;
+SELECT * FROM ProductEntity JOIN MenuEntity ON ProductEntity.menu_id = MenuEntity.id WHERE menu_id = ? GROUP BY ProductEntity.menu_id;
 
 getAllProduct:
-SELECT * FROM ProductEntity;
+SELECT * FROM ProductEntity JOIN MenuEntity ON ProductEntity.menu_id = MenuEntity.id GROUP BY ProductEntity.menu_id;
 
 CREATE TABLE OrderEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

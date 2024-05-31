@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import menu.domain.model.MenuModel
 import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductMenu
 import ui.stock.domain.model.ProductStock
 import ui.stock.domain.repository.InventoryRepository
 
@@ -23,7 +24,7 @@ data class InventoryState(
 data class ProductState(
     var status: Status? = null,
     var isLoading: Boolean? = null,
-    var data: List<Product>? = null
+    var data: List<ProductMenu>? = null
 )
 
 class InventoryViewModel(

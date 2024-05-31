@@ -48,6 +48,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_back
+import ui.stock.domain.model.Product
+import ui.stock.domain.model.ProductMenu
 
 @OptIn(ExperimentalResourceApi::class)
 class AddStockScreen: Screen, KoinComponent {
@@ -63,6 +65,7 @@ class AddStockScreen: Screen, KoinComponent {
         var addNewProduct by remember { mutableStateOf(false) }
         var previousScreen by mutableStateOf(listOf("Super Mario (admin)"))
         var currentScreen by mutableStateOf(listOf("Product & Stock"))
+        var productItem by mutableStateOf<ProductMenu?>(null)
 
         val marioState = marioViewModel.state.collectAsState().value
         val productState = inventoryViewModel.stateProduct.collectAsState().value
@@ -156,6 +159,7 @@ class AddStockScreen: Screen, KoinComponent {
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
                         AddNewStock(
+                            productItem = productItem,
                             searchViewModel = searchViewModel,
                             inventoryViewModel = inventoryViewModel,
                             callback = {
@@ -175,9 +179,10 @@ class AddStockScreen: Screen, KoinComponent {
                             data = productState.data,
                             marioState = marioState,
                             marioEvent = marioViewModel::onEvent,
-                            callBack = {
+                            callBack = { product ->
+                                productItem = product
                                 addNewProduct = true
-                                currentScreen = currentScreen.toMutableList().apply { add("New") }
+                                currentScreen = currentScreen.toMutableList().apply { add("New".takeIf { product == null } ?: "Detail") }
                                 previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
                             },
                             menuClick = {

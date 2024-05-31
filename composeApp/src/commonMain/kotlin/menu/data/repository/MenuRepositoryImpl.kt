@@ -22,7 +22,7 @@ class MenuRepositoryImpl(
 //        if (result.status == Status.ERROR) {
 //            emit(Resource.Error(result.code, result.message))
 //        }
-        val dataInput = db.insertMenu(name = menu.name, imageUrl = menu.image)
+        val dataInput = db.insertMenu(menuName = menu.name, menuImage = menu.image)
 
         return flow {
             emit(Resource.Success(dataInput))
@@ -31,7 +31,7 @@ class MenuRepositoryImpl(
 
     override suspend fun updateMenu(menu: MenuModel): Flow<Resource<Unit>> = flow {
         menu.menuId?.let {
-            val dataUpdate = db.updateMenu(name = menu.name, imageUrl = menu.image, it)
+            val dataUpdate = db.updateMenu(menuName = menu.name, menuImage = menu.image, it)
             emit(Resource.Success(dataUpdate))
         }
     }
