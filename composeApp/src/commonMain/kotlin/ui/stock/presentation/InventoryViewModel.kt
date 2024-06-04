@@ -4,11 +4,19 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import core.data.Resource
 import core.data.Status
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import menu.domain.model.MenuModel
+import menu.presentation.OrderEvent
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductMenu
 import ui.stock.domain.model.ProductStock
@@ -39,6 +47,46 @@ class InventoryViewModel(
 
     private val _stateProduct = MutableStateFlow(ProductState())
     val stateProduct: StateFlow<ProductState> = _stateProduct.asStateFlow()
+
+    private val _searchText = MutableStateFlow("")
+    val searchText = _searchText.asStateFlow()
+
+    private val _isSearching = MutableStateFlow(false)
+    val isSearching = _isSearching.asStateFlow()
+
+    private var _product = MutableStateFlow(listOf<ProductMenu>())
+
+    val product = searchText
+        .onEach {
+            _isSearching.update { true }
+        }
+        .combine(_product) { text, product ->
+            if (text.isBlank()) {
+                product
+            } else {
+                product.filter {
+                    it.doesMatchSearchQuery(text)
+                }
+            }
+        }
+        .onEach { _isSearching.update { false } }
+        .stateIn(
+            screenModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            _product.value
+        )
+
+    fun onEvent(event: InventoryEvent) {
+        when(event) {
+            is InventoryEvent.SearchProduct -> {
+                onSearchTextChange(event.keyword)
+            }
+        }
+    }
+
+    private fun onSearchTextChange(text: String) {
+        _searchText.value = text
+    }
 
     fun onAddProduct(product: Product) {
         screenModelScope.launch {
@@ -72,6 +120,10 @@ class InventoryViewModel(
                 repository.getProduct(menuId).collect { product ->
                     when (product) {
                         is Resource.Success -> {
+                            product.data?.let {
+                                _product.value = it
+                            }
+
                             _stateProduct.value = _stateProduct.value.copy(
                                 data = product.data,
                                 isLoading = false
@@ -93,6 +145,9 @@ class InventoryViewModel(
                 repository.getAllProduct().collect { product ->
                     when (product) {
                         is Resource.Success -> {
+                            product.data?.let {
+                                _product.value = it
+                            }
                             _stateProduct.value = _stateProduct.value.copy(
                                 data = product.data,
                                 isLoading = false

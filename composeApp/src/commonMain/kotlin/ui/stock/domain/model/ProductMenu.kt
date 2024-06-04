@@ -12,4 +12,15 @@ data class ProductMenu(
     val qty: String?,
     val price: String?,
     val discount: String?
-)
+) {
+    fun doesMatchSearchQuery(query: String): Boolean {
+        val matchingCombinations = listOf(
+            "$menuId",
+            "$menuName",
+            "$name"
+        )
+        return matchingCombinations.any {
+            it.contains(query, ignoreCase = true)
+        }
+    }
+}

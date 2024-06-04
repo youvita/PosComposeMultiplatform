@@ -68,7 +68,7 @@ class AddStockScreen: Screen, KoinComponent {
         var productItem by mutableStateOf<ProductMenu?>(null)
 
         val marioState = marioViewModel.state.collectAsState().value
-        val productState = inventoryViewModel.stateProduct.collectAsState().value
+        val productState = inventoryViewModel.product.collectAsState().value
 
         LaunchedEffect(true) {
             inventoryViewModel.onGetProductStock()
@@ -176,7 +176,9 @@ class AddStockScreen: Screen, KoinComponent {
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
                         AddNewProduct(
-                            data = productState.data,
+                            data = productState,
+                            searchText = inventoryViewModel.searchText.collectAsState().value,
+                            onEvent = inventoryViewModel::onEvent,
                             marioState = marioState,
                             marioEvent = marioViewModel::onEvent,
                             callBack = { product ->

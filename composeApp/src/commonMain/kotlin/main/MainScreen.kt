@@ -101,21 +101,21 @@ class MainScreen: Screen, KoinComponent {
                 icon = painterResource(resource = Res.drawable.ic_history_menu),
                 label = "History"
             ),
+//            NavModel(
+//                id = 2,
+//                icon = painterResource(resource = Res.drawable.ic_setting_menu),
+//                label = "Settings"
+//            ),
             NavModel(
                 id = 2,
-                icon = painterResource(resource = Res.drawable.ic_setting_menu),
-                label = "Settings"
-            ),
-            NavModel(
-                id = 3,
                 icon = painterResource(resource = Res.drawable.ic_super_mario_menu),
                 label = "Mario"
             ),
-            NavModel(
-                id = 4,
-                icon = painterResource(resource = Res.drawable.ic_notification_menu),
-                label = "Notification"
-            ),
+//            NavModel(
+//                id = 4,
+//                icon = painterResource(resource = Res.drawable.ic_notification_menu),
+//                label = "Notification"
+//            ),
         )
 
         LaunchedEffect(Unit) {
@@ -225,12 +225,12 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 2 -> {
-
-                }
-
-                3 -> {
                     TabMarioScreen()
                 }
+
+//                3 -> {
+//
+//                }
             }
         }
     }

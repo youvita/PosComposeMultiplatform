@@ -7,6 +7,7 @@ import core.utils.ProvideAppNavigator
 import core.utils.SharePrefer
 import kotlinx.coroutines.launch
 import login.presentation.LoginScreen
+import main.MainScreen
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinContext
 
@@ -26,7 +27,7 @@ fun App() {
 fun NavigationHost(
 ) {
     Navigator(
-        screen = LoginScreen(),
+        screen = MainScreen(),
         content = { navigator ->
             ProvideAppNavigator(
                 navigator = navigator,

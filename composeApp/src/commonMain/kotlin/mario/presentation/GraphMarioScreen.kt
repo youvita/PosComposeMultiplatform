@@ -94,33 +94,33 @@ data class GraphMarioScreen(
                         horizontalArrangement = Arrangement.spacedBy(15.dp),
                         modifier = Modifier.fillMaxSize()
                     ){
-                        item {
-                            MarioItem(
-                                name = "Menu Management",
-                                image = Res.drawable.img_menu
-                            ){
-                                navigator.push(
-                                    GraphMarioScreen(
-                                        screenType = ScreenMario.MenuScreen.route,
-                                        wrapContent = false
-                                    )
-                                )
-                            }
-                        }
-
-                        item{
-                            MarioItem(
-                                name = "Employee Management",
-                                image = Res.drawable.img_employee
-                            ) {
-                                navigator.push(
-                                    GraphMarioScreen(
-                                        screenType = ScreenMario.EmployeeScreen.route,
-                                        wrapContent = false
-                                    )
-                                )
-                            }
-                        }
+//                        item {
+//                            MarioItem(
+//                                name = "Menu Management",
+//                                image = Res.drawable.img_menu
+//                            ){
+//                                navigator.push(
+//                                    GraphMarioScreen(
+//                                        screenType = ScreenMario.MenuScreen.route,
+//                                        wrapContent = false
+//                                    )
+//                                )
+//                            }
+//                        }
+//
+//                        item{
+//                            MarioItem(
+//                                name = "Employee Management",
+//                                image = Res.drawable.img_employee
+//                            ) {
+//                                navigator.push(
+//                                    GraphMarioScreen(
+//                                        screenType = ScreenMario.EmployeeScreen.route,
+//                                        wrapContent = false
+//                                    )
+//                                )
+//                            }
+//                        }
 
                         item{
                             MarioItem(
@@ -137,64 +137,64 @@ data class GraphMarioScreen(
                 }
             }
 
-            ScreenMario.MenuScreen.route -> {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    //Toolbar
-                    MarioToolbar(screenType, navigator)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    MarioMenuScreen(
-                        marioState = marioState,
-                        marioEvent = marioViewModel::onEvent,
-                    )
-                }
-            }
-
-            ScreenMario.EmployeeScreen.route -> {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    MarioToolbar(screenType, navigator)
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    val scope = rememberCoroutineScope()
-
-                    val singleImagePicker = rememberImagePickerLauncher(
-                        selectionMode = SelectionMode.Single,
-                        scope = scope,
-                        onResult = { byteArrays ->
-                            byteArrays.firstOrNull()?.let {
-                                // Process the selected images' ByteArrays.
-                                byteArrays.firstOrNull()?.let {byteArrays ->
-                                    image = byteArrays.toImageBitmap()
-                                }
-
-                            }
-                        }
-                    )
-
-                    Button(
-                        onClick = {
-                            singleImagePicker.launch()
-                        }
-                    ) {
-                        Text("Pick Single Image")
-                    }
-
-
-                    Image(
-                        bitmap = image,
-                        contentDescription = "Selected Image",
-                        modifier =
-                        Modifier
-                            .size(200.dp)
-                            .clip(shape = RoundedCornerShape(12.dp)),
-                        contentScale = ContentScale.Crop,
-                    )
-
-                }
-            }
+//            ScreenMario.MenuScreen.route -> {
+//                Column(
+//                    modifier = Modifier.padding(16.dp)
+//                ) {
+//                    //Toolbar
+//                    MarioToolbar(screenType, navigator)
+//                    Spacer(modifier = Modifier.height(16.dp))
+//                    MarioMenuScreen(
+//                        marioState = marioState,
+//                        marioEvent = marioViewModel::onEvent,
+//                    )
+//                }
+//            }
+//
+//            ScreenMario.EmployeeScreen.route -> {
+//                Column(
+//                    modifier = Modifier.padding(16.dp)
+//                ) {
+//                    MarioToolbar(screenType, navigator)
+//                    Spacer(modifier = Modifier.height(16.dp))
+//
+//                    val scope = rememberCoroutineScope()
+//
+//                    val singleImagePicker = rememberImagePickerLauncher(
+//                        selectionMode = SelectionMode.Single,
+//                        scope = scope,
+//                        onResult = { byteArrays ->
+//                            byteArrays.firstOrNull()?.let {
+//                                // Process the selected images' ByteArrays.
+//                                byteArrays.firstOrNull()?.let {byteArrays ->
+//                                    image = byteArrays.toImageBitmap()
+//                                }
+//
+//                            }
+//                        }
+//                    )
+//
+//                    Button(
+//                        onClick = {
+//                            singleImagePicker.launch()
+//                        }
+//                    ) {
+//                        Text("Pick Single Image")
+//                    }
+//
+//
+//                    Image(
+//                        bitmap = image,
+//                        contentDescription = "Selected Image",
+//                        modifier =
+//                        Modifier
+//                            .size(200.dp)
+//                            .clip(shape = RoundedCornerShape(12.dp)),
+//                        contentScale = ContentScale.Crop,
+//                    )
+//
+//                }
+//            }
         }
     }
 }
