@@ -53,13 +53,6 @@ fun TransactionTable(
         rowList.add(TransactionHistory(it.order_no.toString(), it.date, "Dara (Cashier)", it.discount.toString(), "$${it.total}", it.status))
     }
 
-//    val rowList = listOf(
-//        TransactionHistory("12345678", "23 Jan 2024 10:30", "Dara (Cashier)", null, "$23.00", "Cancel"),
-//        TransactionHistory("12345674", "23 Jan 2024 10:30", "Dara (Cashier)", "4", "$23.00", "Progress"),
-//        TransactionHistory("12345675", "23 Jan 2024 10:30", "Dara (Cashier)", "11", "$2.00", "Paid"),
-//        TransactionHistory("12345677", "23 Jan 2024 10:30", "Dara (Cashier)", "1", "$3.00", "Booking"),
-//    )
-
     val columnWeight = remember { MutableList(columnHeaderList.size) { 0f } } //column header weight
 
     for (index in columnHeaderList.indices) {

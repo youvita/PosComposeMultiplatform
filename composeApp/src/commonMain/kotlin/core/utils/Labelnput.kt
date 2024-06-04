@@ -43,6 +43,7 @@ fun LabelInputRequire(
     modifier: Modifier = Modifier,
     text: String = "",
     label: String = "Label",
+    isInputPrice: Boolean = false,
     placeholder: String = "",
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
@@ -54,6 +55,7 @@ fun LabelInputRequire(
         TextInputNormal(
             modifier = modifier,
             text = text,
+            isInputPrice = isInputPrice,
             placeholder = placeholder,
             keyboardType = keyboardType,
             imeAction = imeAction,

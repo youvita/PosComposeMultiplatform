@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import core.theme.PrimaryColor
 import core.theme.Shapes
@@ -41,6 +42,7 @@ import core.theme.textInputWidth
 fun TextInputNormal(
     modifier: Modifier = Modifier,
     text: String = "",
+    isInputPrice: Boolean = false,
     enabled: Boolean = true,
     placeholder: String = "",
     keyboardType: KeyboardType = KeyboardType.Text,
@@ -51,7 +53,7 @@ fun TextInputNormal(
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused = interactionSource.collectIsFocusedAsState()
     val borderColor = if(isFocused.value) PrimaryColor else Color(0x26000000)
-    var input by rememberSaveable { mutableStateOf(text) }
+    var input by remember { mutableStateOf(text) }
 
     CompositionLocalProvider(value = LocalTextSelectionColors provides textInputSelectionColors){
         BasicTextField(
@@ -60,12 +62,40 @@ fun TextInputNormal(
             interactionSource = interactionSource,
             value = input,
             onValueChange = { newText ->
-                if(keyboardType == KeyboardType.Decimal && newText.split(".").size > 2)
-                    return@BasicTextField
+                val isDecimal = keyboardType == KeyboardType.Decimal
+                input = newText.replace(",","")
+                if (isDecimal){
+                    if(newText.split(".").size > 2) return@BasicTextField
 
-                input = newText
-                onValueChange(newText)
+                    //disable input start with '.'
+                    if (input.length == 1 && input.contains('.')){
+                        input = ""
+                    }
+                    if (input.length == 2){
+                        if (input == "00"){
+                            //disable input zero for second digits
+                            input = "0"
+                        } else {
+                            //auto removed zero for second digits
+                            if (input == "01" || input == "02" || input == "03"
+                                || input == "04" || input == "05" || input == "06"
+                                || input == "07" || input == "08" || input == "09"
+                            )  {
+                                input = input.removeRange(0, 1)
+                            }
+                        }
+                    }
+
+                    // Split into integer and fractional parts
+                    val parts = input.split('.')
+                    val fractionalPart = parts.getOrElse(1) { "0" }
+                    if (fractionalPart.length > 2){
+                        input = input.dropLast(1)
+                    }
+                }
+                onValueChange(input)
             },
+            visualTransformation = CursorVisualTransformation().takeIf { isInputPrice } ?: VisualTransformation.None,
             cursorBrush = SolidColor(PrimaryColor),
             textStyle = TextStyle(fontSize = fontSizeContent),
             keyboardOptions = KeyboardOptions(
@@ -167,12 +197,13 @@ fun TextInputDefault(
     modifier: Modifier = Modifier,
     text: String = "",
     placeholder: String = "",
+    isInputPrice: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Done,
     onValueChange: (String) -> Unit = {}
 ){
     val focusManager = LocalFocusManager.current
-    var input by rememberSaveable { mutableStateOf(text) }
+    var input by remember { mutableStateOf(text) }
 
     OutlinedTextField(
         modifier = modifier,
@@ -186,13 +217,41 @@ fun TextInputDefault(
         textStyle = TextStyle(fontSize = fontSizeContent),
         colors = textInputColors,
         value = input,
-        onValueChange = {
-            if(keyboardType == KeyboardType.Decimal && it.split(".").size > 1)
-                return@OutlinedTextField
+        onValueChange = { newText ->
+            val isDecimal = keyboardType == KeyboardType.Decimal
+            input = newText.replace(",","")
+            if (isDecimal){
+                if(newText.split(".").size > 2) return@OutlinedTextField
 
-            input = it
-            onValueChange(it)
+                //disable input start with '.'
+                if (input.length == 1 && input.contains('.')){
+                    input = ""
+                }
+                if (input.length == 2){
+                    if (input == "00"){
+                        //disable input zero for second digits
+                        input = "0"
+                    } else {
+                        //auto removed zero for second digits
+                        if (input == "01" || input == "02" || input == "03"
+                            || input == "04" || input == "05" || input == "06"
+                            || input == "07" || input == "08" || input == "09"
+                        )  {
+                            input = input.removeRange(0, 1)
+                        }
+                    }
+                }
+
+                // Split into integer and fractional parts
+                val parts = input.split('.')
+                val fractionalPart = parts.getOrElse(1) { "0" }
+                if (fractionalPart.length > 2){
+                    input = input.dropLast(1)
+                }
+            }
+            onValueChange(input)
         },
+        visualTransformation = CursorVisualTransformation().takeIf { isInputPrice } ?: VisualTransformation.None,
         keyboardOptions = KeyboardOptions(
             imeAction = imeAction,
             keyboardType = keyboardType

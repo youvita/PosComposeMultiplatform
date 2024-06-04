@@ -310,7 +310,7 @@ fun OrderBillsForm(
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 Text(
-                    text = "Discount (${orderState?.bill?.discount?: 0}% off)",
+                    text = "Discount",
                     style = TextStyle(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal

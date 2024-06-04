@@ -3,6 +3,8 @@ package menu.presentation
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import core.data.Resource
+import core.utils.dollar
+import core.utils.formatDouble
 import core.utils.percentOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +27,7 @@ import org.topteam.pos.OrderEntity
 import org.topteam.pos.ProductOrderEntity
 import setting.domain.model.ItemModel
 import ui.stock.domain.repository.InventoryRepository
+import kotlin.math.round
 
 class OrderViewModel(
     private val repository: MenuRepository,
@@ -32,15 +35,13 @@ class OrderViewModel(
     private val orderHistoryRepository: OrderHistoryRepository,
 ): ScreenModel {
 
-    private var totalAmount: Double = 0.0
-    private var subTotal: Double = 0.0
-    private var discountAmount: Double = 0.0
-    private var vatAmount: Double = 0.0
-    private var queue: Int = 0
-    private var totalItem: Int = 0
-    private var vat: Int = 0
-    private var discount: Int = 0
-    private var saveMenu: MenuModel? = null
+//    private var totalAmount: Double = 0.0
+//    private var subTotal: Double = 0.0
+//    private var discountAmount: Double = 0.0
+//    private var vatAmount: Double = 0.0
+//    private var totalItem: Int = 0
+//    private var vat: Int = 0
+//    private var discount: Int = 0
 
     private val _state = MutableStateFlow(OrderState())
     val state: StateFlow<OrderState> get() = _state.asStateFlow()
@@ -103,7 +104,8 @@ class OrderViewModel(
                                     image_product = it.image,
                                     imageUrl = it.imageUrl,
                                     qty = it.qty?.toInt(),
-                                    price = it.price?.toDouble()
+                                    price = it.price?.toDouble(),
+                                    discount = if (it.discount.isNullOrEmpty()) 0 else it.discount.toInt()
                                 )
                             },
                             message = result.message,
@@ -135,7 +137,8 @@ class OrderViewModel(
                                     image_product = it.image,
                                     imageUrl = it.imageUrl,
                                     qty = it.qty?.toInt(),
-                                    price = it.price?.toDouble()
+                                    price = it.price?.toDouble(),
+                                    discount = if (it.discount.isNullOrEmpty()) 0 else it.discount.toInt()
                                 )
                             },
                             message = result.message,
@@ -184,6 +187,8 @@ class OrderViewModel(
             is OrderEvent.SelectOrderEvent -> {
                 var isExist = false
                 var qtyTotal = 0
+                var subTotal = 0.0
+                var discountAmount = 0.0
                 var ordered = _state.value.orders?.toMutableList()
                 if(ordered == null) ordered = arrayListOf()
 
@@ -199,9 +204,12 @@ class OrderViewModel(
                     ordered.add(event.item)
                 }
 
-                //get total qty
+                //get total_qty
+                //get sub_total price not include discount
                 ordered.map {
                     qtyTotal += it.qtySelected?:0
+                    subTotal += it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0
+                    discountAmount += ((it.discount?:0) percentOf (it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0))
                 }
 
                 _state.value = _state.value.copy(
@@ -209,13 +217,18 @@ class OrderViewModel(
                 )
                 updateBillState(
                     totalQty = qtyTotal,
-                    totalItem = ordered.size
+                    totalItem = ordered.size,
+                    subTotal = subTotal,
+                    discountAmount = discountAmount,
+                    totalAmount = formatDouble(subTotal).toDouble() - formatDouble(discountAmount).toDouble()
                 )
             }
 
             //quantity change
             is OrderEvent.QuantityChangeEvent -> {
                 var qtyTotal = 0
+                var subTotal = 0.0
+                var discountAmount = 0.0
                 val ordered = _state.value.orders?.toMutableList()
                 val item = ItemModel(
                     itemId = event.item.itemId,
@@ -238,37 +251,49 @@ class OrderViewModel(
                     item
                 )
 
-                //update state total qty
+                //update state total_qty,sub_total
                 ordered?.map {
                     qtyTotal += it.qtySelected?:0
+                    subTotal += it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0
+                    discountAmount += ((it.discount?:0) percentOf (it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0))
                 }
                 _state.value = _state.value.copy(
                     orders = ordered,
                 )
                 updateBillState(
                     totalQty = qtyTotal,
-                    totalItem = ordered?.size
+                    totalItem = ordered?.size,
+                    subTotal = subTotal,
+                    discountAmount = discountAmount,
+                    totalAmount = formatDouble(subTotal).toDouble() - formatDouble(discountAmount).toDouble()
                 )
             }
 
             is OrderEvent.OnRemoveOrder -> {
                 var qtyTotal = 0
+                var subTotal = 0.0
+                var discountAmount = 0.0
 
                 val ordered = _state.value.orders?.toMutableList()
                 if(!ordered.isNullOrEmpty()){
                     ordered.remove(event.item)
                 }
 
-                //update state total qty
+                //update state total_qty,sub_total
                 ordered?.map {
                     qtyTotal += it.qtySelected?:0
+                    subTotal += it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0
+                    discountAmount += ((it.discount?:0) percentOf (it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0))
                 }
                 _state.value = _state.value.copy(
                     orders = ordered,
                 )
                 updateBillState(
                     totalQty = qtyTotal,
-                    totalItem = ordered?.size
+                    totalItem = ordered?.size,
+                    subTotal = subTotal,
+                    discountAmount = discountAmount,
+                    totalAmount = formatDouble(subTotal).toDouble() - formatDouble(discountAmount).toDouble()
                 )
 
             }
@@ -282,7 +307,11 @@ class OrderViewModel(
                     orders = arrayListOf()
                 )
                 updateBillState(
-                    totalQty = 0
+                    totalQty = 0,
+                    subTotal = 0.0,
+                    totalItem = 0,
+                    discountAmount = 0.0,
+                    totalAmount = 0.0
                 )
             }
 
@@ -292,93 +321,23 @@ class OrderViewModel(
         }
     }
 
-    private fun generateBillNoAndDate() {
-        val currentMoment = Clock.System.now()
-        val datetimeInSystemZone: LocalDateTime =
-            currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
 
-        //get order_no
-        val orderNo =
-            "${datetimeInSystemZone.year}" +
-                    "${datetimeInSystemZone.monthNumber}" +
-                    "${datetimeInSystemZone.dayOfMonth}" +
-                    "${datetimeInSystemZone.hour}" +
-                    "${datetimeInSystemZone.minute}" +
-                    "${datetimeInSystemZone.second}"
-
-        //get date "Thu, 25 Apr 2024 00:00 GMT" to 25 Apr 2024
-        val date = DateTimeComponents.Formats.RFC_1123.format {
-            setDate(datetimeInSystemZone.date)
-            hour = 0
-            minute = 0
-            second = 0
-            setOffset(UtcOffset(hours = 0))
-        }.substring(5,16)
-
-        updateBillState(
-            date = date,
-            billNo = orderNo
-        )
-    }
-
-    private fun updateBillState(
-        totalQty: Int? = null,
-        totalItem: Int? = null,
-        totalAmount: Double? = null,
-        subTotal: Double? = null,
-        discountAmount: Double? = null,
-        discount: Int? = null,
-        vat: Int? = null,
-        vatAmount: Double? = null,
-        queue: Int? = null,
-        billNo: String? = null,
-        date: String? = null,
-    ) {
-
-        _state.value = _state.value.copy(
-            bill = BillModel(
-                totalQty = totalQty?:_state.value.bill?.totalQty,
-                totalItem = totalItem?:_state.value.bill?.totalItem,
-                totalAmount = totalAmount?:_state.value.bill?.totalAmount,
-                subTotal = subTotal?:_state.value.bill?.subTotal,
-                discountAmount  = discountAmount?:_state.value.bill?.discountAmount,
-                discount = discount?:_state.value.bill?.discount,
-                vat = vat?:_state.value.bill?.vat,
-                vatAmount= vatAmount?:_state.value.bill?.vatAmount,
-                queue = queue?:_state.value.bill?.queue,
-                billNo = billNo?:_state.value.bill?.billNo,
-                date = date?:_state.value.bill?.date,
-            )
-        )
-
-    }
 
     private fun addOrderHistory() {
-        //get total qty
-
-
-        //get sub total
-
-        //get discount
-
-        //get vat
-
-        //get status
-
         screenModelScope.launch {
             orderHistoryRepository.addOrderHistory(
                 OrderEntity(
                     id = 0,
-                    order_no = _state.value.bill?.billNo?.toLong(),
-                    queue_no = _state.value.queue_no,
+                    order_no = _state.value.bill?.billNo.toString(),
+                    queue_no = _state.value.queue_no.toString(),
                     date = _state.value.bill?.date,
-                    total_item = _state.value.orders?.size?.toLong(),
-                    total_qty = _state.value.bill?.totalQty?.toLong(),
-                    sub_total = null,
-                    discount = null,
-                    vat = null,
-                    total = null,
-                    status = null
+                    total_item = _state.value.orders?.size?.toString(),
+                    total_qty = _state.value.bill?.totalQty?.toString(),
+                    sub_total = _state.value.bill?.subTotal.toString(),
+                    discount = _state.value.bill?.discountAmount.toString(),
+                    vat = "0",
+                    total = _state.value.bill?.totalAmount.toString(),
+                    status = "Paid"
                 )
             ).onEach {result ->
                 when (result) {
@@ -456,52 +415,65 @@ class OrderViewModel(
         }.launchIn(screenModelScope)
     }
 
+    private fun generateBillNoAndDate() {
+        val currentMoment = Clock.System.now()
+        val datetimeInSystemZone: LocalDateTime =
+            currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
 
-    private fun calculateOrder() {
+        //get order_no
+        val orderNo =
+            "${datetimeInSystemZone.year}" +
+                    "${datetimeInSystemZone.monthNumber}" +
+                    "${datetimeInSystemZone.dayOfMonth}" +
+                    "${datetimeInSystemZone.hour}" +
+                    "${datetimeInSystemZone.minute}" +
+                    "${datetimeInSystemZone.second}"
 
-        subTotal = 0.0
-        totalAmount = 0.0
-        discountAmount = 0.0
-//        qtyTotal = 0
-        totalItem = _state.value.orders?.size ?: 0
+        //get date "Thu, 25 Apr 2024 00:00 GMT" to 25 Apr 2024
+        val date = DateTimeComponents.Formats.RFC_1123.format {
+            setDate(datetimeInSystemZone.date)
+            hour = 0
+            minute = 0
+            second = 0
+            setOffset(UtcOffset(hours = 0))
+        }.substring(5,16)
 
-        for (itemModel in _state.value.orders ?: arrayListOf()) {
-
-            // Sub Total
-            val price = itemModel.price ?: 0.0
-            val totalPrice = price * (itemModel.qty ?: 1)
-            subTotal = totalPrice
-
-            // Quantities
-//            qtyTotal += (itemModel.qty ?: 1)
-        }
-
-        // VAT
-        vatAmount = vat percentOf subTotal
-
-        // Discount
-        discountAmount = discount percentOf subTotal
-
-        // Total Price
-        totalAmount = subTotal - discountAmount + vatAmount
-
-//        val bill = BillModel(
-//            totalAmount = totalAmount,
-//            subTotal = subTotal,
-//            discountAmount = discountAmount,
-//            discount = discount,
-//            totalItem = totalItem,
-//            totalQty = 0,
-//            vat = vat,
-//            vatAmount = vatAmount,
-//            queue = queue,
-//            billNo = billNo,
-//        )
-
-//        _state.value = _state.value.copy(
-//            bill = bill,
-//            status = null,
-//            message = null
-//        )
+        updateBillState(
+            date = date,
+            billNo = orderNo
+        )
     }
+
+    private fun updateBillState(
+        totalQty: Int? = null,
+        totalItem: Int? = null,
+        totalAmount: Double? = null,
+        subTotal: Double? = null,
+        discountAmount: Double? = null,
+        discount: Int? = null,
+        vat: Int? = null,
+        vatAmount: Double? = null,
+        queue: Int? = null,
+        billNo: String? = null,
+        date: String? = null,
+    ) {
+
+        _state.value = _state.value.copy(
+            bill = BillModel(
+                totalQty = totalQty?:_state.value.bill?.totalQty,
+                totalItem = totalItem?:_state.value.bill?.totalItem,
+                totalAmount = totalAmount?:_state.value.bill?.totalAmount,
+                subTotal = subTotal?:_state.value.bill?.subTotal,
+                discountAmount  = discountAmount?:_state.value.bill?.discountAmount,
+                discount = discount?:_state.value.bill?.discount,
+                vat = vat?:_state.value.bill?.vat,
+                vatAmount= vatAmount?:_state.value.bill?.vatAmount,
+                queue = queue?:_state.value.bill?.queue,
+                billNo = billNo?:_state.value.bill?.billNo,
+                date = date?:_state.value.bill?.date,
+            )
+        )
+
+    }
+
 }

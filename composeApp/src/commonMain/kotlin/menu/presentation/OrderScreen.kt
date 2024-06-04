@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
@@ -203,41 +206,42 @@ fun OrderScreen(
                             EmptyBox(modifier = Modifier.padding(bottom = 150.dp))
                         }
                         else{
-                            LazyVerticalStaggeredGrid(
-                                columns = StaggeredGridCells.Fixed(3),
-                                verticalItemSpacing = 8.dp,
+
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(3),
                                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 modifier = Modifier.fillMaxSize()
                             ){
                                 itemsIndexed(list){ index, item ->
                                     CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
-                                        Box(modifier = Modifier
-                                            .animateItemPlacement()
-                                            .clickable(
-                                                indication = null,
-                                                interactionSource = remember { MutableInteractionSource() }
-                                            ) {
-                                                focusManager.clearFocus()
-                                                selectedItem = if (selectedItem == index) {
-                                                    -1
-                                                } else index
-                                            }
-                                            .then(
-                                                if (selectedItem == index) {
-                                                    Modifier
-                                                        .background(
-                                                            color = White,
-                                                            shape = Shapes.medium
-                                                        )
-                                                        .border(
-                                                            1.dp,
-                                                            color = PrimaryColor,
-                                                            shape = Shapes.medium
-                                                        )
-                                                } else {
-                                                    Modifier
+                                        Box(
+                                            modifier = Modifier
+                                                .animateItemPlacement()
+                                                .clickable(
+                                                    indication = null,
+                                                    interactionSource = remember { MutableInteractionSource() }
+                                                ) {
+                                                    focusManager.clearFocus()
+                                                    selectedItem = if (selectedItem == index) {
+                                                        -1
+                                                    } else index
                                                 }
-                                            )
+                                                .then(
+                                                    if (selectedItem == index) {
+                                                        Modifier
+                                                            .background(
+                                                                color = White,
+                                                                shape = Shapes.medium
+                                                            )
+                                                            .border(
+                                                                1.dp,
+                                                                color = PrimaryColor,
+                                                                shape = Shapes.medium
+                                                            )
+                                                    } else {
+                                                        Modifier
+                                                    }
+                                                )
                                         ){
                                             ItemView(
                                                 item = item,
@@ -248,6 +252,53 @@ fun OrderScreen(
                                     }
                                 }
                             }
+
+//                            LazyVerticalStaggeredGrid(
+//                                columns = StaggeredGridCells.Fixed(3),
+//                                verticalItemSpacing = 8.dp,
+//                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+//                                modifier = Modifier.fillMaxSize()
+//                            ){
+//                                itemsIndexed(list){ index, item ->
+//                                    CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
+//                                        Box(
+//                                            modifier = Modifier
+//                                                .animateItemPlacement()
+//                                                .clickable(
+//                                                    indication = null,
+//                                                    interactionSource = remember { MutableInteractionSource() }
+//                                                ) {
+//                                                    focusManager.clearFocus()
+//                                                    selectedItem = if (selectedItem == index) {
+//                                                        -1
+//                                                    } else index
+//                                                }
+//                                                .then(
+//                                                    if (selectedItem == index) {
+//                                                        Modifier
+//                                                            .background(
+//                                                                color = White,
+//                                                                shape = Shapes.medium
+//                                                            )
+//                                                            .border(
+//                                                                1.dp,
+//                                                                color = PrimaryColor,
+//                                                                shape = Shapes.medium
+//                                                            )
+//                                                    } else {
+//                                                        Modifier
+//                                                    }
+//                                                )
+//                                        ){
+//                                            ItemView(
+//                                                item = item,
+//                                                selected = selectedItem == index,
+//                                                orderEvent = orderEvent
+//                                            )
+//                                        }
+//                                    }
+//                                }
+//                            }
                         }
                     }
                 }

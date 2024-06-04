@@ -60,6 +60,7 @@ import core.theme.Shapes
 import core.theme.White
 import core.utils.RedRippleTheme
 import core.utils.dollar
+import core.utils.formatDouble
 import core.utils.percentOf
 import menu.presentation.OrderEvent
 import org.jetbrains.compose.resources.DrawableResource
@@ -84,8 +85,7 @@ fun ItemView(
 ){
     val discount = item?.discount?: 0
     val price = item?.price?: 0.0
-    
-    val orderItem = remember { mutableStateOf(item) }
+
     var reset by remember { mutableStateOf(false) }
     var bookmark by remember { mutableStateOf(false) }
 
@@ -97,7 +97,7 @@ fun ItemView(
         modifier = modifier,
         shape = Shapes.medium,
         colors = CardDefaults.cardColors(White),
-         elevation = CardDefaults.cardElevation(2.dp)
+        elevation = CardDefaults.cardElevation(2.dp)
     ){
         Column {
             Row(
@@ -107,24 +107,13 @@ fun ItemView(
                     .padding(16.dp)
             ) {
 
-//                Image(
-//                    painter = painterResource(resource = DrawableResource(item?.imageUrl?:"")),
-//                    contentDescription = "avatar",
-//                    contentScale = ContentScale.Crop,
-//                    modifier = Modifier
-//                        .size(64.dp)
-//                        .clip(shape = Shapes.medium)
-//                        .border(width = 0.5.dp, shape = Shapes.medium, color = Color(0xFFE4E4E4))
-//                )
-
-
                 if (item?.image_product != null && item.image_product!!.isNotEmpty()){
                     Image(
                         bitmap = item.image_product!!.toImageBitmap(),
                         contentDescription = "avatar",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(64.dp)
+                            .size(78.dp)
                             .clip(Shapes.medium)
                             .border(0.5.dp, color = Color(0xFFE4E4E4), shape = Shapes.medium)
                     )
@@ -186,7 +175,7 @@ fun ItemView(
                         }
 
                         Text(
-                            text = (price - (discount percentOf price)).dollar(),
+                            text = (price - formatDouble((discount percentOf price)).toDouble()).dollar(),
                             style = TextStyle(
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold
@@ -237,9 +226,8 @@ fun ItemView(
 
                     OutlinedButton(
                         onClick = {
-                            val ordered = orderItem.value
-                            if(ordered  != null){
-                                orderEvent(OrderEvent.SelectOrderEvent(ordered))
+                            if(item  != null){
+                                orderEvent(OrderEvent.SelectOrderEvent(item))
                                 reset = true
                             }
                         },
@@ -253,7 +241,8 @@ fun ItemView(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(10.dp)
-                            .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+                            .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                        enabled = (item?.qty ?: 0) > 0
                     ) {
                         Text(
                             text = "Add to Billing",

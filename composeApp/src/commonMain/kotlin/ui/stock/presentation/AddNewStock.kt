@@ -276,6 +276,7 @@ fun AddNewStock(
                                             onValueChange = {
                                                 price = it
                                             },
+                                            isInputPrice = true,
                                             keyboardType = KeyboardType.Decimal
                                         )
                                     }

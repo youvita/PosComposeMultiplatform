@@ -8,6 +8,7 @@ import androidx.compose.material3.formatWithSkeleton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -20,7 +21,11 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.WindowInfo
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -48,6 +53,7 @@ import core.theme.textStyleBlack25Small
 import core.theme.textStyleBlack30Bold
 import core.theme.textStyleBlack30Medium
 import core.theme.textStyleBlack30Small
+import kotlinx.serialization.StringFormat
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_cereal
@@ -59,6 +65,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_salads
 import poscomposemultiplatform.composeapp.generated.resources.ic_smoothie
 import poscomposemultiplatform.composeapp.generated.resources.ic_snack
 import poscomposemultiplatform.composeapp.generated.resources.ic_soup
+import kotlin.math.round
 import kotlin.math.roundToInt
 
 val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> = staticCompositionLocalOf { null }
@@ -286,5 +293,61 @@ data class DottedShape(
         close()
     })
 }
-fun Double.dollar(): String = if (this == 0.0) "$0.00" else "$${this}"
+
+fun Double.dollar(): String = if (this == 0.0) "$0.00" else "$${formatDouble(this)}"
+
+/**
+ * 12.23123 to 12.23
+ * 12.3 to 12.30
+ * 1.0 to 1.00
+*/
+fun formatDouble(value: Double): String {
+    val factor = 100.0
+    val roundedValue = round(value * factor) / factor
+    return roundedValue.toString().let {
+        // Ensure it has at least one decimal point
+        if (it.indexOf('.') >= 0) {
+            // Split into integer and fractional parts
+            val parts = it.split('.')
+            val integerPart = parts[0]
+            val fractionalPart = parts.getOrElse(1) { "0" }
+
+            // Ensure the fractional part has exactly two digits
+            val formattedFractionalPart = fractionalPart.padEnd(2, '0').take(2)
+
+            // Combine the integer and formatted fractional parts
+            "$integerPart.$formattedFractionalPart"
+        } else {
+            // No decimal point, add ".00"
+            "$it.00"
+        }
+    }
+}
+
+
+fun formatNumberWithCommas(number: String): String {
+    val parts = number.split(".")
+    val integerPart = parts[0]
+    val reversedNumber = integerPart.reversed()
+    val chunks = reversedNumber.chunked(3)
+    val joinedChunks = chunks.joinToString(",") { it.reversed() }
+    val formattedNumber = joinedChunks.reversed()
+    return if (parts.size > 1) {
+        "$formattedNumber.${parts[1]}"
+    } else {
+        formattedNumber
+    }
+}
+
+@Stable
+class CursorVisualTransformation : VisualTransformation {
+    override fun filter(text: AnnotatedString): TransformedText {
+        val out = text.text
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int = out.length
+            override fun transformedToOriginal(offset: Int): Int = out.length
+        }
+        return TransformedText(AnnotatedString(out), offsetMapping)
+    }
+}
 

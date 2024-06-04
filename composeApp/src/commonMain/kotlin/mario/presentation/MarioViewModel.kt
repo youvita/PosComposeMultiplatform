@@ -244,7 +244,7 @@ class MarioViewModel(
                         imageUrl = event.item.imageUrl,
                         qty = event.item.qty.toString(),
                         price = event.item.price.toString(),
-                        discount = ""
+                        discount = event.item.discount.toString()
                     )
                 )
             }

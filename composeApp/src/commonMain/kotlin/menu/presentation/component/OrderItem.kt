@@ -49,6 +49,7 @@ import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
 import core.utils.dollar
+import core.utils.formatDouble
 import core.utils.percentOf
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -134,7 +135,7 @@ fun OrderItem(
             ) {
                 if(discount > 0){
                     Text(
-                        text = (discount percentOf price).dollar(),
+                        text = price.dollar(),
                         style = TextStyle(
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
@@ -146,7 +147,7 @@ fun OrderItem(
                 }
 
                 Text(
-                    text = price.dollar(),
+                    text = (price - formatDouble((discount percentOf price)).toDouble()).dollar(),
                     style = TextStyle(
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,

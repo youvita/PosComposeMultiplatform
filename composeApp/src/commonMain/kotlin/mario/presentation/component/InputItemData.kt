@@ -33,6 +33,7 @@ import com.preat.peekaboo.image.picker.toImageBitmap
 import core.utils.LabelInputNormal
 import core.utils.LabelInputRequire
 import core.utils.TextRequire
+import core.utils.formatNumberWithCommas
 import menu.domain.model.MenuModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import setting.domain.model.ItemModel
@@ -49,7 +50,7 @@ fun InputItemData(
     var itemModel by remember { mutableStateOf(ItemModel(menuId = menu?.menuId)) }
     var itemName by remember { mutableStateOf(oldItem?.name?:"") }
     var itemCode by remember { mutableStateOf(oldItem?.itemCode?:0L) }
-    var itemDesc by remember { mutableStateOf(oldItem?.description?:"") }
+    var itemDiscount by remember { mutableStateOf(oldItem?.discount?:0) }
     var itemPrice by remember { mutableDoubleStateOf(oldItem?.price?:0.0) }
     var itemQty by remember { mutableIntStateOf(oldItem?.qty?:0) }
 
@@ -158,10 +159,11 @@ fun InputItemData(
             modifier = Modifier.fillMaxWidth(),
             text = if (itemPrice == 0.0) "" else itemPrice.toString(),
             label = "Unit Price $",
+            isInputPrice = true,
             placeholder = "Enter unit price",
             keyboardType = KeyboardType.Decimal,
             onValueChange = {
-                itemPrice = it.toDouble()
+                itemPrice = if (it.isNotEmpty()) it.toDouble() else 0.0
                 itemModel = itemModel.copy(
                     price = itemPrice
                 )
@@ -188,12 +190,14 @@ fun InputItemData(
 
         LabelInputNormal(
             modifier = Modifier.fillMaxWidth(),
-            label = "Description",
-            text = itemDesc,
+            label = "Discount",
+            placeholder = "Enter Discount",
+            text = if (itemDiscount == 0) "" else itemDiscount.toString(),
+            keyboardType = KeyboardType.Number,
             onValueChange = {
-                itemDesc = it
+                itemDiscount = if (it.isNotEmpty()) it.toInt() else 0
                 itemModel = itemModel.copy(
-                    description = it
+                    discount = itemDiscount
                 )
             }
         )
@@ -295,7 +299,7 @@ fun InputItemView(
 
         LabelInputRequire(
             modifier = Modifier.fillMaxWidth(),
-            text = itemModel.price?.toString()?: "",
+            text = formatNumberWithCommas(itemModel.price?.toString()?: ""),
             label = "Unit Price $",
             placeholder = "Enter unit price",
             keyboardType = KeyboardType.Decimal,
