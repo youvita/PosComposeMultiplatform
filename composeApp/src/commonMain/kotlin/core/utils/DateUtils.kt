@@ -13,13 +13,14 @@ fun getCurrentDateTime(): String {
     try {
         val now = Clock.System.now()
         val dateTime: LocalDateTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
-        dateFormat = DateTimeComponents.Formats.RFC_1123.format {
+        val format = DateTimeComponents.Formats.RFC_1123.format {
             setDate(dateTime.date)
             hour = dateTime.time.hour
             minute = dateTime.time.minute
             second = dateTime.time.second
             setOffset(UtcOffset(hours = 0))
-        }.substring(5, 22)
+        }
+        dateFormat = (format.substring(5, 22).takeIf { format.length > 28 } ?: format.subSequence(5, 21)).toString()
     } catch (e: Exception) {
         e.message
     }

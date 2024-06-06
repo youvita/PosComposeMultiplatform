@@ -84,13 +84,15 @@ import ui.stock.domain.model.ProductMenu
 @Composable
 fun AddNewStock(
     productItem: ProductMenu? = null,
+    state: InventoryState,
     searchViewModel: SearchEngineViewModel,
-    inventoryViewModel: InventoryViewModel,
+    onEvent: (InventoryEvent) -> Unit,
     callback: () -> Unit
 ) {
     val searchState = searchViewModel.state.collectAsState().value
-    val stockState = inventoryViewModel.stateProductStock.collectAsState().value
+//    val stockState = inventoryViewModel.stateProductStock.collectAsState().value
 
+    val isNew by remember { mutableStateOf(productItem?.productId == 0L) }
     var startBarCodeScan by remember { mutableStateOf(false) }
     var barCode by remember { mutableStateOf(productItem?.productId ?: 0) }
     var barImage by remember { mutableStateOf("") }
@@ -127,11 +129,6 @@ fun AddNewStock(
         "Stock"
     )
 
-    LaunchedEffect(true) {
-        println(getCurrentDateTime())
-    }
-
-
     Scaffold(
         modifier = Modifier.padding(end = 20.dp)
     ) {
@@ -158,7 +155,7 @@ fun AddNewStock(
                                     onClick = {
                                         tabIndex = index
                                         if (tabIndex == 1) {
-                                            inventoryViewModel.onGetProductStock()
+                                            onEvent(InventoryEvent.GetProductStock())
                                         }
                                     },
                                     text = {
@@ -175,19 +172,34 @@ fun AddNewStock(
                             visible = tabIndex == 0
                         ) {
                             PrimaryButton(
-                                text = "Save Product",
+                                text = "Save Product".takeIf { isNew } ?: "Update Product",
                                 callBack = {
-                                    val product = Product(
-                                        menuId = menuSelected?.menuId,
-                                        productId = barCode,
-                                        name = name,
-                                        image = byteImage,
-                                        imageUrl = barImage,
-                                        qty = "0",
-                                        price = price,
-                                        discount = discount
-                                    )
-                                    inventoryViewModel.onAddProduct(product)
+                                    if (isNew) {
+                                        val product = Product(
+                                            menuId = menuSelected?.menuId,
+                                            productId = barCode,
+                                            name = name,
+                                            image = byteImage,
+                                            imageUrl = barImage,
+                                            qty = "0",
+                                            price = price,
+                                            discount = discount
+                                        )
+                                        onEvent(InventoryEvent.AddProduct(product))
+                                    } else {
+                                        val product = Product(
+                                            menuId = menuSelected?.menuId,
+                                            productId = barCode,
+                                            name = name,
+                                            image = byteImage,
+                                            imageUrl = barImage,
+                                            qty = "0",
+                                            price = price,
+                                            discount = discount
+                                        )
+                                        onEvent(InventoryEvent.UpdateProduct(product))
+                                    }
+
                                     callback()
                                 }
                             )
@@ -324,7 +336,7 @@ fun AddNewStock(
                                             contentPadding = PaddingValues(start = 0.dp, top = 5.dp, bottom = 5.dp, end = 0.dp),
                                             onClick = {
                                                 isSelectCategory = !isSelectCategory
-                                                inventoryViewModel.onGetMenu()
+                                                onEvent(InventoryEvent.GetMenu())
                                             }
                                         ) {
                                             Row(
@@ -375,7 +387,7 @@ fun AddNewStock(
                                                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                                                     contentPadding = PaddingValues(10.dp)
                                                 ) {
-                                                    stockState.menu?.let {
+                                                    state.menu?.let {
                                                         itemsIndexed(it) { _, item ->
                                                             CategoryItem(
                                                                 modifier = Modifier.fillMaxWidth()
@@ -410,6 +422,7 @@ fun AddNewStock(
                                                         modifier = Modifier.size(100.dp)
                                                             .clickable {
                                                                 indexSelected = 0
+                                                                barImage = ""
                                                             },
                                                         shape = RoundedCornerShape(10.dp),
                                                         border = BorderStroke(2.dp, PrimaryColor.takeIf { indexSelected == 0 } ?: ColorE4E4E4)
@@ -473,6 +486,7 @@ fun AddNewStock(
                                                                 .clickable {
                                                                     indexSelected = 1
                                                                     barImage = url
+                                                                    byteImage = null
                                                                 },
                                                             image = url
                                                         )
@@ -508,6 +522,7 @@ fun AddNewStock(
                                                                 .clickable {
                                                                     indexSelected = 2
                                                                     barImage = url
+                                                                    byteImage = null
                                                                 },
                                                             image = url
                                                         )
@@ -541,6 +556,7 @@ fun AddNewStock(
                                                                 .clickable {
                                                                     indexSelected = 3
                                                                     barImage = url
+                                                                    byteImage = null
                                                                 },
                                                             image = url
                                                         )
@@ -561,7 +577,7 @@ fun AddNewStock(
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
                         StockInformation(
-                            state = stockState
+                            state = state
                         )
                     }
                 }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,7 +42,7 @@ fun StockInformation(
     Box(
         modifier = Modifier.fillMaxWidth().background(White).padding(start = 20.dp, top = 30.dp)
     ) {
-        val columnList = listOf("No", "", "Product Name", "SKU", "Stock In", "Stock Out", "Total", "Date")
+        val columnList = listOf("No", "", "Product Name", "Category", "SKU", "Stock In", "Stock Out", "Total", "Date")
         val rowList = state.data
 
         val columnWeight = remember { MutableList(columnList.size) { 0f } } //column header weight
@@ -140,7 +141,8 @@ fun StockInformation(
                                         modifier = Modifier.weight(columnWeight[columnIndex]),
                                         text = getColumnValue(item, columnIndex),
                                         style = getTextStyle(typography = Styles.BodyMedium),
-                                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 }
+                                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 },
+                                        color = getColorValue(item, columnIndex)
                                     )
                                 }
 
@@ -162,10 +164,19 @@ private fun getColumnValue(item: ProductStock, index: Int): String {
         0 -> item.stockId.toString()
         1 -> " "
         2 -> item.productName.toString()
-        3 -> item.productId.toString()
-        4 -> item.stockIn.toString()
-        5 -> item.stockOut.toString()
-        6 -> item.stockTotal.toString()
+        3 -> item.categoryName.toString()
+        4 -> item.productId.toString()
+        5 -> "+${item.stockIn.toString()}"
+        6 -> "-".takeIf { item.stockOut?.toInt() == 0 } ?: "-${item.stockOut.toString()}"
+        7 -> item.stockTotal.toString()
         else -> item.dateIn.toString()
+    }
+}
+
+private fun getColorValue(item: ProductStock, index: Int): Color {
+    return when (index) {
+        5 -> Color(0xFF000000).takeIf { item.stockIn?.toInt() == 0 } ?: Color(0xFF04D000)
+        6-> Color(0xFF000000).takeIf { item.stockOut?.toInt() == 0 } ?: Color(0xFFFF0000)
+        else -> Color(0xFF000000)
     }
 }

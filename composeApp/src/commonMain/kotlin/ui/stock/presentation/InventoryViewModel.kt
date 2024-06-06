@@ -81,6 +81,21 @@ class InventoryViewModel(
             is InventoryEvent.SearchProduct -> {
                 onSearchTextChange(event.keyword)
             }
+            is InventoryEvent.AddProduct -> {
+                onAddProduct(event.product)
+            }
+            is InventoryEvent.UpdateProduct -> {
+                onUpdateProduct(event.product)
+            }
+            is InventoryEvent.GetMenu -> {
+                onGetMenu()
+            }
+            is InventoryEvent.GetProductStock -> {
+                onGetProductStock()
+            }
+            is InventoryEvent.GetProduct -> {
+                onGetProduct(event.menuId)
+            }
         }
     }
 
@@ -88,13 +103,19 @@ class InventoryViewModel(
         _searchText.value = text
     }
 
-    fun onAddProduct(product: Product) {
+    private fun onAddProduct(product: Product) {
         screenModelScope.launch {
             repository.addProduct(product)
         }
     }
 
-    fun onGetProductStock() {
+    private fun onUpdateProduct(product: Product) {
+        screenModelScope.launch {
+            repository.updateProduct(product)
+        }
+    }
+
+    private fun onGetProductStock() {
         screenModelScope.launch {
             repository.getStock().collect { stock ->
                 _stateProductStock.value = _stateProductStock.value.copy(
@@ -104,7 +125,7 @@ class InventoryViewModel(
         }
     }
 
-    fun onGetMenu() {
+    private fun onGetMenu() {
         screenModelScope.launch {
             repository.getMenu().collect { stock ->
                 _stateProductStock.value = _stateProductStock.value.copy(
@@ -114,7 +135,7 @@ class InventoryViewModel(
         }
     }
 
-    fun onGetProduct(menuId: Long) {
+    private fun onGetProduct(menuId: Long) {
         screenModelScope.launch {
             if (menuId > 0) {
                 repository.getProduct(menuId).collect { product ->

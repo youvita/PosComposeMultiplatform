@@ -110,7 +110,6 @@ fun AddNewProduct(
     data: List<ProductMenu>? = null,
     onEvent: (InventoryEvent) -> Unit = {},
     searchText: String? = null,
-    isSearching: Boolean = false,
     marioEvent: (MarioEvent) -> Unit = {},
     callBack: (ProductMenu?) -> Unit = {},
     menuClick: (Long) -> Unit = {}
@@ -125,7 +124,6 @@ fun AddNewProduct(
     var selectedItemIndex by remember { mutableIntStateOf(-1) }
     var selectedMenuIndex by remember { mutableIntStateOf(0) }
 
-    var isInputEmpty by remember { mutableStateOf(true) }
     var date by mutableStateOf("")
 
     val currentMoment = Clock.System.now()
@@ -297,44 +295,6 @@ fun AddNewProduct(
                         Row (
                             modifier = Modifier.weight(1f)
                         ){
-                            //Input Search
-                            TextField(
-                                value = searchText.orEmpty(),
-                                onValueChange = {
-                                    onEvent(InventoryEvent.SearchProduct(it))
-                                },
-                                modifier = Modifier
-                                    .weight(3f)
-                                    .focusRequester(remember { FocusRequester() }),
-                                shape = RoundedCornerShape(10.dp),
-                                placeholder = { Text("Search order ID, Cashier, Amount", maxLines = 1) },
-                                trailingIcon = {
-                                    if (searchText?.isNotEmpty() == true){
-                                        Icon(
-                                            imageVector = Icons.Default.Clear,
-                                            contentDescription = "Clear",
-                                            tint = PrimaryColor,
-                                            modifier = Modifier.clickable {
-                                                onEvent(InventoryEvent.SearchProduct(""))
-                                            }
-                                        )
-                                    } else {
-                                        Icon(
-                                            imageVector = Icons.Outlined.Search,
-                                            contentDescription = "Search",
-                                            tint = PrimaryColor
-                                        )
-                                    }
-                                },
-                                colors = TextFieldDefaults.textFieldColors(
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent,
-                                    disabledIndicatorColor = Color.Transparent
-                                )
-                            )
-
-                            Spacer(modifier = Modifier.width(10.dp))
-
                             //Start date
                             if (showDatePickerStart) {
                                 DatePickerDialog(
@@ -478,6 +438,44 @@ fun AddNewProduct(
                                 onValueChange = {
 
                                 }
+                            )
+
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            //Input Search
+                            TextField(
+                                value = searchText.orEmpty(),
+                                onValueChange = {
+                                    onEvent(InventoryEvent.SearchProduct(it))
+                                },
+                                modifier = Modifier
+                                    .weight(3f)
+                                    .focusRequester(remember { FocusRequester() }),
+                                shape = RoundedCornerShape(10.dp),
+                                placeholder = { Text("Search order ID, Cashier, Amount", maxLines = 1) },
+                                trailingIcon = {
+                                    if (searchText?.isNotEmpty() == true){
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = "Clear",
+                                            tint = PrimaryColor,
+                                            modifier = Modifier.clickable {
+                                                onEvent(InventoryEvent.SearchProduct(""))
+                                            }
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Outlined.Search,
+                                            contentDescription = "Search",
+                                            tint = PrimaryColor
+                                        )
+                                    }
+                                },
+                                colors = TextFieldDefaults.textFieldColors(
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    disabledIndicatorColor = Color.Transparent
+                                )
                             )
                         }
 

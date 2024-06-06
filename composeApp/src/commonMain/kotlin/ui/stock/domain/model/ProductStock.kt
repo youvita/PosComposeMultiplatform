@@ -11,5 +11,6 @@ data class ProductStock(
     val productName: String? = null,
     val productImage: ImageBitmap? = null,
     val productImageUrl: String? = null,
+    val categoryName: String? = null,
     val dateIn: String? = null,
 )

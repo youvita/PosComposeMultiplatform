@@ -3,7 +3,6 @@ package ui.stock.data.repository
 import com.preat.peekaboo.image.picker.toImageBitmap
 import core.data.Resource
 import core.mapper.toMenu
-import core.mapper.toProduct
 import core.mapper.toStock
 import core.utils.getCurrentDateTime
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +17,35 @@ import ui.stock.domain.repository.InventoryRepository
 class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 
     private val db = posDatabase.appDatabaseQueries
+    override suspend fun updateProduct(product: Product) {
+        val result = db.getStockByProductId(product.productId).executeAsList()
+        if (result.isNotEmpty()) {
+            val stock = result.last().toStock()
+            stock.stockId?.let { id ->
+                db.updateStock(
+                    product.productId,
+                    stock.stockIn,
+                    stock.stockOut,
+                    stock.stockBox,
+                    stock.stockTotal,
+                    getCurrentDateTime(),
+                    stock.dateOut,
+                    id
+                )
+            }
+        }
+        db.updateProduct(
+            menu_id = product.menuId,
+            product_id = product.productId,
+            name = product.name,
+            image = product.image,
+            imageUrl = product.imageUrl,
+            qty = product.qty,
+            price = product.price,
+            discount = product.discount,
+            product_id_ = product.productId
+        )
+    }
 
     override suspend fun addProduct(product: Product) {
         val result = db.getStockByProductId(product.productId).executeAsList()
@@ -65,7 +93,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         val productMenu = mutableListOf<ProductMenu>()
         for (item in result) {
             val match = ProductMenu(
-                menuId = item.id,
+                menuId = item.menu_id,
                 menuName = item.menuName,
                 menuImage = item.menuImage,
                 productId = item.product_id,
@@ -87,7 +115,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         val productMenu = mutableListOf<ProductMenu>()
         for (item in result) {
             val match = ProductMenu(
-                menuId = item.id,
+                menuId = item.menu_id,
                 menuName = item.menuName,
                 menuImage = item.menuImage,
                 productId = item.product_id,
@@ -112,11 +140,12 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 stockId = item.stock_id,
                 stockIn = item.stock_in,
                 stockOut = item.stock_out,
-                stockTotal = item.stock_box,
+                stockTotal = item.total,
                 productId = item.product_id,
                 productName = item.name,
                 productImage = item.image?.toImageBitmap(),
                 productImageUrl = item.imageUrl,
+                categoryName = item.menuName,
                 dateIn = item.date_in
             )
             productStock.add(match)

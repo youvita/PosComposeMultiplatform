@@ -39,7 +39,7 @@ getStockByProductId:
 SELECT * FROM StockEntity WHERE product_id = ?;
 
 getProductStock:
-SELECT * FROM StockEntity JOIN ProductEntity ON StockEntity.product_id = ProductEntity.product_id GROUP BY StockEntity.product_id ORDER BY stock_id ASC;
+SELECT * FROM StockEntity JOIN ProductEntity JOIN MenuEntity ON StockEntity.product_id = ProductEntity.product_id AND ProductEntity.menu_id = MenuEntity.id GROUP BY StockEntity.product_id ORDER BY stock_id ASC;
 
 CREATE TABLE ProductEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -53,16 +53,18 @@ CREATE TABLE ProductEntity (
     discount TEXT
 );
 
+updateProduct:
+UPDATE ProductEntity SET menu_id = ?, product_id = ?, name = ?, image = ?, imageUrl = ?, qty = ?, price = ?, discount = ? WHERE product_id = ?;
 
 insertProduct:
 INSERT INTO ProductEntity(menu_id,product_id, name, image, imageUrl, qty, price, discount) VALUES(?,?,?, ?, ?,?, ?, ?);
 
 getProductByMenuId:
-SELECT * FROM ProductEntity JOIN MenuEntity ON ProductEntity.menu_id = MenuEntity.id WHERE menu_id = ? GROUP BY ProductEntity.menu_id;
+SELECT * FROM ProductEntity JOIN MenuEntity ON ProductEntity.menu_id = MenuEntity.id WHERE menu_id = ?;
 
 getAllProduct:
--- SELECT * FROM ProductEntity JOIN MenuEntity ON ProductEntity.menu_id = MenuEntity.id GROUP BY ProductEntity.menu_id;
-SELECT * FROM ProductEntity JOIN MenuEntity;
+SELECT * FROM ProductEntity JOIN MenuEntity ON ProductEntity.menu_id = MenuEntity.id;
+-- SELECT * FROM ProductEntity JOIN MenuEntity;
 
 CREATE TABLE OrderEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

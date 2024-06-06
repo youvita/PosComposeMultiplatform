@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
@@ -41,14 +40,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import core.theme.PrimaryColor
 import core.theme.White
 import mario.presentation.MarioViewModel
-import mario.presentation.childscreen.MarioMenuScreen
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_back
-import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductMenu
 
 @OptIn(ExperimentalResourceApi::class)
@@ -63,16 +60,17 @@ class AddStockScreen: Screen, KoinComponent {
         val marioViewModel = get<MarioViewModel>()
 
         var addNewProduct by remember { mutableStateOf(false) }
-        var previousScreen by mutableStateOf(listOf("Super Mario (admin)"))
-        var currentScreen by mutableStateOf(listOf("Product & Stock"))
-        var productItem by mutableStateOf<ProductMenu?>(null)
+        var previousScreen by remember { mutableStateOf(listOf("Super Mario (admin)")) }
+        var currentScreen by remember { mutableStateOf(listOf("Product & Stock")) }
+        var productItem by remember { mutableStateOf<ProductMenu?>(null) }
 
         val marioState = marioViewModel.state.collectAsState().value
         val productState = inventoryViewModel.product.collectAsState().value
+        val inventoryState = inventoryViewModel.stateProductStock.collectAsState().value
 
         LaunchedEffect(true) {
-            inventoryViewModel.onGetProductStock()
-            inventoryViewModel.onGetProduct(0)
+            inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
+            inventoryViewModel.onEvent(InventoryEvent.GetProduct(0))
         }
 
         Scaffold(
@@ -159,13 +157,15 @@ class AddStockScreen: Screen, KoinComponent {
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
                         AddNewStock(
+                            state = inventoryState,
                             productItem = productItem,
                             searchViewModel = searchViewModel,
-                            inventoryViewModel = inventoryViewModel,
+                            onEvent = inventoryViewModel::onEvent,
                             callback = {
                                 addNewProduct = false
                                 currentScreen = currentScreen.toMutableList().apply { removeLast() }
                                 previousScreen = previousScreen.toMutableList().apply { removeLast() }
+                                inventoryViewModel.onEvent(InventoryEvent.GetProduct(0))
                             }
                         )
                     }
@@ -188,7 +188,7 @@ class AddStockScreen: Screen, KoinComponent {
                                 previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
                             },
                             menuClick = {
-                                inventoryViewModel.onGetProduct(it)
+                                inventoryViewModel.onEvent(InventoryEvent.GetProduct(it))
                             }
                         )
                     }

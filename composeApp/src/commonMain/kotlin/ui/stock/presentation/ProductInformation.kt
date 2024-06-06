@@ -110,6 +110,7 @@ fun ProductInformation(
                     ) {
                         Box(
                             modifier = Modifier.clickable {
+                                println(">>>>> ${item.menuId}")
                                 onItemClick(item)
                             }
                         ) {
