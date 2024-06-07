@@ -8,8 +8,10 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,8 +30,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme.shapes
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TabRow
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -49,8 +55,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -60,6 +69,7 @@ import com.preat.peekaboo.image.picker.toImageBitmap
 import core.scanner.QrScannerScreen
 import core.theme.Black
 import core.theme.ColorE4E4E4
+import core.theme.ColorF1F1F1
 import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
@@ -67,16 +77,22 @@ import core.utils.ImageLoader
 import core.utils.LineWrapper
 import core.utils.PrimaryButton
 import core.utils.TextInputDefault
+import core.utils.dashedBorder
 import core.utils.getCurrentDateTime
 import menu.domain.model.MenuModel
 import menu.presentation.component.CategoryItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
+import poscomposemultiplatform.composeapp.generated.resources.arrow
 import poscomposemultiplatform.composeapp.generated.resources.ic_camera
 import poscomposemultiplatform.composeapp.generated.resources.ic_down
+import poscomposemultiplatform.composeapp.generated.resources.ic_gallery
+import poscomposemultiplatform.composeapp.generated.resources.ic_next
 import poscomposemultiplatform.composeapp.generated.resources.ic_profie
+import poscomposemultiplatform.composeapp.generated.resources.ic_scan_barcode
 import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
+import poscomposemultiplatform.composeapp.generated.resources.ic_upload
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductMenu
 
@@ -168,43 +184,6 @@ fun AddNewStock(
                             }
                         }
 
-                        AnimatedVisibility(
-                            visible = tabIndex == 0
-                        ) {
-                            PrimaryButton(
-                                text = "Save Product".takeIf { isNew } ?: "Update Product",
-                                callBack = {
-                                    if (isNew) {
-                                        val product = Product(
-                                            menuId = menuSelected?.menuId,
-                                            productId = barCode,
-                                            name = name,
-                                            image = byteImage,
-                                            imageUrl = barImage,
-                                            qty = "0",
-                                            price = price,
-                                            discount = discount
-                                        )
-                                        onEvent(InventoryEvent.AddProduct(product))
-                                    } else {
-                                        val product = Product(
-                                            menuId = menuSelected?.menuId,
-                                            productId = barCode,
-                                            name = name,
-                                            image = byteImage,
-                                            imageUrl = barImage,
-                                            qty = "0",
-                                            price = price,
-                                            discount = discount
-                                        )
-                                        onEvent(InventoryEvent.UpdateProduct(product))
-                                    }
-
-                                    callback()
-                                }
-                            )
-                        }
-
                     }
 
                     LineWrapper(modifier = Modifier.padding(start = 20.dp))
@@ -220,6 +199,234 @@ fun AddNewStock(
                                 .verticalScroll(rememberScrollState())
                         ) {
                             Spacer(modifier = Modifier.height(15.dp))
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                Text("Upload Product Image *")
+
+                                AnimatedVisibility(
+                                    visible = tabIndex == 0
+                                ) {
+                                    PrimaryButton(
+                                        text = "Save Product".takeIf { isNew } ?: "Update Product",
+                                        callBack = {
+                                            if (isNew) {
+                                                val product = Product(
+                                                    menuId = menuSelected?.menuId,
+                                                    productId = barCode,
+                                                    name = name,
+                                                    image = byteImage,
+                                                    imageUrl = barImage,
+                                                    qty = "0",
+                                                    price = price,
+                                                    discount = discount
+                                                )
+                                                onEvent(InventoryEvent.AddProduct(product))
+                                            } else {
+                                                val product = Product(
+                                                    menuId = menuSelected?.menuId,
+                                                    productId = barCode,
+                                                    name = name,
+                                                    image = byteImage,
+                                                    imageUrl = barImage,
+                                                    qty = "0",
+                                                    price = price,
+                                                    discount = discount
+                                                )
+                                                onEvent(InventoryEvent.UpdateProduct(product))
+                                            }
+
+                                            callback()
+                                        }
+                                    )
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            Box(
+                                modifier = Modifier
+                                    .background(color = ColorF1F1F1, shape = Shapes.medium)
+                                    .dashedBorder(1.dp, ColorE4E4E4, 10.dp), contentAlignment = Alignment.Center) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(
+                                        modifier = Modifier.padding(start = 20.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Text(text = "※ Choose from library")
+
+                                        Spacer(modifier = Modifier.height(17.dp))
+
+                                        Card(
+                                            modifier = Modifier
+                                                .clip(Shapes.medium)
+                                                .clickable {
+                                                    singleImagePicker.launch()
+                                            },
+                                            shape = Shapes.medium,
+                                            colors = CardDefaults.cardColors(
+                                                containerColor = White
+                                            ),
+                                            elevation = CardDefaults.cardElevation(1.dp),
+                                            border = BorderStroke(2.dp, PrimaryColor.takeIf { indexSelected == 0 } ?: ColorE4E4E4)
+                                        ) {
+                                            if (byteImage != null) {
+                                                byteImage?.let {
+                                                    Image(
+                                                        modifier = Modifier
+                                                            .size(62.dp)
+                                                            .alpha(0.5f.takeIf { indexSelected == 0 } ?: 1f),
+                                                        bitmap = it.toImageBitmap(),
+                                                        contentDescription = null,
+                                                        contentScale = ContentScale.FillBounds
+                                                    )
+                                                }
+                                            } else {
+                                                Column(
+                                                    modifier = Modifier.padding(
+                                                        start = 29.dp,
+                                                        top = 10.dp,
+                                                        bottom = 14.dp,
+                                                        end = 29.dp
+                                                    ),
+                                                    horizontalAlignment = Alignment.CenterHorizontally
+                                                ) {
+                                                    Image(
+                                                        modifier = Modifier.size(62.dp),
+                                                        contentDescription = null,
+                                                        painter = painterResource(resource = Res.drawable.ic_upload)
+                                                    )
+
+                                                    Text(text = "Upload", color = PrimaryColor)
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.width(44.dp))
+
+                                    Row(
+                                        modifier = Modifier.padding(20.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth().weight(1f)
+                                        ) {
+                                            Text(text = "※ Scan barcode product of image for fast")
+
+                                            Spacer(modifier = Modifier.height(17.dp))
+
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth().background(color = Color.Yellow),
+                                                verticalAlignment = Alignment.Top,
+                                                horizontalArrangement = Arrangement.SpaceBetween
+                                            ) {
+                                                PrimaryButton(
+                                                    text = "Scan"
+                                                )
+
+                                                Image(
+                                                    modifier = Modifier.size(107.dp),
+                                                    contentDescription = null,
+                                                    painter = painterResource(resource = Res.drawable.ic_scan_barcode))
+                                            }
+                                        }
+
+                                        Spacer(modifier = Modifier.width(21.dp))
+
+                                        Image(
+                                            modifier = Modifier,
+                                            contentDescription = null,
+                                            painter = painterResource(resource = Res.drawable.ic_next))
+
+                                        Spacer(modifier = Modifier.width(21.dp))
+
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth().weight(1f)
+                                        ) {
+                                            Text(text = "There are 3 images for recommend")
+
+                                            Spacer(modifier = Modifier.height(17.dp))
+
+                                            Row(
+                                                modifier = Modifier,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Card(
+                                                    modifier = Modifier,
+                                                    shape = RoundedCornerShape(10.dp),
+                                                    colors = CardDefaults.cardColors(
+                                                        containerColor = White
+                                                    ),
+                                                    elevation = CardDefaults.cardElevation(1.dp)
+                                                ) {
+                                                    Column(
+                                                        modifier = Modifier.padding(start = 29.dp, top = 10.dp, bottom = 14.dp, end = 29.dp),
+                                                        horizontalAlignment = Alignment.CenterHorizontally                                            ) {
+                                                        Image(
+                                                            modifier = Modifier.size(62.dp),
+                                                            contentDescription = null,
+                                                            painter = painterResource(resource = Res.drawable.ic_gallery))
+
+                                                        Text(text = "Empty")
+                                                    }
+                                                }
+
+                                                Spacer(modifier = Modifier.width(10.dp))
+
+                                                Card(
+                                                    modifier = Modifier,
+                                                    shape = RoundedCornerShape(10.dp),
+                                                    colors = CardDefaults.cardColors(
+                                                        containerColor = White
+                                                    ),
+                                                    elevation = CardDefaults.cardElevation(1.dp)
+                                                ) {
+                                                    Column(
+                                                        modifier = Modifier.padding(start = 29.dp, top = 10.dp, bottom = 14.dp, end = 29.dp),
+                                                        horizontalAlignment = Alignment.CenterHorizontally                                            ) {
+                                                        Image(
+                                                            modifier = Modifier.size(62.dp),
+                                                            contentDescription = null,
+                                                            painter = painterResource(resource = Res.drawable.ic_gallery))
+
+                                                        Text(text = "Empty")
+                                                    }
+                                                }
+
+                                                Spacer(modifier = Modifier.width(10.dp))
+
+                                                Card(
+                                                    modifier = Modifier,
+                                                    shape = RoundedCornerShape(10.dp),
+                                                    colors = CardDefaults.cardColors(
+                                                        containerColor = White
+                                                    ),
+                                                    elevation = CardDefaults.cardElevation(1.dp)
+                                                ) {
+                                                    Column(
+                                                        modifier = Modifier.padding(start = 29.dp, top = 10.dp, bottom = 14.dp, end = 29.dp),
+                                                        horizontalAlignment = Alignment.CenterHorizontally                                            ) {
+                                                        Image(
+                                                            modifier = Modifier.size(62.dp),
+                                                            contentDescription = null,
+                                                            painter = painterResource(resource = Res.drawable.ic_gallery))
+
+                                                        Text(text = "Empty")
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
 
                             Text(text = "※ Scan barcode product of image for fast")
 
