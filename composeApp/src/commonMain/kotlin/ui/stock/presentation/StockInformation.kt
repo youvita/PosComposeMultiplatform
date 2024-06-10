@@ -40,7 +40,7 @@ fun StockInformation(
 ) {
 
     Box(
-        modifier = Modifier.fillMaxWidth().background(White).padding(start = 20.dp, top = 30.dp)
+        modifier = Modifier.fillMaxWidth().background(White).padding(start = 36.dp, top = 30.dp, end = 36.dp)
     ) {
         val columnList = listOf("No", "", "Product Name", "Category", "SKU", "Stock In", "Stock Out", "Total", "Date")
         val rowList = state.data

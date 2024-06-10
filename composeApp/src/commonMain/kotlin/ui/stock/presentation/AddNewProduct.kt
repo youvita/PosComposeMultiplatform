@@ -99,11 +99,14 @@ import menu.domain.model.MenuModel
 import menu.presentation.component.CategoryItem
 import orderhistory.presentation.OrderHistoryEvent
 import orderhistory.presentation.epochMillisToLocalDate
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import poscomposemultiplatform.composeapp.generated.resources.Res
+import poscomposemultiplatform.composeapp.generated.resources.ic_plus
 import setting.domain.model.ItemModel
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductMenu
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun AddNewProduct(
     marioState: MarioState? = null,
@@ -483,7 +486,7 @@ fun AddNewProduct(
 
                         PrimaryButton(
                             text = "New Product",
-                            icon = Icons.Rounded.Add,
+                            icon = Res.drawable.ic_plus,
                             callBack = {
                                 callBack(null)
                             }
