@@ -3,6 +3,7 @@ package main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -16,9 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.transitions.SlideTransition
 import core.bluetooth.BluetoothViewModel
 import core.theme.ColorDDE3F9
 import core.theme.White
+import core.utils.ProvideAppNavigator
 import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.compose.BindEffect
@@ -31,6 +35,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import main.component.NavigationTabScaffold
 import main.model.NavModel
+import mario.presentation.GraphMarioScreen
+import mario.presentation.ScreenMario
 import mario.presentation.TabMarioScreen
 import menu.presentation.OrderViewModel
 import menu.presentation.OrderScreen
@@ -50,6 +56,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_super_mario_men
 import receipt.BillRowItem
 import receipt.CaptureItem
 import setting.domain.model.ItemModel
+import ui.settings.SettingsScreen
 import ui.stock.presentation.InventoryViewModel
 import ui.stock.presentation.SearchEngineViewModel
 
@@ -224,7 +231,15 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 2 -> {
-                    //TODO Settings
+                    Navigator(
+                        screen = SettingsScreen(),
+                        content = { navigator ->
+                            ProvideAppNavigator(
+                                navigator = navigator,
+                                content = { SlideTransition(navigator = navigator) },
+                            )
+                        }
+                    )
                 }
 
                 3 -> {

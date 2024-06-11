@@ -115,7 +115,7 @@ fun OrderHistoryScreen(
             ) {
                 Text(
                     text = "Transaction Order History",
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
 

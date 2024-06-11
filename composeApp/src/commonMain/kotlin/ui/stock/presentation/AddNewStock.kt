@@ -16,6 +16,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -112,7 +114,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_upload
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductMenu
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun AddNewStock(
     productItem: ProductMenu? = null,
@@ -280,10 +282,10 @@ fun AddNewStock(
                                 modifier = Modifier
                                     .background(color = ColorF1F1F1, shape = Shapes.medium)
                                     .dashedBorder(1.dp, ColorE4E4E4, 10.dp), contentAlignment = Alignment.Center) {
-                                Row(
+
+                                FlowRow(
                                     modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                    verticalArrangement = Arrangement.spacedBy(10.dp),
                                 ) {
                                     Column(
                                         modifier = Modifier.padding(20.dp),
@@ -353,14 +355,13 @@ fun AddNewStock(
                                             .background(color = ColorE1E1E1)
                                     )
 
-
                                     Row(
-                                        modifier = Modifier.padding(start = 44.dp, top = 20.dp, bottom = 20.dp, end = 20.dp),
+                                        modifier = Modifier.padding(start = 40.dp, top = 20.dp, bottom = 20.dp, end = 20.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
 
                                         Column(
-                                            modifier = Modifier.fillMaxWidth().weight(1f)
+                                            modifier = Modifier
                                         ) {
                                             Text(text = buildAnnotatedString {
                                                 withStyle(
@@ -377,7 +378,7 @@ fun AddNewStock(
                                             Spacer(modifier = Modifier.height(17.dp))
 
                                             Row(
-                                                modifier = Modifier.fillMaxWidth(),
+                                                modifier = Modifier.fillMaxWidth(0.3f),
                                                 verticalAlignment = Alignment.Top,
                                                 horizontalArrangement = Arrangement.SpaceBetween
                                             ) {
@@ -424,139 +425,138 @@ fun AddNewStock(
                                             contentDescription = null,
                                             painter = painterResource(resource = Res.drawable.ic_arrow_next))
 
-                                        Spacer(modifier = Modifier.width(21.dp))
+                                    }
 
-                                        Column(
-                                            modifier = Modifier
+                                    Column(
+                                        modifier = Modifier.padding(start = 21.dp, top = 20.dp, bottom = 20.dp)
+                                    ) {
+                                        Text(text = "There are 3 images for recommend")
+
+                                        Spacer(modifier = Modifier.height(17.dp))
+
+                                        Row(
+                                            modifier = Modifier,
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            Text(text = "There are 3 images for recommend")
-
-                                            Spacer(modifier = Modifier.height(17.dp))
-
-                                            Row(
-                                                modifier = Modifier,
-                                                verticalAlignment = Alignment.CenterVertically
+                                            Card(
+                                                modifier = Modifier.size(width = 120.dp, height = 111.dp),
+                                                shape = RoundedCornerShape(10.dp),
+                                                border = BorderStroke(2.dp.takeIf { indexSelected == 1 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 1 } ?: White),
+                                                colors = CardDefaults.cardColors(
+                                                    containerColor = ColorE4E4E4.takeIf { indexSelected == 1 } ?: White
+                                                ),
+                                                elevation = CardDefaults.cardElevation(1.dp)
                                             ) {
-                                                Card(
-                                                    modifier = Modifier.size(width = 120.dp, height = 111.dp),
-                                                    shape = RoundedCornerShape(10.dp),
-                                                    border = BorderStroke(2.dp.takeIf { indexSelected == 1 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 1 } ?: White),
-                                                    colors = CardDefaults.cardColors(
-                                                        containerColor = ColorE4E4E4.takeIf { indexSelected == 1 } ?: White
-                                                    ),
-                                                    elevation = CardDefaults.cardElevation(1.dp)
-                                                ) {
-                                                    if (searchState.data?.items == null) {
-                                                        Column(
-                                                            modifier = Modifier.fillMaxSize(),
-                                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                                            verticalArrangement = Arrangement.Center
-                                                        ) {
-                                                            Image(
-                                                                modifier = Modifier.size(62.dp),
-                                                                contentDescription = null,
-                                                                painter = painterResource(resource = Res.drawable.ic_gallery))
+                                                if (searchState.data?.items == null) {
+                                                    Column(
+                                                        modifier = Modifier.fillMaxSize(),
+                                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                                        verticalArrangement = Arrangement.Center
+                                                    ) {
+                                                        Image(
+                                                            modifier = Modifier.size(62.dp),
+                                                            contentDescription = null,
+                                                            painter = painterResource(resource = Res.drawable.ic_gallery))
 
-                                                            Text(text = "Empty")
-                                                        }
-                                                    } else {
-                                                        searchState.data?.items?.let {
-                                                            it[0].image?.thumbnailLink?.let { url ->
-                                                                ImageLoader(
-                                                                    modifier = Modifier
-                                                                        .alpha(0.5f.takeIf { indexSelected == 1 } ?: 1f)
-                                                                        .clickable {
-                                                                            indexSelected = 1
-                                                                            barImage = url
-                                                                            byteImage = null
-                                                                        },
-                                                                    image = url
-                                                                )
-                                                            }
+                                                        Text(text = "Empty")
+                                                    }
+                                                } else {
+                                                    searchState.data?.items?.let {
+                                                        it[0].image?.thumbnailLink?.let { url ->
+                                                            ImageLoader(
+                                                                modifier = Modifier
+                                                                    .alpha(0.5f.takeIf { indexSelected == 1 } ?: 1f)
+                                                                    .clickable {
+                                                                        indexSelected = 1
+                                                                        barImage = url
+                                                                        byteImage = null
+                                                                    },
+                                                                image = url
+                                                            )
                                                         }
                                                     }
                                                 }
+                                            }
 
-                                                Spacer(modifier = Modifier.width(10.dp))
+                                            Spacer(modifier = Modifier.width(10.dp))
 
-                                                Card(
-                                                    modifier = Modifier.size(width = 120.dp, height = 111.dp),
-                                                    shape = RoundedCornerShape(10.dp),
-                                                    border = BorderStroke(2.dp.takeIf { indexSelected == 2 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 2 } ?: White),
-                                                    colors = CardDefaults.cardColors(
-                                                        containerColor = ColorE4E4E4.takeIf { indexSelected == 2 } ?: White
-                                                    ),
-                                                    elevation = CardDefaults.cardElevation(2.dp)
-                                                ) {
-                                                    if (searchState.data?.items == null) {
-                                                        Column(
-                                                            modifier = Modifier.fillMaxSize(),
-                                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                                            verticalArrangement = Arrangement.Center
-                                                        ) {
-                                                            Image(
-                                                                modifier = Modifier.size(62.dp),
-                                                                contentDescription = null,
-                                                                painter = painterResource(resource = Res.drawable.ic_gallery))
+                                            Card(
+                                                modifier = Modifier.size(width = 120.dp, height = 111.dp),
+                                                shape = RoundedCornerShape(10.dp),
+                                                border = BorderStroke(2.dp.takeIf { indexSelected == 2 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 2 } ?: White),
+                                                colors = CardDefaults.cardColors(
+                                                    containerColor = ColorE4E4E4.takeIf { indexSelected == 2 } ?: White
+                                                ),
+                                                elevation = CardDefaults.cardElevation(2.dp)
+                                            ) {
+                                                if (searchState.data?.items == null) {
+                                                    Column(
+                                                        modifier = Modifier.fillMaxSize(),
+                                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                                        verticalArrangement = Arrangement.Center
+                                                    ) {
+                                                        Image(
+                                                            modifier = Modifier.size(62.dp),
+                                                            contentDescription = null,
+                                                            painter = painterResource(resource = Res.drawable.ic_gallery))
 
-                                                            Text(text = "Empty")
-                                                        }
-                                                    } else {
-                                                        searchState.data?.items?.let {
-                                                            it[1].image?.thumbnailLink?.let { url ->
-                                                                ImageLoader(
-                                                                    modifier = Modifier
-                                                                        .alpha(0.5f.takeIf { indexSelected == 2 } ?: 1f)
-                                                                        .clickable {
-                                                                            indexSelected = 2
-                                                                            barImage = url
-                                                                            byteImage = null
-                                                                        },
-                                                                    image = url
-                                                                )
-                                                            }
+                                                        Text(text = "Empty")
+                                                    }
+                                                } else {
+                                                    searchState.data?.items?.let {
+                                                        it[1].image?.thumbnailLink?.let { url ->
+                                                            ImageLoader(
+                                                                modifier = Modifier
+                                                                    .alpha(0.5f.takeIf { indexSelected == 2 } ?: 1f)
+                                                                    .clickable {
+                                                                        indexSelected = 2
+                                                                        barImage = url
+                                                                        byteImage = null
+                                                                    },
+                                                                image = url
+                                                            )
                                                         }
                                                     }
                                                 }
+                                            }
 
-                                                Spacer(modifier = Modifier.width(10.dp))
+                                            Spacer(modifier = Modifier.width(10.dp))
 
-                                                Card(
-                                                    modifier = Modifier.size(width = 120.dp, height = 111.dp),
-                                                    shape = RoundedCornerShape(10.dp),
-                                                    border = BorderStroke(2.dp.takeIf { indexSelected == 3 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 3 } ?: White),
-                                                    colors = CardDefaults.cardColors(
-                                                        containerColor = ColorE4E4E4.takeIf { indexSelected == 3 } ?: White
-                                                    ),
-                                                    elevation = CardDefaults.cardElevation(2.dp)
-                                                ) {
-                                                    if (searchState.data?.items == null) {
-                                                        Column(
-                                                            modifier = Modifier.fillMaxSize(),
-                                                            horizontalAlignment = Alignment.CenterHorizontally,
-                                                            verticalArrangement = Arrangement.Center
-                                                        ) {
-                                                            Image(
-                                                                modifier = Modifier.size(62.dp),
-                                                                contentDescription = null,
-                                                                painter = painterResource(resource = Res.drawable.ic_gallery))
+                                            Card(
+                                                modifier = Modifier.size(width = 120.dp, height = 111.dp),
+                                                shape = RoundedCornerShape(10.dp),
+                                                border = BorderStroke(2.dp.takeIf { indexSelected == 3 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 3 } ?: White),
+                                                colors = CardDefaults.cardColors(
+                                                    containerColor = ColorE4E4E4.takeIf { indexSelected == 3 } ?: White
+                                                ),
+                                                elevation = CardDefaults.cardElevation(2.dp)
+                                            ) {
+                                                if (searchState.data?.items == null) {
+                                                    Column(
+                                                        modifier = Modifier.fillMaxSize(),
+                                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                                        verticalArrangement = Arrangement.Center
+                                                    ) {
+                                                        Image(
+                                                            modifier = Modifier.size(62.dp),
+                                                            contentDescription = null,
+                                                            painter = painterResource(resource = Res.drawable.ic_gallery))
 
-                                                            Text(text = "Empty")
-                                                        }
-                                                    } else {
-                                                        searchState.data?.items?.let {
-                                                            it[2].image?.thumbnailLink?.let { url ->
-                                                                ImageLoader(
-                                                                    modifier = Modifier
-                                                                        .alpha(0.5f.takeIf { indexSelected == 3 } ?: 1f)
-                                                                        .clickable {
-                                                                            indexSelected = 3
-                                                                            barImage = url
-                                                                            byteImage = null
-                                                                        },
-                                                                    image = url
-                                                                )
-                                                            }
+                                                        Text(text = "Empty")
+                                                    }
+                                                } else {
+                                                    searchState.data?.items?.let {
+                                                        it[2].image?.thumbnailLink?.let { url ->
+                                                            ImageLoader(
+                                                                modifier = Modifier
+                                                                    .alpha(0.5f.takeIf { indexSelected == 3 } ?: 1f)
+                                                                    .clickable {
+                                                                        indexSelected = 3
+                                                                        barImage = url
+                                                                        byteImage = null
+                                                                    },
+                                                                image = url
+                                                            )
                                                         }
                                                     }
                                                 }
