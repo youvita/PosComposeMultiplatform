@@ -88,7 +88,6 @@ class MainScreen: Screen, KoinComponent {
             controller.providePermission(Permission.BLUETOOTH_SCAN)
             controller.providePermission(Permission.LOCATION)
         }
-        println(">>>>>> ${bluetoothState.devices.values.toList()}")
 
         val allNavModels = arrayOf(
             NavModel(
@@ -101,13 +100,13 @@ class MainScreen: Screen, KoinComponent {
                 icon = painterResource(resource = Res.drawable.ic_history_menu),
                 label = "History"
             ),
-//            NavModel(
-//                id = 2,
-//                icon = painterResource(resource = Res.drawable.ic_setting_menu),
-//                label = "Settings"
-//            ),
             NavModel(
                 id = 2,
+                icon = painterResource(resource = Res.drawable.ic_setting_menu),
+                label = "Settings"
+            ),
+            NavModel(
+                id = 3,
                 icon = painterResource(resource = Res.drawable.ic_super_mario_menu),
                 label = "Mario"
             ),
@@ -225,12 +224,12 @@ class MainScreen: Screen, KoinComponent {
                 }
 
                 2 -> {
-                    TabMarioScreen()
+                    //TODO Settings
                 }
 
-//                3 -> {
-//
-//                }
+                3 -> {
+                    TabMarioScreen()
+                }
             }
         }
     }

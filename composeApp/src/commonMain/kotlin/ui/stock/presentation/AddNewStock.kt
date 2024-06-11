@@ -68,7 +68,10 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.preat.peekaboo.image.picker.SelectionMode
@@ -128,6 +131,7 @@ fun AddNewStock(
     var barImage by remember { mutableStateOf("") }
     var name by remember { mutableStateOf(productItem?.name) }
     var price by remember { mutableStateOf(productItem?.price) }
+    var qty by remember { mutableStateOf(productItem?.qty) }
     var discount by remember { mutableStateOf(productItem?.discount) }
     var category by remember { mutableStateOf("") }
 //    var stockBox by remember { mutableStateOf(Long.MIN_VALUE) }
@@ -223,7 +227,17 @@ fun AddNewStock(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.Bottom
                             ) {
-                                Text("Upload Product Image *")
+                                Text(text = buildAnnotatedString {
+                                    append("Upload Product Image")
+                                    withStyle(
+                                        SpanStyle(
+                                            color = Color.Red
+                                        )
+                                    ) {
+                                        append(" ")
+                                        append("*")
+                                    }
+                                })
 
                                 PrimaryButton(
                                     text = "Save Product".takeIf { isNew } ?: "Update Product",
@@ -236,7 +250,7 @@ fun AddNewStock(
                                                 name = name,
                                                 image = byteImage,
                                                 imageUrl = barImage,
-                                                qty = "0",
+                                                qty = qty,
                                                 price = price,
                                                 discount = discount
                                             )
@@ -248,7 +262,7 @@ fun AddNewStock(
                                                 name = name,
                                                 image = byteImage,
                                                 imageUrl = barImage,
-                                                qty = "0",
+                                                qty = qty,
                                                 price = price,
                                                 discount = discount
                                             )
@@ -275,7 +289,17 @@ fun AddNewStock(
                                         modifier = Modifier.padding(20.dp),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
-                                        Text(text = "※ Choose from library")
+                                        Text(text = buildAnnotatedString {
+                                            withStyle(
+                                                SpanStyle(
+                                                    color = PrimaryColor
+                                                )
+                                            ) {
+                                                append("※")
+                                                append(" ")
+                                            }
+                                            append("Choose from library")
+                                        })
 
                                         Spacer(modifier = Modifier.height(17.dp))
 
@@ -297,7 +321,7 @@ fun AddNewStock(
                                                 byteImage?.let {
                                                     Image(
                                                         modifier = Modifier
-                                                            .size(62.dp)
+                                                            .fillMaxSize()
                                                             .alpha(0.5f.takeIf { indexSelected == 0 } ?: 1f),
                                                         bitmap = it.toImageBitmap(),
                                                         contentDescription = null,
@@ -338,7 +362,17 @@ fun AddNewStock(
                                         Column(
                                             modifier = Modifier.fillMaxWidth().weight(1f)
                                         ) {
-                                            Text(text = "※ Scan barcode product of image for fast")
+                                            Text(text = buildAnnotatedString {
+                                                withStyle(
+                                                    SpanStyle(
+                                                        color = PrimaryColor
+                                                    )
+                                                ) {
+                                                    append("※")
+                                                    append(" ")
+                                                }
+                                                append("Scan barcode product of image for fast")
+                                            })
 
                                             Spacer(modifier = Modifier.height(17.dp))
 
@@ -537,7 +571,17 @@ fun AddNewStock(
                             // Category
                             Column {
 
-                                Text(text = "Select Product Category *")
+                                Text(text = buildAnnotatedString {
+                                    append("Select Product Category")
+                                    withStyle(
+                                        SpanStyle(
+                                            color = Color.Red
+                                        )
+                                    ) {
+                                        append(" ")
+                                        append("*")
+                                    }
+                                })
 
                                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -607,7 +651,17 @@ fun AddNewStock(
                                 modifier = Modifier.fillMaxWidth(0.7f)
                             ) {
                                 Column {
-                                    Text(text = "Product SKU *")
+                                    Text(text = buildAnnotatedString {
+                                        append("Product SKU")
+                                        withStyle(
+                                            SpanStyle(
+                                                color = Color.Red
+                                            )
+                                        ) {
+                                            append(" ")
+                                            append("*")
+                                        }
+                                    })
 
                                     Spacer(modifier = Modifier.height(5.dp))
 
@@ -631,7 +685,17 @@ fun AddNewStock(
                                     Column(
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Text(text = "Product Name")
+                                        Text(text = buildAnnotatedString {
+                                            append("Product Name")
+                                            withStyle(
+                                                SpanStyle(
+                                                    color = Color.Red
+                                                )
+                                            ) {
+                                                append(" ")
+                                                append("*")
+                                            }
+                                        })
 
                                         Spacer(modifier = Modifier.height(5.dp))
 
@@ -650,7 +714,7 @@ fun AddNewStock(
                                     Column(
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Text(text = "Price")
+                                        Text(text = "Price($)")
 
                                         Spacer(modifier = Modifier.height(5.dp))
 
@@ -679,10 +743,10 @@ fun AddNewStock(
 
                                         TextInputDefault(
                                             modifier = Modifier.fillMaxWidth(),
-                                            text = discount.orEmpty(),
+                                            text = qty.orEmpty(),
                                             placeholder = "Enter Quality",
                                             onValueChange = {
-                                                discount = it
+                                                qty = it
                                             },
                                             keyboardType = KeyboardType.Number
                                         )
