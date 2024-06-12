@@ -33,13 +33,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -56,6 +54,8 @@ import androidx.compose.ui.unit.sp
 import com.preat.peekaboo.image.picker.SelectionMode
 import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
 import com.preat.peekaboo.image.picker.toImageBitmap
+import core.app.convertToObject
+import core.app.convertToString
 import core.theme.Black
 import core.theme.ColorD9D9D9
 import core.theme.ColorDDE3F9
@@ -65,6 +65,7 @@ import core.theme.Shapes
 import core.theme.White
 import core.theme.fontSizeTitle
 import core.theme.labelTextStyle
+import core.utils.Constants
 import core.utils.LabelInputNormal
 import core.utils.LabelInputRequire
 import core.utils.LabelSelectInput
@@ -76,10 +77,17 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_upload
+import ui.settings.domain.model.ExchangeRateData
+import ui.settings.domain.model.InvoiceData
+import ui.settings.domain.model.ShopData
+import ui.settings.domain.model.VatData
+import ui.settings.presentation.SettingsEvent
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
 @Composable
-fun Preference() {
+fun Preference(
+    onEvent: (SettingsEvent) -> Unit = {}
+) {
 
     var preview by rememberSaveable { mutableStateOf(false) }
     var required by rememberSaveable { mutableStateOf(false) }
@@ -227,6 +235,53 @@ fun Preference() {
 
             OutlinedButton(
                 onClick = {
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.SHOP_HEADER,
+                        preferItem = convertToString(
+                            ShopData(
+                                isUsed = hasBillHeader,
+                                shopLogo = shopLogo.toImageBitmap(),
+                                shopNameKhmer = shopNameKH,
+                                shopNameEnglish = shopNameEN,
+                                shopAddress = shopAddress,
+                                shopTaxId = shopTaxId
+                            )
+                        )
+                    ))
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.INVOICE_NO,
+                        preferItem = convertToString(
+                            InvoiceData(
+                                isUsed = hasInvoiceNo,
+                                dateFormat = indexIssueDateFormat,
+                                countingSequence = indexCountingSequence
+                            )
+                        )
+                    ))
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.EXCHANGE_RATE,
+                        preferItem = convertToString(
+                            ExchangeRateData(
+                                isUsed = hasExchangeRate,
+                                rateKHR = rateKHR
+                            )
+                        )
+                    ))
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.VAT,
+                        preferItem = convertToString(
+                            VatData(
+                                isUsed = hasVat,
+                                taxValue = vat
+                            )
+                        )
+                    ))
+
+
 //                    if(!savable()){
 //                        required = true
 //                        return@OutlinedButton

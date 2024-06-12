@@ -143,3 +143,15 @@ CREATE TABLE ProductOrderEntity (
 insertProductOrder:
 INSERT INTO ProductOrderEntity(product_id,order_id, name, image,qty, price, discount)
 VALUES(?,?, ?, ?,?, ?, ?);
+
+
+CREATE TABLE PreferenceEntity (
+    prefer_id INTEGER NOT NULL PRIMARY KEY,
+    prefer_item TEXT
+);
+
+insertPreference:
+INSERT INTO PreferenceEntity(prefer_id, prefer_item) VALUES(?,?);
+
+updatePreference:
+UPDATE PreferenceEntity SET prefer_item = ? WHERE prefer_id = ?;

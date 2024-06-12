@@ -3,7 +3,6 @@ package main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -35,8 +34,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import main.component.NavigationTabScaffold
 import main.model.NavModel
-import mario.presentation.GraphMarioScreen
-import mario.presentation.ScreenMario
 import mario.presentation.TabMarioScreen
 import menu.presentation.OrderViewModel
 import menu.presentation.OrderScreen
@@ -44,19 +41,16 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
-import org.koin.core.component.getScopeId
-import org.koin.core.component.getScopeName
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_background
 import poscomposemultiplatform.composeapp.generated.resources.ic_history_menu
-import poscomposemultiplatform.composeapp.generated.resources.ic_notification_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_order_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_setting_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_super_mario_menu
 import receipt.BillRowItem
 import receipt.CaptureItem
 import setting.domain.model.ItemModel
-import ui.settings.SettingsScreen
+import ui.settings.presentation.SettingsScreen
 import ui.stock.presentation.InventoryViewModel
 import ui.stock.presentation.SearchEngineViewModel
 

@@ -1,4 +1,4 @@
-package ui.settings
+package ui.settings.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,17 +34,19 @@ import core.theme.White
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_background
 import ui.settings.components.Preference
 import ui.settings.components.SettingSideBar
 import ui.settings.components.SettingSideBarEvent
+import ui.stock.presentation.SearchEngineViewModel
 
 class SettingsScreen: Screen, KoinComponent {
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun Content() {
-
+        val settingViewModel = get<SettingsViewModel>()
         var eventSideBar by rememberSaveable { mutableIntStateOf(0) }
 
         Scaffold {
@@ -116,7 +118,9 @@ class SettingsScreen: Screen, KoinComponent {
                             Box(modifier = Modifier.padding(horizontal = 20.dp)){
                                 when(eventSideBar){
                                     0 ->{
-                                        Preference()
+                                        Preference(
+                                            onEvent = settingViewModel::onEvent
+                                        )
                                     }
 
                                     1 ->{
