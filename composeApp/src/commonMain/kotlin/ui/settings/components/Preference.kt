@@ -29,11 +29,13 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +58,7 @@ import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
 import com.preat.peekaboo.image.picker.toImageBitmap
 import core.app.convertToObject
 import core.app.convertToString
+import core.data.Status
 import core.theme.Black
 import core.theme.ColorD9D9D9
 import core.theme.ColorDDE3F9
@@ -79,13 +82,21 @@ import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_upload
 import ui.settings.domain.model.ExchangeRateData
 import ui.settings.domain.model.InvoiceData
+import ui.settings.domain.model.InvoiceFooterData
+import ui.settings.domain.model.InvoiceSealData
+import ui.settings.domain.model.PaymentData
+import ui.settings.domain.model.QueueData
+import ui.settings.domain.model.SavePointData
 import ui.settings.domain.model.ShopData
 import ui.settings.domain.model.VatData
+import ui.settings.domain.model.WifiData
+import ui.settings.presentation.PreferState
 import ui.settings.presentation.SettingsEvent
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
 @Composable
 fun Preference(
+    state: PreferState? = null,
     onEvent: (SettingsEvent) -> Unit = {}
 ) {
 
@@ -125,6 +136,105 @@ fun Preference(
     var wifiPassword by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
     var indexQueueNumber by rememberSaveable { mutableIntStateOf(0) }
+
+
+    val isLoading by rememberUpdatedState(newValue = state?.isLoading)
+    LaunchedEffect(isLoading) {
+        if (state?.status == Status.SUCCESS) {
+
+            // shop header
+            val shopPrefer = state.data?.find { it.preferId == Constants.PreferenceType.SHOP_HEADER }
+            shopPrefer?.preferItem?.let { prefer ->
+                val shop = convertToObject<ShopData>(prefer)
+                shop.shopLogo?.let {
+                    shopLogo = it
+                }
+                hasBillHeader = shop.isUsed
+                shopNameKH = shop.shopNameKhmer.orEmpty()
+                shopNameEN = shop.shopNameEnglish.orEmpty()
+                shopAddress = shop.shopAddress.orEmpty()
+                shopTaxId = shop.shopTaxId.orEmpty()
+            }
+
+            // invoice no
+            val invoicePrefer = state.data?.find { it.preferId == Constants.PreferenceType.INVOICE_NO }
+            invoicePrefer?.preferItem?.let { prefer ->
+                val invoice = convertToObject<InvoiceData>(prefer)
+                hasInvoiceNo = invoice.isUsed
+                indexIssueDateFormat = invoice.dateFormat ?: 0
+                indexCountingSequence = invoice.countingSequence ?: 0
+            }
+
+            // exchange rate
+            val exchangeRatePrefer = state.data?.find { it.preferId == Constants.PreferenceType.EXCHANGE_RATE }
+            exchangeRatePrefer?.preferItem?.let { prefer ->
+                val exchangeRate = convertToObject<ExchangeRateData>(prefer)
+                hasExchangeRate = exchangeRate.isUsed
+                rateKHR = exchangeRate.rateKHR ?: 0.0
+            }
+
+            // taxation
+            val vatPrefer = state.data?.find { it.preferId == Constants.PreferenceType.VAT }
+            vatPrefer?.preferItem?.let { prefer ->
+                val vatData = convertToObject<VatData>(prefer)
+                hasVat = vatData.isUsed
+                vat = vatData.taxValue ?: 0
+            }
+
+            // customer save point
+            val savePointPrefer = state.data?.find { it.preferId == Constants.PreferenceType.SAVE_POINT }
+            savePointPrefer?.preferItem?.let { prefer ->
+                val savePoint = convertToObject<SavePointData>(prefer)
+                hasSavePoint = savePoint.isUsed
+                amtUsdExchange = savePoint.amtUsdExchange ?: 0.0
+            }
+
+            // payment method
+            val paymentPrefer = state.data?.find { it.preferId == Constants.PreferenceType.PAYMENT_METHOD }
+            paymentPrefer?.preferItem?.let { prefer ->
+                val payment = convertToObject<PaymentData>(prefer)
+                hasPaymentMethod = payment.isUsed
+                payment.imageKHQR?.let {
+                    imageKHQR = it
+                }
+            }
+
+            // company seal invoice
+            val sealPrefer = state.data?.find { it.preferId == Constants.PreferenceType.INVOICE_SEAL }
+            sealPrefer?.preferItem?.let { prefer ->
+                val seal = convertToObject<InvoiceSealData>(prefer)
+                hasCompanySeal = seal.isUsed
+                seal.sellerSignature?.let {
+                    signatureImage = it
+                }
+            }
+
+            // wifi
+            val wifiPrefer = state.data?.find { it.preferId == Constants.PreferenceType.WIFI }
+            wifiPrefer?.preferItem?.let { prefer ->
+                val wifi = convertToObject<WifiData>(prefer)
+                hasWifi = wifi.isUsed
+                wifiPassword = wifi.password.orEmpty()
+            }
+
+            // queue number
+            val queuePrefer = state.data?.find { it.preferId == Constants.PreferenceType.QUEUE }
+            queuePrefer?.preferItem?.let { prefer ->
+                val queue = convertToObject<QueueData>(prefer)
+                hasQueueNumber = queue.isUsed
+                indexQueueNumber = queue.queueNumber ?: 0
+            }
+
+            // invoice footer
+            val footerPrefer = state.data?.find { it.preferId == Constants.PreferenceType.FOOTER }
+            footerPrefer?.preferItem?.let { prefer ->
+                val footer = convertToObject<InvoiceFooterData>(prefer)
+                hasInvoiceFooter = footer.isUsed
+                note = footer.note.orEmpty()
+            }
+
+        }
+    }
 
 
     val scope = rememberCoroutineScope()
@@ -173,65 +283,65 @@ fun Preference(
                 )
             )
 
-            OutlinedButton(
-                onClick = {
-                    preview = !preview
-//                    settingEvent(SettingEvent.PreviewSettingEvent(
-//                        PreferenceModel(
-//                            hasBillHeader = hasBillHeader,
-//                            shopLogo = shopLogo,
-//                            shopNameKH = shopNameKH,
-//                            shopNameEN = shopNameEN,
-//                            shopAddress = shopAddress,
-//                            hasInvoiceNo = hasInvoiceNo,
-//                            indexIssueDateFormat = indexIssueDateFormat,
-//                            indexCountingSequence = indexCountingSequence,
-//                            hasExchangeRate = hasExchangeRate,
-//                            hasStartEndTime = hasStartEndTime,
-//                            hasTableNo = hasTableNo,
-//                            hasCustomer = hasCustomer,
-//                            hasVat = hasVat,
-//                            hasSavePoint = hasSavePoint,
-//                            hasPaymentMethod = hasPaymentMethod,
-//                            rateKHR = rateKHR,
-//                            vat = vat,
-//                            amtUsdExchange = amtUsdExchange,
-//                            point = point,
-//                            imageKHQR = imageKHQR,
-//                            bankName = bankName,
-//                            accountNo = accountNo,
-//                            accountName = accountName,
-//                            signatureImage = signatureImage,
-//                            hasCompanySeal = hasCompanySeal,
-//                            hasWifiPassword = hasWifi,
-//                            wifiPassword = wifiPassword,
-//                            hasQueueNumber = hasQueueNumber,
-//                            indexQueueNumber = indexQueueNumber,
-//                            hasInvoiceFooter = hasInvoiceFooter,
-//                            note = note
-//                        )
-//                    ))
-                },
-                colors = ButtonDefaults.elevatedButtonColors(
-                    containerColor = ColorDDE3F9,
-                    contentColor = PrimaryColor
-                ),
-                border = null,
-                shape = Shapes.medium,
-                contentPadding = PaddingValues(10.dp),
-                modifier = Modifier
-                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-            )  {
-                Text(
-                    text = "Preview",
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal
-                    )
-                )
-            }
-
-            Spacer(modifier = Modifier.width(16.dp))
+//            OutlinedButton(
+//                onClick = {
+//                    preview = !preview
+////                    settingEvent(SettingEvent.PreviewSettingEvent(
+////                        PreferenceModel(
+////                            hasBillHeader = hasBillHeader,
+////                            shopLogo = shopLogo,
+////                            shopNameKH = shopNameKH,
+////                            shopNameEN = shopNameEN,
+////                            shopAddress = shopAddress,
+////                            hasInvoiceNo = hasInvoiceNo,
+////                            indexIssueDateFormat = indexIssueDateFormat,
+////                            indexCountingSequence = indexCountingSequence,
+////                            hasExchangeRate = hasExchangeRate,
+////                            hasStartEndTime = hasStartEndTime,
+////                            hasTableNo = hasTableNo,
+////                            hasCustomer = hasCustomer,
+////                            hasVat = hasVat,
+////                            hasSavePoint = hasSavePoint,
+////                            hasPaymentMethod = hasPaymentMethod,
+////                            rateKHR = rateKHR,
+////                            vat = vat,
+////                            amtUsdExchange = amtUsdExchange,
+////                            point = point,
+////                            imageKHQR = imageKHQR,
+////                            bankName = bankName,
+////                            accountNo = accountNo,
+////                            accountName = accountName,
+////                            signatureImage = signatureImage,
+////                            hasCompanySeal = hasCompanySeal,
+////                            hasWifiPassword = hasWifi,
+////                            wifiPassword = wifiPassword,
+////                            hasQueueNumber = hasQueueNumber,
+////                            indexQueueNumber = indexQueueNumber,
+////                            hasInvoiceFooter = hasInvoiceFooter,
+////                            note = note
+////                        )
+////                    ))
+//                },
+//                colors = ButtonDefaults.elevatedButtonColors(
+//                    containerColor = ColorDDE3F9,
+//                    contentColor = PrimaryColor
+//                ),
+//                border = null,
+//                shape = Shapes.medium,
+//                contentPadding = PaddingValues(10.dp),
+//                modifier = Modifier
+//                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+//            )  {
+//                Text(
+//                    text = "Preview",
+//                    style = TextStyle(
+//                        fontSize = 14.sp,
+//                        fontWeight = FontWeight.Normal
+//                    )
+//                )
+//            }
+//
+//            Spacer(modifier = Modifier.width(16.dp))
 
             OutlinedButton(
                 onClick = {
@@ -241,7 +351,7 @@ fun Preference(
                         preferItem = convertToString(
                             ShopData(
                                 isUsed = hasBillHeader,
-                                shopLogo = shopLogo.toImageBitmap(),
+                                shopLogo = shopLogo,
                                 shopNameKhmer = shopNameKH,
                                 shopNameEnglish = shopNameEN,
                                 shopAddress = shopAddress,
@@ -281,47 +391,69 @@ fun Preference(
                         )
                     ))
 
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.SAVE_POINT,
+                        preferItem = convertToString(
+                            SavePointData(
+                                isUsed = hasSavePoint,
+                                amtUsdExchange = amtUsdExchange,
+                                point = point
+                            )
+                        )
+                    ))
 
-//                    if(!savable()){
-//                        required = true
-//                        return@OutlinedButton
-//                    }
-//
-//                    settingEvent(SettingEvent.SaveSettingEvent(
-//                        PreferenceModel(
-//                            hasBillHeader = hasBillHeader,
-//                            shopLogo = shopLogo,
-//                            shopNameKH = shopNameKH,
-//                            shopNameEN = shopNameEN,
-//                            shopAddress = shopAddress,
-//                            hasInvoiceNo = hasInvoiceNo,
-//                            indexIssueDateFormat = indexIssueDateFormat,
-//                            indexCountingSequence = indexCountingSequence,
-//                            hasExchangeRate = hasExchangeRate,
-//                            hasStartEndTime = hasStartEndTime,
-//                            hasTableNo = hasTableNo,
-//                            hasCustomer = hasCustomer,
-//                            hasVat = hasVat,
-//                            hasSavePoint = hasSavePoint,
-//                            hasPaymentMethod = hasPaymentMethod,
-//                            rateKHR = rateKHR,
-//                            vat = vat,
-//                            amtUsdExchange = amtUsdExchange,
-//                            point = point,
-//                            imageKHQR = imageKHQR,
-//                            bankName = bankName,
-//                            accountNo = accountNo,
-//                            accountName = accountName,
-//                            signatureImage = signatureImage,
-//                            hasCompanySeal = hasCompanySeal,
-//                            hasWifiPassword = hasWifi,
-//                            wifiPassword = wifiPassword,
-//                            hasQueueNumber = hasQueueNumber,
-//                            indexQueueNumber = indexQueueNumber,
-//                            hasInvoiceFooter = hasInvoiceFooter,
-//                            note = note
-//                        )
-//                    ))
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.PAYMENT_METHOD,
+                        preferItem = convertToString(
+                            PaymentData(
+                                isUsed = hasPaymentMethod,
+                                imageKHQR = imageKHQR,
+                                bankName = bankName,
+                                accountNumber = accountNo,
+                                accountName = accountName
+                            )
+                        )
+                    ))
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.INVOICE_SEAL,
+                        preferItem = convertToString(
+                            InvoiceSealData(
+                                isUsed = hasCompanySeal,
+                                sellerSignature = signatureImage
+                            )
+                        )
+                    ))
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.WIFI,
+                        preferItem = convertToString(
+                            WifiData(
+                                isUsed = hasWifi,
+                                password = wifiPassword
+                            )
+                        )
+                    ))
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.QUEUE,
+                        preferItem = convertToString(
+                            QueueData(
+                                isUsed = hasQueueNumber,
+                                queueNumber = indexQueueNumber
+                            )
+                        )
+                    ))
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.FOOTER,
+                        preferItem = convertToString(
+                            InvoiceFooterData(
+                                isUsed = hasInvoiceFooter,
+                                note = note
+                            )
+                        )
+                    ))
                 },
                 colors = ButtonDefaults.elevatedButtonColors(
                     containerColor = PrimaryColor,

@@ -151,7 +151,10 @@ CREATE TABLE PreferenceEntity (
 );
 
 insertPreference:
-INSERT INTO PreferenceEntity(prefer_id, prefer_item) VALUES(?,?);
+INSERT OR REPLACE INTO PreferenceEntity(prefer_id, prefer_item) VALUES(?,?);
 
 updatePreference:
 UPDATE PreferenceEntity SET prefer_item = ? WHERE prefer_id = ?;
+
+getPreference:
+SELECT * FROM PreferenceEntity;

@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -118,7 +119,10 @@ class SettingsScreen: Screen, KoinComponent {
                             Box(modifier = Modifier.padding(horizontal = 20.dp)){
                                 when(eventSideBar){
                                     0 ->{
+                                        settingViewModel.onEvent(SettingsEvent.GetPreference())
+
                                         Preference(
+                                            state = settingViewModel.state.value,
                                             onEvent = settingViewModel::onEvent
                                         )
                                     }

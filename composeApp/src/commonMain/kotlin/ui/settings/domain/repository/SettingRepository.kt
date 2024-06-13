@@ -7,6 +7,6 @@ import ui.settings.domain.model.PreferenceData
 interface SettingRepository {
     suspend fun updatePreference(preferenceId: Int, preferenceItem: String)
     suspend fun addPreference(preferenceId: Int, preferenceItem: String)
-    suspend fun getPreference(preferenceId: Int): Flow<Resource<List<PreferenceData>>>
+    suspend fun getPreference(): Flow<Resource<List<PreferenceData>>>
 
 }

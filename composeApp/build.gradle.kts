@@ -191,6 +191,7 @@ sqldelight {
     databases {
         create("PosDatabase") {
             packageName.set("org.topteam.pos")
+            schemaOutputDirectory = file("src/main/sqldelight/databases")
         }
     }
 }

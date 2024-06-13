@@ -4,8 +4,8 @@ import core.utils.Constants
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ExchangeRateData(
-    val referId: Int = Constants.PreferenceType.EXCHANGE_RATE,
+data class WifiData(
+    val referId: Int = Constants.PreferenceType.WIFI,
     val isUsed: Boolean = false,
-    val rateKHR: Double? = null
+    val password: String? = null,
 )

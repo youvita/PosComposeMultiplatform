@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VatData(
-    val referId: Int = Constants.ReferenceType.VAT,
+    val referId: Int = Constants.PreferenceType.VAT,
     val isUsed: Boolean = false,
     val taxValue: Int? = null,
 )
