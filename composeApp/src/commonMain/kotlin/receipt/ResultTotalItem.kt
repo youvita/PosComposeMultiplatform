@@ -13,6 +13,7 @@ import core.utils.getTextStyle
 
 @Composable
 fun ResultTotalItem(
+    isPreview: Boolean = false,
     label: String?,
     value: String?,
     labelWeight: Float,
@@ -25,14 +26,14 @@ fun ResultTotalItem(
         label?.let {
             Text(
                 modifier = Modifier.alpha(0.5f).weight(labelWeight),
-                text = it, style = getTextStyle(typography = Styles.TitleMedium),
+                text = it, style = getTextStyle(typography = Styles.TitleMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
                 textAlign = TextAlign.End
             )
         }
         value?.let {
             Text(
                 modifier = Modifier.weight(valueWeight),
-                text = it, style = getTextStyle(typography = Styles.TitleLarge),
+                text = it, style = getTextStyle(typography = Styles.TitleLarge.takeIf { !isPreview } ?: Styles.LabelSmall),
                 textAlign = TextAlign.End
             )
         }

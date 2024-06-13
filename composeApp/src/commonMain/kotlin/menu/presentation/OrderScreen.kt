@@ -22,7 +22,9 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.ripple.LocalRippleTheme
@@ -32,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -49,10 +52,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import core.app.convertToObject
 import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
+import core.utils.Constants
 import core.utils.RedRippleTheme
+import core.utils.SharePrefer
 import customer.presentation.CustomerEvent
 import customer.presentation.CustomerState
 import menu.presentation.component.utils.EmptyBox
@@ -64,7 +70,22 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
+import receipt.BillCompanySeal
+import receipt.BillCustomerForm1
+import receipt.BillCustomerForm2
+import receipt.BillFooter
+import receipt.BillHeader
+import receipt.BillHeaderItem
+import receipt.BillPayment
+import receipt.BillQueue
+import receipt.BillTotalItem
+import receipt.CaptureItem
 import setting.domain.model.ItemModel
+import ui.settings.domain.model.InvoiceFooterData
+import ui.settings.domain.model.InvoiceSealData
+import ui.settings.domain.model.PaymentData
+import ui.settings.domain.model.QueueData
+import ui.settings.domain.model.ShopData
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
     ExperimentalResourceApi::class
@@ -109,6 +130,7 @@ fun OrderScreen(
         orderEvent(OrderEvent.GetItemsEvent(0))
     }
 
+    var isPreview by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = Color.Transparent
@@ -309,7 +331,122 @@ fun OrderScreen(
                         orderEvent = orderEvent,
                         customerState = customerState,
                         customerEvent = customerEvent,
+                        onPrint = {
+                            isPreview = true
+                        }
                     )
+
+                    if (isPreview) {
+                        CaptureItem()
+
+                        Column(
+                            modifier = Modifier
+                                .verticalScroll(rememberScrollState())
+                                .fillMaxSize()
+                                .background(White)
+                                .padding(10.dp),
+                        ) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                val shopHeader = SharePrefer.getPrefer("${Constants.PreferenceType.SHOP_HEADER}")
+                                val shop = convertToObject<ShopData>(shopHeader)
+                                if (shop.isUsed) {
+                                    BillHeader(isPreview = isPreview, shop = shop)
+                                }
+                            }
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                BillCustomerForm1(isPreview)
+                            }
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                BillCustomerForm2(isPreview)
+                            }
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
+                                val rowList = listOf(
+                                    ItemModel(
+                                        name = "Caramel Frappuccino Caramel",
+                                        qty = 1,
+                                        price = 1.0,
+                                        discount = 0
+                                    )
+                                )
+                                BillHeaderItem(
+                                    isPreview = isPreview,
+                                    columnList = columnList,
+                                    rowList = rowList
+                                )
+                            }
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                val columnList = listOf(
+                                    "ទំនិញ / ចំនួន Item/Qty :",
+                                    "សរុបរង / Sub Total :",
+                                    "បញ្ចុះតម្លៃ / Discount :",
+                                    "អាករ / VAT :",
+                                    "សរុប / Total :"
+                                )
+                                val rowList = listOf("99 items / Qty 999", "22222.22 $", "99%", "10%", "234,234.00 $")
+                                val pointColumnList = listOf("Old Point :", "New Point :", "Total Current Point :")
+                                val pointRowList = listOf("999", "999", "999")
+                                BillTotalItem(
+                                    isPreview = isPreview,
+                                    columnList = columnList,
+                                    rowList = rowList,
+                                    pointColumnList = pointColumnList,
+                                    pointRowList = pointRowList
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                val paymentMethod = SharePrefer.getPrefer("${Constants.PreferenceType.PAYMENT_METHOD}")
+                                val payment = convertToObject<PaymentData>(paymentMethod)
+                                if (payment.isUsed) {
+                                    BillPayment(
+                                        isPreview
+                                    )
+                                }
+                            }
+
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                val invoiceSeal = SharePrefer.getPrefer("${Constants.PreferenceType.INVOICE_SEAL}")
+                                val seal = convertToObject<InvoiceSealData>(invoiceSeal)
+                                if (seal.isUsed) {
+                                    BillCompanySeal(
+                                        isPreview
+                                    )
+                                }
+                            }
+
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                BillQueue(
+                                    isPreview
+                                )
+                            }
+
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                BillFooter(
+                                    isPreview
+                                )
+                            }
+                        }
+
+                    }
                 }
             }
         }

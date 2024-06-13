@@ -13,6 +13,7 @@ import core.utils.getTextStyle
 
 @Composable
 fun ResultItem(
+    isPreview: Boolean = false,
     label: String?,
     value: String?,
 ) {
@@ -23,13 +24,13 @@ fun ResultItem(
         label?.let {
             Text(
                 modifier = Modifier.alpha(0.5f),
-                text = it, style = getTextStyle(typography = Styles.TitleMedium),
+                text = it, style = getTextStyle(typography = Styles.TitleMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
                 textAlign = TextAlign.Start
             )
         }
         value?.let {
             Text(
-                text = it, style = getTextStyle(typography = Styles.TitleLarge),
+                text = it, style = getTextStyle(typography = Styles.TitleLarge.takeIf { !isPreview } ?: Styles.LabelSmall),
                 textAlign = TextAlign.End
             )
         }

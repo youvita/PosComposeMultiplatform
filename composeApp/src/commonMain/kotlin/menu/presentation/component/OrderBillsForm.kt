@@ -45,13 +45,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import core.app.convertToObject
 import menu.presentation.component.utils.DialogCustomer
 import core.theme.ColorD9D9D9
 import core.theme.ColorDDE3F9
 import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
+import core.utils.Constants
 import core.utils.DottedShape
+import core.utils.SharePrefer
 import core.utils.dollar
 import customer.domain.model.CustomerModel
 import customer.presentation.CustomerEvent
@@ -65,7 +68,9 @@ import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_cash
 import poscomposemultiplatform.composeapp.generated.resources.ic_qr_payment
+import receipt.CaptureItem
 import setting.domain.model.ItemModel
+import ui.settings.domain.model.ShopData
 
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -74,7 +79,8 @@ fun OrderBillsForm(
     orderState: OrderState? = null,
     customerState: CustomerState? = null,
     customerEvent: (CustomerEvent) -> Unit = {},
-    orderEvent: (OrderEvent) -> Unit = {}
+    orderEvent: (OrderEvent) -> Unit = {},
+    onPrint: () -> Unit = {}
 ){
     var list by rememberSaveable { mutableStateOf<List<ItemModel>>(emptyList()) }
     var selectedCustomer by remember { mutableStateOf(CustomerModel()) }
@@ -459,13 +465,12 @@ fun OrderBillsForm(
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 OutlinedButton(
-                    enabled = list.isNotEmpty() && selectedCustomer.customer_id != null,
                     onClick = {
-                        if(!orderState?.orders.isNullOrEmpty()){
-                            orderEvent(OrderEvent.PreOrderEvent(selectedCustomer))
-                            selectedCustomer = CustomerModel()
-                        }
-
+//                        if(!orderState?.orders.isNullOrEmpty()){
+//                            orderEvent(OrderEvent.PreOrderEvent(selectedCustomer))
+//                            selectedCustomer = CustomerModel()
+//                        }
+                        onPrint()
                     },
                     colors = ButtonDefaults.elevatedButtonColors(
                         containerColor = ColorDDE3F9,

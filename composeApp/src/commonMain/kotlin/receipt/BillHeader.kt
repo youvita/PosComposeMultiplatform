@@ -19,17 +19,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.preat.peekaboo.image.picker.toImageBitmap
+import core.app.convertToObject
 import core.theme.Styles
+import core.utils.Constants
+import core.utils.SharePrefer
 import core.utils.getTextStyle
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_coffee
+import ui.settings.domain.model.ShopData
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun BillHeader(
-
+    shop: ShopData? = null,
+    isPreview: Boolean = false,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -40,13 +45,15 @@ fun BillHeader(
                 .padding(top = 10.dp)
                 .size(90.dp)
         ) {
-            Image(
-                modifier = Modifier
-                    .clip(shape = RoundedCornerShape(8)),
-                painter = painterResource(resource = Res.drawable.ic_coffee),
-                contentScale = ContentScale.Fit,
-                contentDescription = null,
-            )
+            shop?.shopLogo?.let {
+                Image(
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(8)),
+                    bitmap = it.toImageBitmap(),
+                    contentScale = ContentScale.Fit,
+                    contentDescription = null,
+                )
+            }
         }
 
         Column(
@@ -54,28 +61,39 @@ fun BillHeader(
                 .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(
-                text = "ក្រុមហ៊ុន", style = getTextStyle(typography = Styles.HeaderLarge),
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "Company", style = getTextStyle(typography = Styles.HeaderLarge),
-                textAlign = TextAlign.Center
-            )
+            shop?.shopNameKhmer?.let {
+                Text(
+                    text = it, style = getTextStyle(typography = Styles.HeaderLarge.takeIf { !isPreview } ?: Styles.LabelSmall),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            shop?.shopNameEnglish?.let {
+                Text(
+                    text = it, style = getTextStyle(typography = Styles.HeaderLarge.takeIf { !isPreview } ?: Styles.LabelSmall),
+                    textAlign = TextAlign.Center
+                )
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = "VAT TIN: E008-15000037167", style = getTextStyle(typography = Styles.TitleMedium),
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text ="#120, 93 Street, Sen Sok, Phnom Penh, Cambodia",
-                style = getTextStyle(typography = Styles.TitleMedium),
-                modifier = Modifier.padding(horizontal = 5.dp),
-                textAlign = TextAlign.Center
-            )
 
+            shop?.shopTaxId?.let {
+                Text(
+                    text = "VAT TIN: $it", style = getTextStyle(typography = Styles.TitleMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            shop?.shopAddress?.let {
+                Text(
+                    text = it,
+                    style = getTextStyle(typography = Styles.TitleMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
+                    modifier = Modifier.padding(horizontal = 5.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 

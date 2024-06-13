@@ -25,7 +25,9 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_qr_code
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun BillPayment() {
+fun BillPayment(
+    isPreview: Boolean = false,
+) {
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -38,19 +40,19 @@ fun BillPayment() {
                 Text(
                     modifier = Modifier.alpha(0.5f),
                     text = "គណនីសំរាប់ទូទាត់\n" + "Payment Method :",
-                    style = getTextStyle(typography = Styles.HeaderMedium),
+                    style = getTextStyle(typography = Styles.HeaderMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "ABA Bank ", style = getTextStyle(typography = Styles.HeaderLarge)
+                    text = "ABA Bank ", style = getTextStyle(typography = Styles.HeaderLarge.takeIf { !isPreview } ?: Styles.LabelSmall)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "TEST TEST & TEST TEST", style = getTextStyle(typography = Styles.HeaderLarge)
+                    text = "TEST TEST & TEST TEST", style = getTextStyle(typography = Styles.HeaderLarge.takeIf { !isPreview } ?: Styles.LabelSmall)
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "000 234 234", style = getTextStyle(typography = Styles.HeaderLarge)
+                    text = "000 234 234", style = getTextStyle(typography = Styles.HeaderLarge.takeIf { !isPreview } ?: Styles.LabelSmall)
                 )
 
             }
@@ -60,7 +62,7 @@ fun BillPayment() {
             Image(
                 painter = painterResource(resource = Res.drawable.ic_qr_code),
                 contentDescription = "Image",
-                modifier = Modifier.size(250.dp)
+                modifier = Modifier.size(250.dp.takeIf { !isPreview } ?: 150.dp)
             )
         }
     }

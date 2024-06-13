@@ -15,11 +15,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import core.app.convertToObject
+import core.utils.Constants
 import core.utils.DashedDivider
+import core.utils.SharePrefer
 import core.utils.calculateWeight
+import ui.settings.domain.model.SavePointData
+import ui.settings.domain.model.ShopData
 
 @Composable
 fun BillTotalItem(
+    isPreview: Boolean = false,
     columnList: List<String> = arrayListOf(),
     rowList: List<String> = arrayListOf(),
     pointColumnList: List<String> = arrayListOf(),
@@ -51,6 +57,10 @@ fun BillTotalItem(
     val rowSorted = rowWeightList.sortedByDescending { it }
     rowWeight = calculateWeight(rowSorted.first()).takeIf { rowWeight < calculateWeight(rowSorted.first()) } ?: rowWeight
 
+
+    val savePoint = SharePrefer.getPrefer("${Constants.PreferenceType.SAVE_POINT}")
+    val point = convertToObject<SavePointData>(savePoint)
+
     Column(
         modifier = Modifier.size(width = 380.dp, height = Dp.Infinity)
     ) {
@@ -58,45 +68,40 @@ fun BillTotalItem(
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp), color = Color.Black, thickness = 2.dp)
+            .padding(horizontal = 2.dp),
+            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
         Column(modifier = Modifier) {
             columnList.forEachIndexed { index, column ->
-                ResultTotalItem(label = column, value = rowList[index], labelWeight = columnWeight, valueWeight = rowWeight)
+                ResultTotalItem(label = column, value = rowList[index], labelWeight = columnWeight, valueWeight = rowWeight, isPreview = isPreview)
             }
         }
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp), color = Color.Black, thickness = 2.dp)
+            .padding(horizontal = 2.dp),
+            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
-//        Row(
-//            modifier = Modifier.fillMaxWidth(),
-//            verticalAlignment = Alignment.Top
-//        ) {
-//            Column {
-//                Text(
-//                    modifier = Modifier.alpha(0.5f),
-//                    text = "អតិថិជន / Customer :", style = getTextStyle(context = context, typography = Styles.TitleMedium),
-//                    textAlign = TextAlign.End
-//                )
-//                Text(
-//                    modifier = Modifier.alpha(0.5f),
-//                    text = "093 234 234", style = getTextStyle(context = context, typography = Styles.TitleMedium),
-//                    textAlign = TextAlign.End
-//                )
-//            }
+        if (point.isUsed) {
             Column(modifier = Modifier) {
                 pointColumnList.forEachIndexed { index, column ->
-                    ResultTotalItem(label = column, value = pointRowList[index], labelWeight = columnWeight, valueWeight = rowWeight)
+                    ResultTotalItem(
+                        label = column,
+                        value = pointRowList[index],
+                        labelWeight = columnWeight,
+                        valueWeight = rowWeight,
+                        isPreview = isPreview
+                    )
                 }
             }
-//        }
 
-        DashedDivider(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 2.dp), color = Color.Black, thickness = 2.dp)
+            DashedDivider(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 2.dp),
+                color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
-        Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(5.dp))
+        }
+
     }
 }

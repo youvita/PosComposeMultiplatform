@@ -25,6 +25,7 @@ import setting.domain.model.ItemModel
 
 @Composable
 fun BillHeaderItem(
+    isPreview: Boolean = false,
     columnList: List<String> = arrayListOf(),
     rowList: List<ItemModel> = arrayListOf()
 ) {
@@ -52,7 +53,8 @@ fun BillHeaderItem(
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp), color = Color.Black, thickness = 2.dp)
+            .padding(horizontal = 2.dp),
+            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
         Spacer(modifier = Modifier.height(5.dp))
 
@@ -63,7 +65,7 @@ fun BillHeaderItem(
                         .alpha(0.5f)
                         .weight(1.5f.takeIf { index == 0 } ?: columnWeight[index]),
                     text = column,
-                    style = getTextStyle(typography = Styles.BodyMedium),
+                    style = getTextStyle(typography = Styles.BodyMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
                     textAlign = TextAlign.End.takeIf { index == columnList.size - 1 }
                 )
                 if (index != columnHeaderList1.size - 1) Spacer(modifier = Modifier.width(10.dp))
@@ -77,7 +79,7 @@ fun BillHeaderItem(
                         .alpha(0.5f)
                         .weight(1.5f.takeIf { index == 0 } ?: columnWeight[index]),
                     text = column,
-                    style = getTextStyle(typography = Styles.BodyMedium),
+                    style = getTextStyle(typography = Styles.BodyMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
                     textAlign = TextAlign.End.takeIf { index == columnList.size - 1 }
                 )
                 if (index != columnList.size - 1) Spacer(modifier = Modifier.width(10.dp))
@@ -88,7 +90,8 @@ fun BillHeaderItem(
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp), color = Color.Black, thickness = 2.dp)
+            .padding(horizontal = 2.dp),
+            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
         Spacer(modifier = Modifier.height(5.dp))
     }

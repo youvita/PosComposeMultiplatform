@@ -15,39 +15,51 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import core.app.convertToObject
 import core.theme.Styles
+import core.utils.Constants
 import core.utils.DashedDivider
+import core.utils.SharePrefer
 import core.utils.getTextStyle
+import ui.settings.domain.model.InvoiceFooterData
 
 @Composable
-fun BillFooter() {
+fun BillFooter(
+    isPreview: Boolean = false
+) {
+    val invoiceFooter = SharePrefer.getPrefer("${Constants.PreferenceType.FOOTER}")
+    val footer = convertToObject<InvoiceFooterData>(invoiceFooter)
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        Text(
-            modifier = Modifier,
-            text = "VAT INCLUDED\nThank you, Please come again!\nPlease have a good day.",
-            style = getTextStyle(typography = Styles.HeaderLarge),
-            textAlign = TextAlign.Center
-        )
+        if (footer.isUsed) {
+            footer.note?.let {
+                Text(
+                    modifier = Modifier,
+                    text = it,
+                    style = getTextStyle(typography = Styles.HeaderLarge.takeIf { !isPreview }
+                        ?: Styles.LabelSmall),
+                    textAlign = TextAlign.Center
+                )
+            }
 
-        Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
-        DashedDivider(
-            modifier = Modifier
+            DashedDivider(modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 2.dp), color = Color.Black, thickness = 2.dp
-        )
+                .padding(horizontal = 2.dp),
+                color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
-        Spacer(modifier = Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(5.dp))
+        }
 
         Text(
             modifier = Modifier.alpha(0.5f),
             text = "handmade by love from TOP.ExD Team",
-            style = getTextStyle(typography = Styles.HeaderMedium),
+            style = getTextStyle(typography = Styles.HeaderMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
             textAlign = TextAlign.Center
         )
 
