@@ -19,9 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -34,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +57,7 @@ import core.utils.RedRippleTheme
 import core.utils.SharePrefer
 import customer.presentation.CustomerEvent
 import customer.presentation.CustomerState
+import getPlatform
 import menu.presentation.component.utils.EmptyBox
 import menu.domain.model.MenuModel
 import menu.presentation.component.ItemView
@@ -78,14 +75,18 @@ import receipt.BillHeader
 import receipt.BillHeaderItem
 import receipt.BillPayment
 import receipt.BillQueue
+import receipt.BillRowItem
 import receipt.BillTotalItem
-import receipt.CaptureItem
 import setting.domain.model.ItemModel
+import ui.settings.domain.model.ExchangeRateData
+import ui.settings.domain.model.InvoiceData
 import ui.settings.domain.model.InvoiceFooterData
 import ui.settings.domain.model.InvoiceSealData
 import ui.settings.domain.model.PaymentData
 import ui.settings.domain.model.QueueData
+import ui.settings.domain.model.SavePointData
 import ui.settings.domain.model.ShopData
+import ui.settings.domain.model.WifiData
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
     ExperimentalResourceApi::class
@@ -337,28 +338,226 @@ fun OrderScreen(
                     )
 
                     if (isPreview) {
-                        CaptureItem()
+                        val platform = getPlatform()
+                        var shopData = ShopData()
+                        var invoiceData = InvoiceData()
+                        var exchangeData = ExchangeRateData()
+                        var pointData = SavePointData()
+                        var paymentData = PaymentData()
+                        var sealData = InvoiceSealData()
+                        var queueData = QueueData()
+                        var wifiData = WifiData()
+                        var footerData = InvoiceFooterData()
+
+                        val shopHeader = SharePrefer.getPrefer("${Constants.PreferenceType.SHOP_HEADER}")
+                        val invoiceNo = SharePrefer.getPrefer("${Constants.PreferenceType.INVOICE_NO}")
+                        val exchangeRate = SharePrefer.getPrefer("${Constants.PreferenceType.EXCHANGE_RATE}")
+                        val savePoint = SharePrefer.getPrefer("${Constants.PreferenceType.SAVE_POINT}")
+                        val paymentMethod = SharePrefer.getPrefer("${Constants.PreferenceType.PAYMENT_METHOD}")
+                        val invoiceSeal = SharePrefer.getPrefer("${Constants.PreferenceType.INVOICE_SEAL}")
+                        val queueNumber = SharePrefer.getPrefer("${Constants.PreferenceType.QUEUE}")
+                        val wifiPassword = SharePrefer.getPrefer("${Constants.PreferenceType.WIFI}")
+                        val invoiceFooter = SharePrefer.getPrefer("${Constants.PreferenceType.FOOTER}")
+
+                        if (shopHeader.isNotEmpty()) {
+                            shopData = convertToObject<ShopData>(shopHeader)
+                        }
+                        if (invoiceNo.isNotEmpty()) {
+                            invoiceData = convertToObject<InvoiceData>(invoiceNo)
+                        }
+                        if (exchangeRate.isNotEmpty()) {
+                            exchangeData = convertToObject<ExchangeRateData>(exchangeRate)
+                        }
+                        if (savePoint.isNotEmpty()) {
+                            pointData = convertToObject<SavePointData>(savePoint)
+                        }
+                        if (paymentMethod.isNotEmpty()) {
+                            paymentData = convertToObject<PaymentData>(paymentMethod)
+                        }
+                        if (invoiceSeal.isNotEmpty()) {
+                            sealData = convertToObject<InvoiceSealData>(invoiceSeal)
+                        }
+                        if (queueNumber.isNotEmpty()) {
+                            queueData = convertToObject<QueueData>(queueNumber)
+                        }
+                        if (wifiPassword.isNotEmpty()) {
+                            wifiData = convertToObject<WifiData>(wifiPassword)
+                        }
+                        if (invoiceFooter.isNotEmpty()) {
+                            footerData = convertToObject<InvoiceFooterData>(invoiceFooter)
+                        }
+
+                        if (shopData.isUsed) {
+                            platform.Capture(0) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().background(White)
+                                ) {
+                                    BillHeader()
+                                }
+                            }
+                        }
+
+                        if (invoiceData.isUsed) {
+                            platform.Capture(1) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().background(White)
+                                ) {
+                                    BillCustomerForm1(
+                                        invoiceData = invoiceData,
+                                        exchangeData = exchangeData
+                                    )
+                                }
+                            }
+                        }
+
+                        platform.Capture(2) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                BillCustomerForm2()
+                            }
+                        }
+
+                        platform.Capture(3) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
+                                val rowList = listOf(
+                                    ItemModel(
+                                        name = "Caramel Frappuccino Caramel",
+                                        qty = 1,
+                                        price = 1.0,
+                                        discount = 0
+                                    )
+                                )
+                                BillHeaderItem(
+                                    columnList = columnList,
+                                    rowList = rowList
+                                )
+                            }
+                        }
+
+                        platform.Capture(4) {
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
+                                val rowList = listOf(ItemModel(name = "Caramel Frappuccino Caramel", qty = 1, price = 1.0, discount = 0))
+                                BillRowItem(
+                                    columnList = columnList,
+                                    rowList = rowList
+                                )
+                            }
+                        }
+
+                        if (pointData.isUsed) {
+                            platform.Capture(5) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().background(White)
+                                ) {
+                                    val columnList = listOf(
+                                        "ទំនិញ / ចំនួន Item/Qty :",
+                                        "សរុបរង / Sub Total :",
+                                        "បញ្ចុះតម្លៃ / Discount :",
+                                        "អាករ / VAT :",
+                                        "សរុប / Total :"
+                                    )
+                                    val rowList = listOf(
+                                        "99 items / Qty 999",
+                                        "22222.22 $",
+                                        "99%",
+                                        "10%",
+                                        "234,234.00 $"
+                                    )
+                                    val pointColumnList = listOf(
+                                        "Old Point :",
+                                        "New Point :",
+                                        "Total Current Point :"
+                                    )
+                                    val pointRowList = listOf("999", "999", "999")
+                                    BillTotalItem(
+                                        savePointData = pointData,
+                                        columnList = columnList,
+                                        rowList = rowList,
+                                        pointColumnList = pointColumnList,
+                                        pointRowList = pointRowList
+                                    )
+                                }
+                            }
+                        }
+
+                        if (paymentData.isUsed) {
+                            platform.Capture(6) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().background(White)
+                                ) {
+                                    BillPayment(
+                                        payment = paymentData
+                                    )
+                                }
+                            }
+                        }
+
+                        if (sealData.isUsed) {
+                            platform.Capture(7) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().background(White)
+                                ) {
+                                    BillCompanySeal(
+                                        invoiceSeal = sealData
+                                    )
+                                }
+                            }
+                        }
+
+                        if (wifiData.isUsed || queueData.isUsed) {
+                            platform.Capture(8) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().background(White)
+                                ) {
+                                    BillQueue(
+                                        wifiData = wifiData,
+                                        queueData = queueData
+                                    )
+                                }
+                            }
+                        }
+
+                        if (footerData.isUsed) {
+                            platform.Capture(9) {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().background(White)
+                                ) {
+                                    BillFooter(
+                                        footerData = footerData
+                                    )
+                                }
+                            }
+                        }
+
 
                         Column(
                             modifier = Modifier
                                 .verticalScroll(rememberScrollState())
                                 .fillMaxSize()
                                 .background(White)
-                                .padding(10.dp),
                         ) {
                             Box(
                                 modifier = Modifier.fillMaxWidth().background(White)
                             ) {
-                                val shopHeader = SharePrefer.getPrefer("${Constants.PreferenceType.SHOP_HEADER}")
-                                val shop = convertToObject<ShopData>(shopHeader)
-                                if (shop.isUsed) {
-                                    BillHeader(isPreview = isPreview, shop = shop)
+                                if (shopData.isUsed) {
+                                    BillHeader(isPreview = isPreview, shop = shopData)
                                 }
                             }
                             Box(
                                 modifier = Modifier.fillMaxWidth().background(White)
                             ) {
-                                BillCustomerForm1(isPreview)
+                                BillCustomerForm1(
+                                    isPreview = isPreview,
+                                    invoiceData = invoiceData,
+                                    exchangeData = exchangeData
+                                )
                             }
                             Box(
                                 modifier = Modifier.fillMaxWidth().background(White)
@@ -383,6 +582,19 @@ fun OrderScreen(
                                     rowList = rowList
                                 )
                             }
+
+                            Box(
+                                modifier = Modifier.fillMaxWidth().background(White)
+                            ) {
+                                val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
+                                val rowList = listOf(ItemModel(name = "Caramel Frappuccino Caramel", qty = 1, price = 1.0, discount = 0))
+                                BillRowItem(
+                                    isPreview = isPreview,
+                                    columnList = columnList,
+                                    rowList = rowList
+                                )
+                            }
+
                             Box(
                                 modifier = Modifier.fillMaxWidth().background(White)
                             ) {
@@ -396,8 +608,10 @@ fun OrderScreen(
                                 val rowList = listOf("99 items / Qty 999", "22222.22 $", "99%", "10%", "234,234.00 $")
                                 val pointColumnList = listOf("Old Point :", "New Point :", "Total Current Point :")
                                 val pointRowList = listOf("999", "999", "999")
+
                                 BillTotalItem(
                                     isPreview = isPreview,
+                                    savePointData = pointData,
                                     columnList = columnList,
                                     rowList = rowList,
                                     pointColumnList = pointColumnList,
@@ -408,32 +622,28 @@ fun OrderScreen(
                             Box(
                                 modifier = Modifier.fillMaxWidth().background(White)
                             ) {
-                                val paymentMethod = SharePrefer.getPrefer("${Constants.PreferenceType.PAYMENT_METHOD}")
-                                val payment = convertToObject<PaymentData>(paymentMethod)
-                                if (payment.isUsed) {
-                                    BillPayment(
-                                        isPreview
-                                    )
-                                }
+                                BillPayment(
+                                    isPreview = isPreview,
+                                    payment = paymentData
+                                )
                             }
 
                             Box(
                                 modifier = Modifier.fillMaxWidth().background(White)
                             ) {
-                                val invoiceSeal = SharePrefer.getPrefer("${Constants.PreferenceType.INVOICE_SEAL}")
-                                val seal = convertToObject<InvoiceSealData>(invoiceSeal)
-                                if (seal.isUsed) {
-                                    BillCompanySeal(
-                                        isPreview
-                                    )
-                                }
+                                BillCompanySeal(
+                                    isPreview = isPreview,
+                                    invoiceSeal = sealData
+                                )
                             }
 
                             Box(
                                 modifier = Modifier.fillMaxWidth().background(White)
                             ) {
                                 BillQueue(
-                                    isPreview
+                                    isPreview = isPreview,
+                                    wifiData = wifiData,
+                                    queueData = queueData
                                 )
                             }
 
@@ -441,7 +651,8 @@ fun OrderScreen(
                                 modifier = Modifier.fillMaxWidth().background(White)
                             ) {
                                 BillFooter(
-                                    isPreview
+                                    isPreview = isPreview,
+                                    footerData = footerData
                                 )
                             }
                         }

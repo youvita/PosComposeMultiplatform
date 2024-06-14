@@ -197,6 +197,9 @@ fun Preference(
                 payment.imageKHQR?.let {
                     imageKHQR = it
                 }
+                bankName = payment.bankName.orEmpty()
+                accountNo = payment.accountNumber.orEmpty()
+                accountName = payment.accountName.orEmpty()
             }
 
             // company seal invoice

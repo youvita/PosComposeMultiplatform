@@ -53,12 +53,12 @@ fun BillHeaderItem(
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp),
+            .padding(horizontal = 5.dp),
             color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        Row(modifier = Modifier) {
+        Row(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
             columnHeaderList1.forEachIndexed { index, column ->
                 Text(
                     modifier = Modifier
@@ -72,7 +72,7 @@ fun BillHeaderItem(
             }
         }
 
-        Row(modifier = Modifier) {
+        Row(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
             columnList.forEachIndexed { index, column ->
                 Text(
                     modifier = Modifier
@@ -90,7 +90,7 @@ fun BillHeaderItem(
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp),
+            .padding(horizontal = 5.dp),
             color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
         Spacer(modifier = Modifier.height(5.dp))

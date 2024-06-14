@@ -53,18 +53,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_order_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_setting_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_super_mario_menu
 import receipt.BillRowItem
-import receipt.CaptureItem
 import setting.domain.model.ItemModel
-import ui.settings.domain.model.ExchangeRateData
-import ui.settings.domain.model.InvoiceData
-import ui.settings.domain.model.InvoiceFooterData
-import ui.settings.domain.model.InvoiceSealData
-import ui.settings.domain.model.PaymentData
-import ui.settings.domain.model.QueueData
-import ui.settings.domain.model.SavePointData
-import ui.settings.domain.model.ShopData
-import ui.settings.domain.model.VatData
-import ui.settings.domain.model.WifiData
 import ui.settings.presentation.SettingsEvent
 import ui.settings.presentation.SettingsScreen
 import ui.settings.presentation.SettingsViewModel
@@ -138,7 +127,6 @@ class MainScreen: Screen, KoinComponent {
 //            ),
         )
 
-        CaptureItem()
         if (isAddItem) {
             isAddItem = false
             platform.Capture(4) {

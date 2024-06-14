@@ -26,10 +26,11 @@ import ui.settings.domain.model.ShopData
 @Composable
 fun BillTotalItem(
     isPreview: Boolean = false,
+    savePointData: SavePointData? = null,
     columnList: List<String> = arrayListOf(),
     rowList: List<String> = arrayListOf(),
     pointColumnList: List<String> = arrayListOf(),
-    pointRowList: List<String> = arrayListOf(),
+    pointRowList: List<String> = arrayListOf()
 ) {
 
     var columnWeight by remember {
@@ -57,10 +58,6 @@ fun BillTotalItem(
     val rowSorted = rowWeightList.sortedByDescending { it }
     rowWeight = calculateWeight(rowSorted.first()).takeIf { rowWeight < calculateWeight(rowSorted.first()) } ?: rowWeight
 
-
-    val savePoint = SharePrefer.getPrefer("${Constants.PreferenceType.SAVE_POINT}")
-    val point = convertToObject<SavePointData>(savePoint)
-
     Column(
         modifier = Modifier.size(width = 380.dp, height = Dp.Infinity)
     ) {
@@ -68,22 +65,29 @@ fun BillTotalItem(
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 2.dp),
+            .padding(horizontal = 5.dp),
             color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
-        Column(modifier = Modifier) {
+        Spacer(modifier = Modifier.height(5.dp))
+
+        Column(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
             columnList.forEachIndexed { index, column ->
                 ResultTotalItem(label = column, value = rowList[index], labelWeight = columnWeight, valueWeight = rowWeight, isPreview = isPreview)
             }
         }
 
-        DashedDivider(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 2.dp),
-            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
+        if (savePointData?.isUsed == true) {
 
-        if (point.isUsed) {
-            Column(modifier = Modifier) {
+            Spacer(modifier = Modifier.height(5.dp))
+
+            DashedDivider(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
+                color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Column(modifier = Modifier.padding(start = 10.dp, end = 10.dp)) {
                 pointColumnList.forEachIndexed { index, column ->
                     ResultTotalItem(
                         label = column,
@@ -94,14 +98,6 @@ fun BillTotalItem(
                     )
                 }
             }
-
-            DashedDivider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 2.dp),
-                color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
-
-            Spacer(modifier = Modifier.height(5.dp))
         }
-
     }
 }

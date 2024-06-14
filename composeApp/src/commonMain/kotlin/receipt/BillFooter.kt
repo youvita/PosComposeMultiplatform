@@ -25,18 +25,24 @@ import ui.settings.domain.model.InvoiceFooterData
 
 @Composable
 fun BillFooter(
-    isPreview: Boolean = false
+    isPreview: Boolean = false,
+    footerData: InvoiceFooterData? = null
 ) {
-    val invoiceFooter = SharePrefer.getPrefer("${Constants.PreferenceType.FOOTER}")
-    val footer = convertToObject<InvoiceFooterData>(invoiceFooter)
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        if (footer.isUsed) {
-            footer.note?.let {
+        if (footerData?.isUsed == true) {
+
+            DashedDivider(modifier = Modifier
+                .fillMaxWidth(),
+                color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
+
+            Spacer(modifier = Modifier.height(5.dp))
+
+            footerData.note?.let {
                 Text(
                     modifier = Modifier,
                     text = it,
@@ -49,8 +55,13 @@ fun BillFooter(
             Spacer(modifier = Modifier.height(5.dp))
 
             DashedDivider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 2.dp),
+                .fillMaxWidth(),
+                color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
+
+            Spacer(modifier = Modifier.height(5.dp))
+        } else {
+            DashedDivider(modifier = Modifier
+                .fillMaxWidth(),
                 color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
             Spacer(modifier = Modifier.height(5.dp))

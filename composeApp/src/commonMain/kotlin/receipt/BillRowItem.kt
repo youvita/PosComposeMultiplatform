@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ import setting.domain.model.ItemModel
 
 @Composable
 fun BillRowItem(
+    isPreview: Boolean = false,
     columnList: List<String> = arrayListOf(),
     rowList: List<ItemModel> = arrayListOf()
 ) {
@@ -49,7 +51,7 @@ fun BillRowItem(
             Spacer(modifier = Modifier.height(5.dp))
 
             Row(
-                modifier = Modifier,
+                modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.Top
             ) {
@@ -60,7 +62,7 @@ fun BillRowItem(
                                 modifier = Modifier
                                     .weight(1.5f.takeIf { columnIndex == 0 } ?: columnWeight[columnIndex]),
                                 text = it,
-                                style = getTextStyle(typography = Styles.BodyMedium),
+                                style = getTextStyle(typography = Styles.BodyMedium.takeIf { !isPreview } ?: Styles.LabelSmall),
                                 textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 }
                             )
                         }

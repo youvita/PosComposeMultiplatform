@@ -68,9 +68,7 @@ import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_cash
 import poscomposemultiplatform.composeapp.generated.resources.ic_qr_payment
-import receipt.CaptureItem
 import setting.domain.model.ItemModel
-import ui.settings.domain.model.ShopData
 
 
 @OptIn(ExperimentalLayoutApi::class)
