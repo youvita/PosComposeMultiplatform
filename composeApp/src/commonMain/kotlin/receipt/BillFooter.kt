@@ -37,7 +37,8 @@ fun BillFooter(
         if (footerData?.isUsed == true) {
 
             DashedDivider(modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
                 color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
             Spacer(modifier = Modifier.height(5.dp))
@@ -55,13 +56,16 @@ fun BillFooter(
             Spacer(modifier = Modifier.height(5.dp))
 
             DashedDivider(modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
                 color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
             Spacer(modifier = Modifier.height(5.dp))
+
         } else {
             DashedDivider(modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
                 color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
 
             Spacer(modifier = Modifier.height(5.dp))

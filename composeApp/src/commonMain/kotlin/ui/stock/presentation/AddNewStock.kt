@@ -244,7 +244,7 @@ fun AddNewStock(
                                 PrimaryButton(
                                     text = "Save Product".takeIf { isNew } ?: "Update Product",
                                     icon = Res.drawable.ic_plus,
-                                    callBack = {
+                                    onClick = {
                                         if (isNew) {
                                             val product = Product(
                                                 menuId = menuSelected?.menuId,

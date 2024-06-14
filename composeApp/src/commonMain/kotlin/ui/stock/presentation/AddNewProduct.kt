@@ -487,7 +487,7 @@ fun AddNewProduct(
                         PrimaryButton(
                             text = "New Product",
                             icon = Res.drawable.ic_plus,
-                            callBack = {
+                            onClick = {
                                 callBack(null)
                             }
                         )
