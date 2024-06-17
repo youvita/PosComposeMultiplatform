@@ -78,7 +78,7 @@ fun OrderBillsForm(
     customerState: CustomerState? = null,
     customerEvent: (CustomerEvent) -> Unit = {},
     orderEvent: (OrderEvent) -> Unit = {},
-    onPrint: () -> Unit = {}
+    onPrint: (List<ItemModel>, BillModel) -> Unit = {_, _ ->}
 ){
     var list by rememberSaveable { mutableStateOf<List<ItemModel>>(emptyList()) }
     var selectedCustomer by remember { mutableStateOf(CustomerModel()) }
@@ -389,71 +389,71 @@ fun OrderBillsForm(
             Spacer(modifier = Modifier.height(10.dp))
 
             //payment method
-            FlowRow(
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ){
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "Payment method",
-                    style = TextStyle(
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-
-                LazyRow{
-                    val mod = Modifier
-                        .height(40.dp)
-                        .widthIn(min = 60.dp)
-                        .clip(shape = Shapes.medium)
-                        .background(Color(0xFFFFFFFF))
-
-                    item{
-                        Box(
-                            modifier = mod.then(
-                                    Modifier
-                                        .border(
-                                            1.dp,
-                                            color = if(selectedPaymentMethod == 0) PrimaryColor else Color(0x37333030),
-                                            shape = Shapes.medium
-                                        )
-                                ).clickable {
-                                    selectedPaymentMethod = 0
-                                }
-                        ){
-                            PaymentMethod(
-                                modifier = Modifier.align(Alignment.Center),
-                                payCash = true
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(10.dp))
-                    }
-
-                    item{
-                        Box(
-                            modifier = mod.then(
-                                    Modifier
-                                        .border(
-                                            1.dp,
-                                            color = if(selectedPaymentMethod == 1) PrimaryColor else Color(0x37333030),
-                                            shape = Shapes.medium
-                                        )
-                                ).clickable {
-                                    selectedPaymentMethod = 1
-                                }
-                        ){
-                            PaymentMethod(
-                                modifier = Modifier.align(Alignment.Center),
-                                payCash = false
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
+//            FlowRow(
+//                verticalArrangement = Arrangement.spacedBy(10.dp),
+//            ){
+//                Text(
+//                    modifier = Modifier.align(Alignment.CenterVertically),
+//                    text = "Payment method",
+//                    style = TextStyle(
+//                        fontSize = 15.sp,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//                )
+//                Spacer(modifier = Modifier.width(10.dp))
+//
+//                LazyRow{
+//                    val mod = Modifier
+//                        .height(40.dp)
+//                        .widthIn(min = 60.dp)
+//                        .clip(shape = Shapes.medium)
+//                        .background(Color(0xFFFFFFFF))
+//
+//                    item{
+//                        Box(
+//                            modifier = mod.then(
+//                                    Modifier
+//                                        .border(
+//                                            1.dp,
+//                                            color = if(selectedPaymentMethod == 0) PrimaryColor else Color(0x37333030),
+//                                            shape = Shapes.medium
+//                                        )
+//                                ).clickable {
+//                                    selectedPaymentMethod = 0
+//                                }
+//                        ){
+//                            PaymentMethod(
+//                                modifier = Modifier.align(Alignment.Center),
+//                                payCash = true
+//                            )
+//                        }
+//
+//                        Spacer(modifier = Modifier.width(10.dp))
+//                    }
+//
+//                    item{
+//                        Box(
+//                            modifier = mod.then(
+//                                    Modifier
+//                                        .border(
+//                                            1.dp,
+//                                            color = if(selectedPaymentMethod == 1) PrimaryColor else Color(0x37333030),
+//                                            shape = Shapes.medium
+//                                        )
+//                                ).clickable {
+//                                    selectedPaymentMethod = 1
+//                                }
+//                        ){
+//                            PaymentMethod(
+//                                modifier = Modifier.align(Alignment.Center),
+//                                payCash = false
+//                            )
+//                        }
+//                    }
+//                }
+//            }
+//
+//            Spacer(modifier = Modifier.height(10.dp))
 
             // Pre-Order
             Row(
@@ -463,12 +463,15 @@ fun OrderBillsForm(
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 OutlinedButton(
+                    enabled = list.isNotEmpty(),
                     onClick = {
 //                        if(!orderState?.orders.isNullOrEmpty()){
 //                            orderEvent(OrderEvent.PreOrderEvent(selectedCustomer))
 //                            selectedCustomer = CustomerModel()
 //                        }
-                        onPrint()
+                        if (list.isNotEmpty()) {
+                            onPrint(list, orderState?.bill ?: BillModel())
+                        }
                     },
                     colors = ButtonDefaults.elevatedButtonColors(
                         containerColor = ColorDDE3F9,
@@ -481,7 +484,7 @@ fun OrderBillsForm(
                         .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
                 ) {
                     Text(
-                        text = "Pre-Order",
+                        text = "Print",
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Normal
@@ -511,7 +514,7 @@ fun OrderBillsForm(
                         .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
                 ) {
                     Text(
-                        text = "Place an order",
+                        text = "Place order",
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Normal

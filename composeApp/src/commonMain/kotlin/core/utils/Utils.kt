@@ -275,11 +275,12 @@ val menuIcons = arrayListOf(
 
 fun String?.stringToBoolean(): Boolean = if(this.isNullOrEmpty()) false else this.toBoolean()
 
-
+fun calculatePoint(totalAmount: Double?, exchangeAmount: Double?, points: Int?): String {
+    if (totalAmount == null || exchangeAmount == null || points == null) return ""
+    return ((totalAmount * points) / exchangeAmount).toString()
+}
 
 infix fun Int.percentOf(value: Double): Double = if (this == 0) 0.0 else (value / 100) * this
-
-
 
 
 object RedRippleTheme: RippleTheme {

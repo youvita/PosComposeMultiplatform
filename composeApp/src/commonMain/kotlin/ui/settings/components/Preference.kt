@@ -53,6 +53,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dokar.sonner.ToastType
+import com.dokar.sonner.Toaster
+import com.dokar.sonner.ToasterDefaults
+import com.dokar.sonner.rememberToasterState
 import com.preat.peekaboo.image.picker.SelectionMode
 import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
 import com.preat.peekaboo.image.picker.toImageBitmap
@@ -100,6 +104,7 @@ fun Preference(
     onEvent: (SettingsEvent) -> Unit = {}
 ) {
 
+    val toastState = rememberToasterState()
     var preview by rememberSaveable { mutableStateOf(false) }
     var required by rememberSaveable { mutableStateOf(false) }
 
@@ -187,6 +192,7 @@ fun Preference(
                 val savePoint = convertToObject<SavePointData>(prefer)
                 hasSavePoint = savePoint.isUsed
                 amtUsdExchange = savePoint.amtUsdExchange ?: 0.0
+                point = savePoint.point ?: 0
             }
 
             // payment method
@@ -269,6 +275,10 @@ fun Preference(
                 signatureImage = image
             }
         }
+    )
+
+    Toaster(
+        state = toastState
     )
 
     Column {
@@ -457,6 +467,12 @@ fun Preference(
                             )
                         )
                     ))
+
+                    toastState.show(
+                        message = "Saved",
+                        type = ToastType.Success,
+                        duration = ToasterDefaults.DurationShort
+                    )
                 },
                 colors = ButtonDefaults.elevatedButtonColors(
                     containerColor = PrimaryColor,

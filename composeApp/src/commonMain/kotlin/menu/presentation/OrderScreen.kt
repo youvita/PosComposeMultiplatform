@@ -63,9 +63,12 @@ import core.utils.Constants
 import core.utils.PrimaryButton
 import core.utils.RedRippleTheme
 import core.utils.SharePrefer
+import core.utils.calculatePoint
+import core.utils.formatDouble
 import customer.presentation.CustomerEvent
 import customer.presentation.CustomerState
 import getPlatform
+import menu.domain.model.BillModel
 import menu.presentation.component.utils.EmptyBox
 import menu.domain.model.MenuModel
 import menu.presentation.component.ItemView
@@ -156,7 +159,8 @@ fun OrderScreen(
     }
 
     var selectedItem by remember { mutableIntStateOf(-1) }
-    var list by remember { mutableStateOf<List<ItemModel>>(emptyList()) }
+    var listItem by remember { mutableStateOf<List<ItemModel>>(emptyList()) }
+    var footerItem by remember { mutableStateOf(BillModel()) }
     var selectedMenuIndex by remember { mutableIntStateOf(0) }
     var isInputEmpty by remember { mutableStateOf(true) }
     val focusManager = LocalFocusManager.current
@@ -177,7 +181,7 @@ fun OrderScreen(
         menuList = categoryMenuList
     }
     LaunchedEffect(orderState?.items){
-        list = orderState?.items?: emptyList()
+        listItem = orderState?.items?: emptyList()
     }
 
     LaunchedEffect(Unit){
@@ -275,14 +279,14 @@ fun OrderScreen(
                         val size = if(menuList.isEmpty()) "0" else menuList[selectedMenuIndex].name
                         Text(
                             modifier = Modifier.padding(vertical = 8.dp),
-                            text = "${list.size} Item in '$size' Menu",
+                            text = "${listItem.size} Item in '$size' Menu",
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold
                             )
                         )
 
-                        if(list.isEmpty()){
+                        if(listItem.isEmpty()){
                             EmptyBox(modifier = Modifier.padding(bottom = 150.dp))
                         }
                         else{
@@ -292,7 +296,7 @@ fun OrderScreen(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 modifier = Modifier.fillMaxSize()
                             ){
-                                itemsIndexed(list){ index, item ->
+                                itemsIndexed(listItem){ index, item ->
                                     CompositionLocalProvider(LocalRippleTheme provides RedRippleTheme){
                                         Box(
                                             modifier = Modifier
@@ -426,14 +430,7 @@ fun OrderScreen(
                                     modifier = Modifier.fillMaxWidth().background(White)
                                 ) {
                                     val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                                    val rowList = listOf(
-                                        ItemModel(
-                                            name = "Caramel Frappuccino Caramel",
-                                            qty = 1,
-                                            price = 1.0,
-                                            discount = 0
-                                        )
-                                    )
+                                    val rowList = listItem
                                     BillHeaderItem(
                                         columnList = columnList,
                                         rowList = rowList
@@ -446,7 +443,7 @@ fun OrderScreen(
                                     modifier = Modifier.fillMaxWidth().background(White)
                                 ) {
                                     val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                                    val rowList = listOf(ItemModel(name = "Caramel Frappuccino Caramel", qty = 1, price = 1.0, discount = 0))
+                                    val rowList = listItem
                                     BillRowItem(
                                         columnList = columnList,
                                         rowList = rowList
@@ -459,6 +456,13 @@ fun OrderScreen(
                                     Box(
                                         modifier = Modifier.fillMaxWidth().background(White)
                                     ) {
+                                        val totalItem = footerItem.totalItem ?: 0
+                                        val qty = footerItem.totalQty ?: 0
+                                        val subTotal = footerItem.subTotal ?: 0.0
+                                        val discount = footerItem.discount ?: 0
+                                        val vat = footerItem.vat ?: 0
+                                        val totalAmount = footerItem.totalAmount ?: 0.0
+
                                         val columnList = listOf(
                                             "ទំនិញ / ចំនួន Item/Qty :",
                                             "សរុបរង / Sub Total :",
@@ -467,18 +471,17 @@ fun OrderScreen(
                                             "សរុប / Total :"
                                         )
                                         val rowList = listOf(
-                                            "99 items / Qty 999",
-                                            "22222.22 $",
-                                            "99%",
-                                            "10%",
-                                            "234,234.00 $"
+                                            "$totalItem items / Qty $qty",
+                                            "$ ${formatDouble(subTotal)}",
+                                            discount.toString(),
+                                            vat.toString(),
+                                            "$ ${formatDouble(totalAmount)}"
                                         )
-                                        val pointColumnList = listOf(
-                                            "Old Point :",
-                                            "New Point :",
-                                            "Total Current Point :"
-                                        )
-                                        val pointRowList = listOf("999", "999", "999")
+
+                                        val newPoint = calculatePoint(totalAmount = totalAmount, exchangeAmount = pointData.amtUsdExchange, points = pointData.point)
+                                        val oldPoint = if (totalAmount >= 10.0) newPoint else 0
+                                        val pointColumnList = listOf("Old Point :", "New Point :", "Total Current Point :")
+                                        val pointRowList = listOf(oldPoint.toString(), newPoint, "999")
                                         BillTotalItem(
                                             savePointData = pointData,
                                             columnList = columnList,
@@ -546,7 +549,9 @@ fun OrderScreen(
                         orderEvent = orderEvent,
                         customerState = customerState,
                         customerEvent = customerEvent,
-                        onPrint = {
+                        onPrint = { items, subItem ->
+                            footerItem = subItem
+                            listItem = items
                             isPreview = true
                         }
                     )
@@ -623,14 +628,7 @@ fun OrderScreen(
                                             modifier = Modifier.fillMaxWidth().background(White)
                                         ) {
                                             val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                                            val rowList = listOf(
-                                                ItemModel(
-                                                    name = "Caramel Frappuccino Caramel",
-                                                    qty = 1,
-                                                    price = 1.0,
-                                                    discount = 0
-                                                )
-                                            )
+                                            val rowList = listItem
                                             BillHeaderItem(
                                                 isPreview = isPreview,
                                                 columnList = columnList,
@@ -642,17 +640,30 @@ fun OrderScreen(
                                             modifier = Modifier.fillMaxWidth().background(White)
                                         ) {
                                             val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                                            val rowList = listOf(ItemModel(name = "Caramel Frappuccino Caramel", qty = 1, price = 1.0, discount = 0))
-                                            BillRowItem(
-                                                isPreview = isPreview,
-                                                columnList = columnList,
-                                                rowList = rowList
-                                            )
+                                            val rowList = listItem
+
+                                            // display each item as a rows
+                                            for (item in listItem) {
+                                                Column {
+                                                    BillRowItem(
+                                                        isPreview = isPreview,
+                                                        columnList = columnList,
+                                                        rowList = rowList
+                                                    )
+                                                }
+                                            }
                                         }
 
                                         Box(
                                             modifier = Modifier.fillMaxWidth().background(White)
                                         ) {
+                                            val totalItem = footerItem.totalItem ?: 0
+                                            val qty = footerItem.totalQty ?: 0
+                                            val subTotal = footerItem.subTotal ?: 0.0
+                                            val discount = footerItem.discount ?: 0
+                                            val vat = footerItem.vat ?: 0
+                                            val totalAmount = footerItem.totalAmount ?: 0.0
+
                                             val columnList = listOf(
                                                 "ទំនិញ / ចំនួន Item/Qty :",
                                                 "សរុបរង / Sub Total :",
@@ -660,9 +671,17 @@ fun OrderScreen(
                                                 "អាករ / VAT :",
                                                 "សរុប / Total :"
                                             )
-                                            val rowList = listOf("99 items / Qty 999", "22222.22 $", "99%", "10%", "234,234.00 $")
+                                            val rowList = listOf(
+                                                "$totalItem items / Qty $qty",
+                                                "$ ${formatDouble(subTotal)}",
+                                                discount.toString(),
+                                                vat.toString(),
+                                                "$ ${formatDouble(totalAmount)}"
+                                            )
+                                            val newPoint = calculatePoint(totalAmount = totalAmount, exchangeAmount = pointData.amtUsdExchange, points = pointData.point)
+                                            val oldPoint = if (totalAmount >= 10.0) newPoint else 0
                                             val pointColumnList = listOf("Old Point :", "New Point :", "Total Current Point :")
-                                            val pointRowList = listOf("999", "999", "999")
+                                            val pointRowList = listOf(oldPoint.toString(), newPoint, "999")
 
                                             BillTotalItem(
                                                 isPreview = isPreview,

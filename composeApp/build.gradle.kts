@@ -126,6 +126,8 @@ kotlin {
 
             implementation(libs.bundles.onseok)
 
+            implementation(libs.sonner.toast)
+
 //            // peekaboo-ui
 //            implementation(libs.peekaboo.ui)
 //

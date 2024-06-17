@@ -127,24 +127,6 @@ class MainScreen: Screen, KoinComponent {
 //            ),
         )
 
-        if (isAddItem) {
-            isAddItem = false
-            platform.Capture(4) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().background(White)
-                ) {
-                    val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                    val rowList = listOf(ItemModel(name = "Caramel Frappuccino Caramel", qty = 1, price = 1.0, discount = 0))
-                    BillRowItem(
-                        columnList = columnList,
-                        rowList = rowList
-                    )
-                }
-            }
-        }
-
-
-
         NavigationTabScaffold(
             containerColor = ColorDDE3F9,
             navModels = allNavModels
