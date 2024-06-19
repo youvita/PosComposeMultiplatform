@@ -417,13 +417,13 @@ fun OrderScreen(
                                 }
                             }
 
-                            platform.Capture(2) {
-                                Box(
-                                    modifier = Modifier.fillMaxWidth().background(White)
-                                ) {
-                                    BillCustomerForm2()
-                                }
-                            }
+//                            platform.Capture(2) {
+//                                Box(
+//                                    modifier = Modifier.fillMaxWidth().background(White)
+//                                ) {
+//                                    BillCustomerForm2()
+//                                }
+//                            }
 
                             platform.Capture(3) {
                                 Box(
@@ -619,11 +619,11 @@ fun OrderScreen(
                                                 exchangeData = exchangeData
                                             )
                                         }
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth().background(White)
-                                        ) {
-                                            BillCustomerForm2(isPreview)
-                                        }
+//                                        Box(
+//                                            modifier = Modifier.fillMaxWidth().background(White)
+//                                        ) {
+//                                            BillCustomerForm2(isPreview)
+//                                        }
                                         Box(
                                             modifier = Modifier.fillMaxWidth().background(White)
                                         ) {

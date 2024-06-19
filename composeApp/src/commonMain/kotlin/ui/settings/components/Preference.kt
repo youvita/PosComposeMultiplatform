@@ -3,6 +3,7 @@ package ui.settings.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -278,8 +279,10 @@ fun Preference(
     )
 
     Toaster(
-        state = toastState
+        state = toastState,
+        alignment = Alignment.TopCenter
     )
+
 
     Column {
         Spacer(modifier = Modifier.height(20.dp))

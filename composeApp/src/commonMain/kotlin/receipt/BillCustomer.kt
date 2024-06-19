@@ -29,20 +29,21 @@ fun BillCustomerForm1(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(10.dp))
-
-        Text(text = "វិក្កយបត្រ Customer Bill ", style = getTextStyle(typography = Styles.HeaderLarge.takeIf { !isPreview } ?: Styles.LabelSmall))
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        DashedDivider(modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 5.dp),
-            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
-
-        Spacer(modifier = Modifier.height(10.dp))
+//        Spacer(modifier = Modifier.height(10.dp))
+//
+//        Text(text = "វិក្កយបត្រ Customer Bill ", style = getTextStyle(typography = Styles.HeaderLarge.takeIf { !isPreview } ?: Styles.LabelSmall))
 
         if (invoiceData.isUsed) {
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            DashedDivider(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
+                color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -81,17 +82,17 @@ fun BillCustomerForm1(
             Spacer(modifier = Modifier.height(5.dp))
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp)
-        ){
-            ResultItem(label = "ពេលវេលាចាប់ផ្តើម / Start Time :", value = "23 Jan 2024 10:00", isPreview = isPreview)
-
-            Spacer(modifier = Modifier.height(5.dp))
-
-            ResultItem(label = "ពេលវេលាបញ្ចប់ / End Time :", value = "23 Jan 2024 14:00", isPreview = isPreview)
-        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(start = 10.dp, end = 10.dp)
+//        ){
+//            ResultItem(label = "ពេលវេលាចាប់ផ្តើម / Start Time :", value = "23 Jan 2024 10:00", isPreview = isPreview)
+//
+//            Spacer(modifier = Modifier.height(5.dp))
+//
+//            ResultItem(label = "ពេលវេលាបញ្ចប់ / End Time :", value = "23 Jan 2024 14:00", isPreview = isPreview)
+//        }
 
     }
 }
