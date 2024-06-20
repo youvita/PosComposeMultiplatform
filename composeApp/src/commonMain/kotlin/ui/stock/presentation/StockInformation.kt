@@ -169,7 +169,7 @@ private fun getColumnValue(item: ProductStock, index: Int): String {
         5 -> "+${item.stockIn.toString()}"
         6 -> "-".takeIf { item.stockOut?.toInt() == 0 } ?: "-${item.stockOut.toString()}"
         7 -> item.stockTotal.toString()
-        else -> item.dateIn.toString()
+        else -> "${item.dateIn} ${item.timeIn}"
     }
 }
 

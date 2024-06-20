@@ -11,7 +11,8 @@ data class ProductMenu(
     val imageUrl: String?,
     val qty: String?,
     val price: String?,
-    val discount: String?
+    val discount: String?,
+    val date: String?
 ) {
     fun doesMatchSearchQuery(query: String): Boolean {
         val matchingCombinations = listOf(

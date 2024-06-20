@@ -53,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,6 +83,8 @@ import core.utils.DialogPreview
 import core.utils.DialogSuccess
 import core.utils.PrimaryButton
 import core.utils.RedRippleTheme
+import core.utils.getCurrentDate
+import core.utils.getCurrentDateByDayOfMonth
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -127,18 +130,10 @@ fun AddNewProduct(
     var selectedItemIndex by remember { mutableIntStateOf(-1) }
     var selectedMenuIndex by remember { mutableIntStateOf(0) }
 
-    var date by mutableStateOf("")
+    var dateSelected by remember { mutableStateOf(getCurrentDateByDayOfMonth(1) + " - " + getCurrentDateByDayOfMonth(0)) }
 
     val currentMoment = Clock.System.now()
     val datetimeInSystemZone: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
-
-    val dadadda = DateTimeComponents.Formats.RFC_1123.format {
-        setDate(datetimeInSystemZone.date)
-        hour = 0
-        minute = 0
-        second = 0
-        setOffset(UtcOffset(hours = 0))
-    }
 
     // set the initial date
     val datePickerStartState = rememberDatePickerState(initialSelectedDateMillis = currentMoment.toEpochMilliseconds())
@@ -303,13 +298,13 @@ fun AddNewProduct(
                                 DatePickerDialog(
                                     onDismissRequest = {
                                         showDatePickerStart = false
-                                        date = ""
+//                                        date = ""
                                     },
                                     confirmButton = {
                                         TextButton(onClick = {
                                             showDatePickerStart = false
                                             showDatePickerEnd = true
-                                            date = TextFieldValue(
+                                            dateSelected = TextFieldValue(
                                                 DateTimeComponents.Formats.RFC_1123.format {
                                                     setDate(epochMillisToLocalDate(datePickerStartState.selectedDateMillis?:0))
                                                     hour = 0
@@ -318,6 +313,7 @@ fun AddNewProduct(
                                                     setOffset(UtcOffset(hours = 0))
                                                 }
                                             ).text.substring(5,16) //"Thu, 25 Apr 2024 00:00 GMT" to 25 Apr 2024
+
                                         }) {
                                             Text(text = "Confirm")
                                         }
@@ -325,7 +321,7 @@ fun AddNewProduct(
                                     dismissButton = {
                                         TextButton(onClick = {
                                             showDatePickerStart = false
-                                            date = ""
+//                                            date = ""
                                         }) {
                                             Text(text = "Cancel")
                                         }
@@ -355,12 +351,12 @@ fun AddNewProduct(
                                 DatePickerDialog(
                                     onDismissRequest = {
                                         showDatePickerEnd = false
-                                        date = ""
+//                                        date = ""
                                     },
                                     confirmButton = {
                                         TextButton(onClick = {
                                             showDatePickerEnd = false
-                                            date += " - "+ TextFieldValue(
+                                            val endDate = TextFieldValue(
                                                 DateTimeComponents.Formats.RFC_1123.format {
                                                     setDate(epochMillisToLocalDate(datePickerEndState.selectedDateMillis?:0))
                                                     hour = 0
@@ -369,6 +365,10 @@ fun AddNewProduct(
                                                     setOffset(UtcOffset(hours = 0))
                                                 }
                                             ).text.substring(5,16) //"Thu, 25 Apr 2024 00:00 GMT" to 25 Apr 2024
+
+                                            onEvent(InventoryEvent.SearchProductByDate(dateSelected, endDate))
+
+                                            dateSelected = "$dateSelected - $endDate"
                                         }) {
                                             Text(text = "Confirm")
                                         }
@@ -376,7 +376,7 @@ fun AddNewProduct(
                                     dismissButton = {
                                         TextButton(onClick = {
                                             showDatePickerEnd = false
-                                            date = ""
+//                                            date = ""
                                         }) {
                                             Text(text = "Cancel")
                                         }
@@ -403,10 +403,9 @@ fun AddNewProduct(
 
                             //date picker
                             TextField(
-                                value = date,
+                                value = dateSelected,
                                 singleLine = true,
                                 enabled = false,
-                                placeholder = { Text("23 Jan 2024 - 31 Dec 2024", maxLines = 1) },
                                 modifier = Modifier
                                     .weight(2f)
                                     .clickable(
@@ -439,7 +438,7 @@ fun AddNewProduct(
                                 },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 onValueChange = {
-
+                                    println("text changed: $it")
                                 }
                             )
 

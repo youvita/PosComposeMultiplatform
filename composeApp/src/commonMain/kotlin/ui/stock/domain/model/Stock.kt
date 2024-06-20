@@ -9,4 +9,6 @@ data class Stock(
     val stockTotal: Long? = null,
     val dateIn: String? = null,
     val dateOut: String? = null,
+    val timeIn: String? = null,
+    val timeOut: String? = null,
 )

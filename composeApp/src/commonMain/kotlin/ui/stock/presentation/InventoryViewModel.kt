@@ -96,6 +96,9 @@ class InventoryViewModel(
             is InventoryEvent.GetProduct -> {
                 onGetProduct(event.menuId)
             }
+            is InventoryEvent.SearchProductByDate -> {
+                onSearchProductByDate(event.startDate, event.endDate)
+            }
         }
     }
 
@@ -131,6 +134,35 @@ class InventoryViewModel(
                 _stateProductStock.value = _stateProductStock.value.copy(
                     menu = stock.data
                 )
+            }
+        }
+    }
+
+    private fun onSearchProductByDate(startDate: String, endDate: String) {
+        screenModelScope.launch {
+            repository.getSearchProductByDate(startDate, endDate).collect { product ->
+               when (product) {
+                   is Resource.Success -> {
+                       product.data?.let {
+                           _product.value = it
+                       }
+
+                       _stateProduct.value = _stateProduct.value.copy(
+                           data = product.data,
+                           isLoading = false
+                       )
+                   }
+                   is Resource.Error -> {
+                       _stateProduct.value = _stateProduct.value.copy(
+                           isLoading = false
+                       )
+                   }
+                   is Resource.Loading -> {
+                       _stateProduct.value = _stateProduct.value.copy(
+                           isLoading = true
+                       )
+                   }
+               }
             }
         }
     }

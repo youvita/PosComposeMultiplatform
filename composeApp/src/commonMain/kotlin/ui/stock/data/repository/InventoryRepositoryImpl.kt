@@ -4,7 +4,9 @@ import com.preat.peekaboo.image.picker.toImageBitmap
 import core.data.Resource
 import core.mapper.toMenu
 import core.mapper.toStock
+import core.utils.getCurrentDate
 import core.utils.getCurrentDateTime
+import core.utils.getCurrentTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import menu.domain.model.MenuModel
@@ -30,6 +32,8 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                     stock.stockTotal,
                     getCurrentDateTime(),
                     stock.dateOut,
+                    stock.timeIn,
+                    stock.timeOut,
                     id
                 )
             }
@@ -58,8 +62,10 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                     stock.stockOut,
                     stock.stockBox,
                     stock.stockTotal?.plus(1),
-                    getCurrentDateTime(),
+                    getCurrentDate(),
                     stock.dateOut,
+                    getCurrentTime(),
+                    stock.timeOut,
                     id
                 )
             }
@@ -70,8 +76,10 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 stock_out = 0,
                 stock_box = 0,
                 total = 1,
-                date_in = getCurrentDateTime(),
-                date_out = ""
+                date_in = getCurrentDate(),
+                date_out = "",
+                time_in = getCurrentTime(),
+                time_out = ""
             )
         }
 
@@ -102,7 +110,34 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 imageUrl = item.imageUrl,
                 qty = item.qty,
                 price = item.price,
-                discount = item.discount
+                discount = item.discount,
+                date = item.date_in + " " + item.time_in
+            )
+            productMenu.add(match)
+        }
+        emit(Resource.Success(productMenu))
+    }
+
+    override suspend fun getSearchProductByDate(
+        startDate: String,
+        endDate: String,
+    ): Flow<Resource<List<ProductMenu>>> = flow {
+        emit(Resource.Loading())
+        val result = db.getProductByDate(startDate, endDate).executeAsList()
+        val productMenu = mutableListOf<ProductMenu>()
+        for (item in result) {
+            val match = ProductMenu(
+                menuId = item.menu_id,
+                menuName = item.menuName,
+                menuImage = item.menuImage,
+                productId = item.product_id,
+                name = item.name,
+                image = item.image,
+                imageUrl = item.imageUrl,
+                qty = item.qty,
+                price = item.price,
+                discount = item.discount,
+                date = item.date_in + " " + item.time_in
             )
             productMenu.add(match)
         }
@@ -124,7 +159,8 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 imageUrl = item.imageUrl,
                 qty = item.qty,
                 price = item.price,
-                discount = item.discount
+                discount = item.discount,
+                date = item.date_in + " " + item.time_in
             )
             productMenu.add(match)
         }
@@ -146,7 +182,8 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 productImage = item.image?.toImageBitmap(),
                 productImageUrl = item.imageUrl,
                 categoryName = item.menuName,
-                dateIn = item.date_in
+                dateIn = item.date_in,
+                timeIn = item.time_in
             )
             productStock.add(match)
         }

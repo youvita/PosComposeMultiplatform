@@ -17,22 +17,8 @@ fun StockEntity.toStock(): Stock {
         stockIn = stock_in,
         stockOut = stock_out,
         stockTotal = total,
-    )
-}
-
-fun ProductEntity.toProduct(): ProductMenu {
-    return ProductMenu(
-        id = id,
-        menuId = menu_id,
-        menuName = name,
-        menuImage = image,
-        productId = product_id,
-        name = name,
-        image = image,
-        imageUrl = imageUrl,
-        qty = qty.toString(),
-        price = price.toString(),
-        discount = discount.toString()
+        timeIn = time_in,
+        timeOut = time_out
     )
 }
 

@@ -26,14 +26,16 @@ CREATE TABLE StockEntity (
     stock_box INTEGER,
     total INTEGER,
     date_in TEXT,
-    date_out TEXT
+    date_out TEXT,
+    time_in TEXT,
+    time_out TEXT
 );
 
 insertStock:
-INSERT INTO StockEntity(product_id, stock_in, stock_out, stock_box, total, date_in, date_out) VALUES(?, ?, ?, ?, ?, ?, ?);
+INSERT INTO StockEntity(product_id, stock_in, stock_out, stock_box, total, date_in, date_out, time_in, time_out) VALUES(?, ?, ?, ?, ?, ?, ?,?,?);
 
 updateStock:
-UPDATE StockEntity SET product_id = ?, stock_in = ?, stock_out = ?, stock_box = ?, total = ?, date_in = ?, date_out = ? WHERE stock_id = ?;
+UPDATE StockEntity SET product_id = ?, stock_in = ?, stock_out = ?, stock_box = ?, total = ?, date_in = ?, date_out = ?, time_in = ?, time_out = ? WHERE stock_id = ?;
 
 getStockByProductId:
 SELECT * FROM StockEntity WHERE product_id = ?;
@@ -60,11 +62,14 @@ insertProduct:
 INSERT INTO ProductEntity(menu_id,product_id, name, image, imageUrl, qty, price, discount) VALUES(?,?,?, ?, ?,?, ?, ?);
 
 getProductByMenuId:
-SELECT * FROM ProductEntity JOIN MenuEntity ON ProductEntity.menu_id = MenuEntity.id WHERE menu_id = ?;
+SELECT * FROM ProductEntity JOIN MenuEntity JOIN StockEntity ON ProductEntity.menu_id = MenuEntity.id AND StockEntity.product_id = ProductEntity.product_id WHERE menu_id = ?;
 
 getAllProduct:
-SELECT * FROM ProductEntity JOIN MenuEntity ON ProductEntity.menu_id = MenuEntity.id;
+SELECT * FROM ProductEntity JOIN MenuEntity JOIN StockEntity ON ProductEntity.menu_id = MenuEntity.id AND StockEntity.product_id = ProductEntity.product_id;
 -- SELECT * FROM ProductEntity JOIN MenuEntity;
+
+getProductByDate:
+SELECT * FROM ProductEntity JOIN MenuEntity JOIN StockEntity ON ProductEntity.menu_id = MenuEntity.id AND ProductEntity.product_id = StockEntity.product_id WHERE date_in >= ? AND date_in <= ?;
 
 CREATE TABLE OrderEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
