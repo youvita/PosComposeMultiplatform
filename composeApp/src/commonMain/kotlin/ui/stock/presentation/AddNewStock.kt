@@ -8,21 +8,17 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,24 +28,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme.shapes
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,18 +52,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.preat.peekaboo.image.picker.SelectionMode
 import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
@@ -82,7 +66,6 @@ import com.preat.peekaboo.image.picker.toImageBitmap
 import core.scanner.QrScannerScreen
 import core.theme.Black
 import core.theme.Color488BFF
-import core.theme.ColorDDE3F9
 import core.theme.ColorE1E1E1
 import core.theme.ColorE4E4E4
 import core.theme.ColorF1F1F1
@@ -94,20 +77,14 @@ import core.utils.LineWrapper
 import core.utils.PrimaryButton
 import core.utils.TextInputDefault
 import core.utils.dashedBorder
-import core.utils.getCurrentDateTime
 import menu.domain.model.MenuModel
 import menu.presentation.component.CategoryItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
-import poscomposemultiplatform.composeapp.generated.resources.arrow
 import poscomposemultiplatform.composeapp.generated.resources.ic_arrow_next
-import poscomposemultiplatform.composeapp.generated.resources.ic_camera
-import poscomposemultiplatform.composeapp.generated.resources.ic_down
 import poscomposemultiplatform.composeapp.generated.resources.ic_gallery
-import poscomposemultiplatform.composeapp.generated.resources.ic_next
 import poscomposemultiplatform.composeapp.generated.resources.ic_plus
-import poscomposemultiplatform.composeapp.generated.resources.ic_profie
 import poscomposemultiplatform.composeapp.generated.resources.ic_scan_barcode
 import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
 import poscomposemultiplatform.composeapp.generated.resources.ic_upload
@@ -143,6 +120,7 @@ fun AddNewStock(
     var indexMenu by remember { mutableStateOf(-1) }
     var isSelectCategory by remember { mutableStateOf(false) }
     var menuSelected by remember { mutableStateOf<MenuModel?>(MenuModel(menuId = productItem?.menuId, name = productItem?.menuName, image = productItem?.menuImage)) }
+    var requiredField by remember { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
     val singleImagePicker = rememberImagePickerLauncher(
@@ -167,6 +145,16 @@ fun AddNewStock(
 
     LaunchedEffect(true) {
         onEvent(InventoryEvent.GetMenu())
+    }
+
+    //check require field
+    LaunchedEffect(indexMenu,name,barCode,byteImage){
+        requiredField = required(
+            sku = barCode,
+            name = name,
+            categoryIndex = indexMenu,
+            byteImage = byteImage
+        )
     }
 
     Scaffold(
@@ -272,7 +260,8 @@ fun AddNewStock(
                                         }
 
                                         callback()
-                                    }
+                                    },
+                                    isEnable = requiredField
                                 )
                             }
 
@@ -670,9 +659,7 @@ fun AddNewStock(
                                         text = barCode.toString().takeIf { barCode > 0 } ?: "",
                                         placeholder = "Barcode",
                                         onValueChange = {
-                                            if (it.isNotEmpty()) {
-                                                barCode = it.toLong()
-                                            }
+                                            barCode = if (it.isNotEmpty()) it.toLong() else 0
                                         },
                                         keyboardType = KeyboardType.Number
                                     )
@@ -809,4 +796,12 @@ fun AddNewStock(
         }
     }
 
+}
+private fun required(
+    sku: Long,
+    name: String?,
+    categoryIndex: Int,
+    byteImage: ByteArray?
+): Boolean{
+    return sku > 0 && name?.isNotEmpty() == true && categoryIndex >= 0 && byteImage != null
 }

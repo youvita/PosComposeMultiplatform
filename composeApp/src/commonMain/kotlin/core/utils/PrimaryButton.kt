@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -34,14 +35,16 @@ fun PrimaryButton(
     text: String,
     icon: DrawableResource? = null,
     iconColor: Color = White,
+    isEnable: Boolean = true,
     onClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .clip(Shapes.medium)
-            .clickable {
+            .clickable (isEnable){
                 onClick()
-            },
+            }
+            .alpha(1f.takeIf { isEnable }?:0.5f),
         shape = Shapes.medium,
         colors = CardDefaults.cardColors(PrimaryColor),
         elevation = CardDefaults.cardElevation(2.dp)
