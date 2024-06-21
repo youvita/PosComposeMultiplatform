@@ -161,6 +161,8 @@ class AddStockScreen: Screen, KoinComponent {
                             productItem = productItem,
                             searchViewModel = searchViewModel,
                             onEvent = inventoryViewModel::onEvent,
+                            marioState = marioState,
+                            marioEvent = marioViewModel::onEvent,
                             callback = {
                                 addNewProduct = false
                                 currentScreen = currentScreen.toMutableList().apply { removeLast() }

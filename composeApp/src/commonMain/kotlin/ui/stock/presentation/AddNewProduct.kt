@@ -209,6 +209,7 @@ fun AddNewProduct(
                     val menuId = it.menuId
                     if(menuId != null){
                         marioEvent(MarioEvent.DeleteMenuEvent(menuId))
+                        onEvent(InventoryEvent.GetProduct(0))
                         showEditMenuDialog = false
                         selectedMenuIndex = 0
                         showEditMenu = false

@@ -54,6 +54,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -79,6 +80,7 @@ import androidx.compose.ui.unit.dp
 import com.preat.peekaboo.image.picker.SelectionMode
 import com.preat.peekaboo.image.picker.rememberImagePickerLauncher
 import com.preat.peekaboo.image.picker.toImageBitmap
+import core.data.Status
 import core.scanner.QrScannerScreen
 import core.theme.Black
 import core.theme.Color488BFF
@@ -89,12 +91,22 @@ import core.theme.ColorF1F1F1
 import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
+import core.utils.DialogError
+import core.utils.DialogFullScreen
+import core.utils.DialogLoading
+import core.utils.DialogPreview
+import core.utils.DialogSuccess
 import core.utils.ImageLoader
 import core.utils.LineWrapper
 import core.utils.PrimaryButton
 import core.utils.TextInputDefault
 import core.utils.dashedBorder
 import core.utils.getCurrentDateTime
+import mario.presentation.MarioEvent
+import mario.presentation.MarioState
+import mario.presentation.component.CreateItem
+import mario.presentation.component.CreateMenu
+import mario.presentation.component.EditMenu
 import menu.domain.model.MenuModel
 import menu.presentation.component.CategoryItem
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -121,7 +133,9 @@ fun AddNewStock(
     state: InventoryState,
     searchViewModel: SearchEngineViewModel,
     onEvent: (InventoryEvent) -> Unit,
-    callback: () -> Unit
+    callback: () -> Unit,
+    marioState: MarioState? = null,
+    marioEvent: (MarioEvent) -> Unit = {}
 ) {
     val formPadding = 36.dp
     val searchState = searchViewModel.state.collectAsState().value
@@ -167,6 +181,86 @@ fun AddNewStock(
 
     LaunchedEffect(true) {
         onEvent(InventoryEvent.GetMenu())
+    }
+
+    var showAddMenuDialog by remember { mutableStateOf(false) }
+    var required by remember { mutableStateOf(false) }
+    var showAddItem by remember { mutableStateOf(false) }
+    var selectedItemIndex by remember { mutableIntStateOf(-1) }
+    var selectedMenuIndex by remember { mutableIntStateOf(0) }
+
+    var menuList by remember {
+        mutableStateOf<List<MenuModel>>(arrayListOf(MenuModel(menuId = 0, name = "All")))
+    }
+
+    //show dialog for create Menu
+    if(showAddMenuDialog){
+        DialogPreview(
+            title = "Create New Menu",
+            onClose = { showAddMenuDialog = false },
+            onDismissRequest = { showAddMenuDialog = false }
+        ){
+            CreateMenu{ menu, require ->
+                required = require
+                if(!require){
+                    marioEvent(MarioEvent.AddMenuEvent(menu))
+                    onEvent(InventoryEvent.GetMenu())
+                    showAddMenuDialog = false
+                }
+            }
+        }
+    }
+
+//    //show dialog for create Item
+//    if(showAddItem){
+//        DialogFullScreen(
+//            title = "Create New Item",
+//            onClose = { showAddItem = false },
+//            onDismissRequest = { showAddItem = false },
+//        ){
+//            CreateItem(menuList[selectedMenuIndex]){ item, require ->
+//                required = require
+//                if(!require){
+//                    marioEvent(MarioEvent.AddItemEvent(item))
+//                    showAddItem = false
+//                }
+//            }
+//        }
+//    }
+
+
+    //show dialog alert required fields
+    if(required){
+        DialogError(
+            message = "Please fill the required fields",
+            onClose = {
+                required = false
+            },
+            onDismissRequest = {
+                required = false
+            }
+        )
+    }
+
+//    if(marioState?.status == Status.SUCCESS){
+//        onEvent(InventoryEvent.GetMenu())
+//    }
+
+    if(marioState?.status == Status.LOADING){
+        DialogLoading()
+    }
+
+    if(marioState?.status == Status.ERROR){
+        DialogError(
+            title = "Error",
+            message = marioState.message,
+            onClose = {
+                marioEvent(MarioEvent.ClearEvent)
+            },
+            onDismissRequest = {
+                marioEvent(MarioEvent.ClearEvent)
+            }
+        )
     }
 
     Scaffold(
@@ -594,7 +688,7 @@ fun AddNewStock(
                                             .size(80.dp)
                                             .clip(Shapes.medium)
                                             .clickable {
-
+                                                showAddMenuDialog = true
                                             },
                                         shape = Shapes.medium,
                                         colors = CardDefaults.cardColors(PrimaryColor),
