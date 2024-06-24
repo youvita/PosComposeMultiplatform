@@ -121,8 +121,6 @@ class SettingsScreen: Screen, KoinComponent {
                             Box(modifier = Modifier.padding(horizontal = 20.dp)){
                                 when(eventSideBar){
                                     0 ->{
-                                        settingViewModel.onEvent(SettingsEvent.GetPreference())
-
                                         Preference(
                                             state = settingViewModel.state.value,
                                             onEvent = settingViewModel::onEvent

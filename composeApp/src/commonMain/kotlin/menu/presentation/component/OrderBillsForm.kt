@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -85,8 +86,11 @@ fun OrderBillsForm(
     var showCustomerDialog by rememberSaveable { mutableStateOf(false) }
     var selectedPaymentMethod by rememberSaveable { mutableIntStateOf(0) }
 
-    LaunchedEffect(orderState?.orders){
+    val isOrderUpdated by rememberUpdatedState(orderState?.orders)
+    LaunchedEffect(isOrderUpdated) {
         list = orderState?.orders?: arrayListOf()
+
+        println(">>>>>>list:::  $list")
     }
 
     if(showCustomerDialog){

@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.compose.BindEffect
@@ -60,48 +61,52 @@ fun QrScannerScreen(
 
     BindEffect(controller)
     if (isGranted) {
-        Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
-            Column(
-                modifier = Modifier
-                    .background(color = Color.Transparent)
-                    .windowInsetsPadding(WindowInsets.safeDrawing)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box(
+        Dialog(
+            onDismissRequest = {}
+        ) {
+            Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
+                Column(
                     modifier = Modifier
                         .background(color = Color.Transparent)
+                        .windowInsetsPadding(WindowInsets.safeDrawing)
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(250.dp)
-                            .clip(shape = RoundedCornerShape(size = 14.dp))
-                            .clipToBounds()
-                            .border(2.dp, Color.Gray, RoundedCornerShape(size = 14.dp)),
-                        contentAlignment = Alignment.Center
+                            .background(color = Color.Transparent)
                     ) {
-                        QrCodeScanner(
+                        Box(
                             modifier = Modifier
+                                .size(250.dp)
+                                .clip(shape = RoundedCornerShape(size = 14.dp))
                                 .clipToBounds()
-                                .clip(shape = RoundedCornerShape(size = 14.dp)),
-                            flashlightOn = false,
-                            onCompletion = {
-                                result(it)
-                            },
+                                .border(2.dp, Color.Gray, RoundedCornerShape(size = 14.dp)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            QrCodeScanner(
+                                modifier = Modifier
+                                    .clipToBounds()
+                                    .clip(shape = RoundedCornerShape(size = 14.dp)),
+                                flashlightOn = false,
+                                onCompletion = {
+                                    result(it)
+                                },
+                            )
+                        }
+
+                        Icon(
+                            modifier = Modifier
+                                .padding(5.dp)
+                                .align(Alignment.TopEnd)
+                                .clickable {
+                                    result("")
+                                },
+                            painter = painterResource(resource = Res.drawable.ic_exit),
+                            contentDescription = ""
                         )
                     }
-
-                    Icon(
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .align(Alignment.TopEnd)
-                            .clickable {
-                            result("")
-                        },
-                        painter = painterResource(resource = Res.drawable.ic_exit),
-                        contentDescription = ""
-                    )
                 }
             }
         }

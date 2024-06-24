@@ -201,7 +201,7 @@ class MainScreen: Screen, KoinComponent {
                     )
 
                     // call to refresh receipt data for print
-                    settingsViewModel.onEvent(SettingsEvent.GetPreference())
+//                    settingsViewModel.onEvent(SettingsEvent.GetPreference())
                 }
 
                 1 -> {

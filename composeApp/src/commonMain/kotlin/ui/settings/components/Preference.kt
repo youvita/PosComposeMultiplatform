@@ -476,6 +476,8 @@ fun Preference(
                         type = ToastType.Success,
                         duration = ToasterDefaults.DurationShort
                     )
+
+                    onEvent(SettingsEvent.GetPreference())
                 },
                 colors = ButtonDefaults.elevatedButtonColors(
                     containerColor = PrimaryColor,

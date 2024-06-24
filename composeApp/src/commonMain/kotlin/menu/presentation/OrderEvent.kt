@@ -23,4 +23,6 @@ sealed class OrderEvent {
     data class SearchEvent(val searchText: String) : OrderEvent()
     data class GetItemsEvent(val id: Long): OrderEvent()
     object GetMenusEvent: OrderEvent()
+
+    data class ScanItemEvent(val id: Long): OrderEvent()
 }

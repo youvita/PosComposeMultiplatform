@@ -82,7 +82,7 @@ class OrderViewModel(
                     is Resource.Loading -> {
                         _state.value = _state.value.copy(
                             status = result.status,
-                            message = result.message
+                            message = result.message,
                         )
                     }
                 }
@@ -114,7 +114,6 @@ class OrderViewModel(
 
                     }
                     is Resource.Error -> {
-
                     }
                     is Resource.Loading -> {
                     }
@@ -315,13 +314,85 @@ class OrderViewModel(
                 )
             }
 
+            is OrderEvent.ScanItemEvent -> {
+                getMenuByScanItem(event.id)
+            }
+
             else -> {
 
             }
         }
     }
 
+    private fun getMenuByScanItem(id: Long) {
+        screenModelScope.launch {
+            repositoryInventory.getAllProduct().onEach {result ->
+                when (result) {
+                    is Resource.Success -> {
+                        if (result.data?.isEmpty() == true) return@onEach
 
+                        val item = result.data?.find { it.productId == id }
+                        if (item == null) return@onEach
+
+                        val itemModel = ItemModel(
+                            menuId  = item.menuId,
+                            name = item.name,
+                            product_id = item.productId,
+                            image_product = item.image,
+                            imageUrl = item.imageUrl,
+                            qty = item.qty?.toInt(),
+                            price = item.price?.toDouble(),
+                            discount = if (item.discount.isNullOrEmpty()) 0 else item.discount.toInt()
+                        )
+
+                        var isExist = false
+                        var qtyTotal = 0
+                        var subTotal = 0.0
+                        var discountAmount = 0.0
+                        var ordered = _state.value.orders?.toMutableList()
+                        if(ordered == null) ordered = arrayListOf()
+
+                        //exist item in bill not add to list
+                        ordered.map {
+                            if (it.product_id == itemModel.product_id){
+                                isExist = true
+                                return@map
+                            } else
+                                isExist = false
+                        }
+                        if (!isExist){
+                            ordered.add(itemModel)
+                        }
+
+                        //get total_qty
+                        //get sub_total price not include discount
+                        ordered.map {
+                            qtyTotal += it.qtySelected?:0
+                            subTotal += it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0
+                            discountAmount += ((it.discount?:0) percentOf (it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0))
+                        }
+
+                        _state.value = _state.value.copy(
+                            orders = ordered,
+                        )
+                        updateBillState(
+                            totalQty = qtyTotal,
+                            totalItem = ordered.size,
+                            subTotal = subTotal,
+                            discountAmount = discountAmount,
+                            totalAmount = formatDouble(subTotal).toDouble() - formatDouble(discountAmount).toDouble()
+                        )
+
+                    }
+                    is Resource.Error -> {
+
+                    }
+                    is Resource.Loading -> {
+                    }
+                }
+            }.launchIn(screenModelScope)
+        }
+    }
 
     private fun addOrderHistory() {
         screenModelScope.launch {

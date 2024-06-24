@@ -26,10 +26,6 @@ class SettingsViewModel(
     private val _state = MutableStateFlow(PreferState())
     val state: StateFlow<PreferState> = _state.asStateFlow()
 
-    init {
-        getPreference()
-    }
-
     fun onEvent(event: SettingsEvent) {
         when(event) {
             is SettingsEvent.AddPreference -> {

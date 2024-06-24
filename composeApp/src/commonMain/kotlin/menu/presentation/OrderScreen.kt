@@ -1,5 +1,8 @@
 package menu.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -55,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import core.app.convertToObject
+import core.scanner.QrScannerScreen
 import core.theme.Black
 import core.theme.PrimaryColor
 import core.theme.Shapes
@@ -164,6 +168,7 @@ fun OrderScreen(
     var selectedMenuIndex by remember { mutableIntStateOf(0) }
     var isInputEmpty by remember { mutableStateOf(true) }
     val focusManager = LocalFocusManager.current
+    var startBarCodeScan by remember { mutableStateOf(false) }
 
     //add first category menu
     val categoryMenuList = ArrayList<MenuModel>()
@@ -248,7 +253,7 @@ fun OrderScreen(
                                         modifier = Modifier
                                             .size(24.dp)
                                             .clickable {
-                                                println(">>>>>> Scan start")
+                                                startBarCodeScan = true
                                             },
                                         painter = painterResource(Res.drawable.ic_scanner),
                                         contentDescription = ""
@@ -752,6 +757,21 @@ fun OrderScreen(
                     }
                 }
             }
+        }
+
+        AnimatedVisibility(
+            visible = startBarCodeScan,
+            enter = scaleIn(),
+            exit = scaleOut()
+        ) {
+            QrScannerScreen(
+                result = {
+                    startBarCodeScan = false
+
+                    if (it.isEmpty()) return@QrScannerScreen
+                    orderEvent(OrderEvent.ScanItemEvent(it.toLong()))
+                }
+            )
         }
     }
 }
