@@ -66,4 +66,10 @@ class HistoryRepositoryImpl(
             emit(Resource.Success(db.getOrderHistoryPaging(limit.toLong(), offset.toLong()).executeAsList()))
         }
     }
+
+    override fun getProductByOrderId(id: Long): Flow<Resource<List<ProductOrderEntity>>> = flow {
+        emit(Resource.Loading())
+        val dataOutput = db.getProdutByOrderId(id).executeAsList()
+        emit(Resource.Success(dataOutput))
+    }
 }

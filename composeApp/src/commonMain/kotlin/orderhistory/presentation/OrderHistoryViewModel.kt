@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.topteam.pos.OrderEntity
+import setting.domain.model.ItemModel
 
 
 class OrderHistoryViewModel (
@@ -108,6 +109,43 @@ class OrderHistoryViewModel (
         }.launchIn(screenModelScope)
     }
 
+
+    private fun getProductOrderById(id: Long) {
+        orderHistoryRepository.getProductByOrderId(id).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    val productList = ArrayList<ItemModel>()
+                    result.data?.forEach {
+                        productList.add(
+                            ItemModel(
+                                itemId = it.id,
+                                product_id = it.product_id,
+                                name = it.name,
+                                image_product = it.image,
+                                qty = it.qty?.toInt(),
+                                price = it.price?.toDouble(),
+                                discount = it.discount?.toInt()
+                            )
+                        )
+                    }
+
+                    _uiState.value = uiState.value.copy(
+                        productList = productList,
+                    )
+                }
+                is Resource.Error -> {
+                    _uiState.value = uiState.value.copy(
+                        status = result.status,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _uiState.value = uiState.value.copy(isLoading = true)
+                }
+            }
+        }.launchIn(screenModelScope)
+    }
+
     fun onEvent(event: OrderHistoryEvent){
         when(event){
             is OrderHistoryEvent.SearchEventOrder -> {
@@ -136,12 +174,23 @@ class OrderHistoryViewModel (
                 getHistoryListPaging(1,0)
             }
 
-//            is HistoryEvent.GetOrderDetail -> {
-//                getOrderDetail(event.id)
-//            }
+            is OrderHistoryEvent.GetOrderDetail -> {
+                getProductOrderById(event.id)
+                _uiState.value = _uiState.value.copy(orderSelected = getOrderDetail(event.id))
+            }
 
             else -> {}
         }
     }
+
+    private fun getOrderDetail(id: Long): OrderEntity? {
+        for (item in _uiState.value.orderList?: arrayListOf()){
+            if (id == item.id){
+               return item
+            }
+        }
+        return null
+    }
+
 
 }

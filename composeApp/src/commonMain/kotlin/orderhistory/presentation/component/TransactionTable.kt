@@ -50,7 +50,17 @@ fun TransactionTable(
     val columnHeaderList = listOf("Bill No", "Date", "Order By", "Discount", "Total", "Status")
     val rowList = arrayListOf<TransactionHistory>()
     state?.orderList?.forEach{
-        rowList.add(TransactionHistory(it.order_no.toString(), it.date, "Dara (Cashier)", it.discount.toString(), "$${it.total}", it.status))
+        rowList.add(
+            TransactionHistory(
+                orderId = it.id,
+                billNo = it.order_no.toString(),
+                date = it.date,
+                orderBy = "Dara (Cashier)",
+                discount = it.discount.toString(),
+                total = "$${it.total}",
+                status = it.status
+            )
+        )
     }
 
     val columnWeight = remember { MutableList(columnHeaderList.size) { 0f } } //column header weight

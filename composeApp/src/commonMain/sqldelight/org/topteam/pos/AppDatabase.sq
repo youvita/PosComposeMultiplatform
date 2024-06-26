@@ -55,6 +55,9 @@ CREATE TABLE ProductEntity (
     discount TEXT
 );
 
+updateProductQty:
+UPDATE ProductEntity SET qty = ? WHERE id = ?;
+
 updateProduct:
 UPDATE ProductEntity SET menu_id = ?, product_id = ?, name = ?, image = ?, imageUrl = ?, qty = ?, price = ?, discount = ? WHERE product_id = ?;
 
@@ -105,33 +108,8 @@ SELECT * FROM OrderEntity;
 getOrderHistoryPaging:
 SELECT * FROM OrderEntity LIMIT ? OFFSET ?;
 
--- SQL query for INNER JOIN
-SELECT
-    OrderEntity.order_no,
-    OrderEntity.queue_no,
-    OrderEntity.date,
-    OrderEntity.total_item,
-    OrderEntity.total_qty,
-    OrderEntity.sub_total,
-    OrderEntity.discount,
-    OrderEntity.vat,
-    OrderEntity.total,
-    OrderEntity.status,
-    ProductOrderEntity.product_id AS product_code,
-    ProductOrderEntity.name,
-    ProductOrderEntity.image,
-    ProductOrderEntity.imageUrl,
-    ProductOrderEntity.qty,
-    ProductOrderEntity.price,
-    ProductOrderEntity.discount
-FROM
-    OrderEntity
-INNER JOIN
-    ProductOrderEntity
-ON
-    OrderEntity.id = ProductOrderEntity.order_id
-WHERE
-    OrderEntity.id = ?;
+getProdutByOrderId:
+SELECT * FROM ProductOrderEntity WHERE order_id = ?;
 
 CREATE TABLE ProductOrderEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

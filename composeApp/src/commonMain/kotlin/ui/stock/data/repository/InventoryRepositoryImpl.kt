@@ -51,6 +51,11 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         )
     }
 
+    override suspend fun updateProductQty(id: Long, qty: String): Flow<Resource<Unit>> = flow{
+        emit(Resource.Loading())
+        emit(Resource.Success(db.updateProductQty(qty = qty, id = id)))
+    }
+
     override suspend fun addProduct(product: Product) {
         val result = db.getStockByProductId(product.productId).executeAsList()
         if (result.isNotEmpty()) {
@@ -95,12 +100,13 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         )
     }
 
-    override suspend fun getProduct(id: Long): Flow<Resource<List<ProductMenu>>> = flow {
+    override suspend fun getProductByMenuId(id: Long): Flow<Resource<List<ProductMenu>>> = flow {
         emit(Resource.Loading())
         val result = db.getProductByMenuId(id).executeAsList()
         val productMenu = mutableListOf<ProductMenu>()
         for (item in result) {
             val match = ProductMenu(
+                id = item.id,
                 menuId = item.menu_id,
                 menuName = item.menuName,
                 menuImage = item.menuImage,
@@ -127,6 +133,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         val productMenu = mutableListOf<ProductMenu>()
         for (item in result) {
             val match = ProductMenu(
+                id = item.id,
                 menuId = item.menu_id,
                 menuName = item.menuName,
                 menuImage = item.menuImage,
@@ -150,6 +157,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         val productMenu = mutableListOf<ProductMenu>()
         for (item in result) {
             val match = ProductMenu(
+                id = item.id,
                 menuId = item.menu_id,
                 menuName = item.menuName,
                 menuImage = item.menuImage,

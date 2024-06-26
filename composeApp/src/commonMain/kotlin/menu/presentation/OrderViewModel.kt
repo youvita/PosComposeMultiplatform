@@ -3,7 +3,6 @@ package menu.presentation
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import core.data.Resource
-import core.utils.dollar
 import core.utils.formatDouble
 import core.utils.percentOf
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,21 +26,12 @@ import org.topteam.pos.OrderEntity
 import org.topteam.pos.ProductOrderEntity
 import setting.domain.model.ItemModel
 import ui.stock.domain.repository.InventoryRepository
-import kotlin.math.round
 
 class OrderViewModel(
     private val repository: MenuRepository,
     private val repositoryInventory: InventoryRepository,
     private val orderHistoryRepository: OrderHistoryRepository,
 ): ScreenModel {
-
-//    private var totalAmount: Double = 0.0
-//    private var subTotal: Double = 0.0
-//    private var discountAmount: Double = 0.0
-//    private var vatAmount: Double = 0.0
-//    private var totalItem: Int = 0
-//    private var vat: Int = 0
-//    private var discount: Int = 0
 
     private val _state = MutableStateFlow(OrderState())
     val state: StateFlow<OrderState> get() = _state.asStateFlow()
@@ -90,14 +80,15 @@ class OrderViewModel(
         }
     }
 
-    private fun getProduct(id: Long) {
+    private fun getProductByMenuId(id: Long) {
         screenModelScope.launch {
-            repositoryInventory.getProduct(id).onEach {result ->
+            repositoryInventory.getProductByMenuId(id).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
                         _state.value = _state.value.copy(
                             items = result.data?.map {
                                 ItemModel(
+                                    itemId = it.id,
                                     menuId  = it.menuId,
                                     name = it.name,
                                     product_id = it.productId,
@@ -122,6 +113,24 @@ class OrderViewModel(
         }
     }
 
+    private fun updateProductQty(qty: String, id: Long) {
+        screenModelScope.launch {
+            repositoryInventory.updateProductQty(id,qty).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                         getAllProduct()
+                    }
+                    is Resource.Error -> {
+
+                    }
+                    is Resource.Loading -> {
+
+                    }
+                }
+            }.launchIn(screenModelScope)
+        }
+    }
+
     private fun getAllProduct() {
         screenModelScope.launch {
             repositoryInventory.getAllProduct().onEach {result ->
@@ -130,6 +139,7 @@ class OrderViewModel(
                         _state.value = _state.value.copy(
                             items = result.data?.map {
                                 ItemModel(
+                                    itemId = it.id,
                                     menuId  = it.menuId,
                                     name = it.name,
                                     product_id = it.productId,
@@ -178,7 +188,7 @@ class OrderViewModel(
                 if (event.id == 0L){
                     getAllProduct()
                 } else {
-                    getProduct(event.id)
+                    getProductByMenuId(event.id)
                 }
             }
 
@@ -302,9 +312,18 @@ class OrderViewModel(
                 generateBillNoAndDate()
 
                 addOrderHistory()
-                _state.value = _state.value.copy(
-                    orders = arrayListOf()
-                )
+
+                val ordered = _state.value.orders
+                if (ordered != null) {
+                    for (updateItem in ordered){
+                        updateProductQty(
+                            qty = (updateItem.qty?.minus(updateItem.qtySelected?:1)).toString(),
+                            id = updateItem.itemId?:0
+                        )
+                    }
+                }
+
+                //reset bill
                 updateBillState(
                     totalQty = 0,
                     subTotal = 0.0,
@@ -312,6 +331,11 @@ class OrderViewModel(
                     discountAmount = 0.0,
                     totalAmount = 0.0
                 )
+
+                _state.value = _state.value.copy(
+                    orders = arrayListOf()
+                )
+
             }
 
             is OrderEvent.ScanItemEvent -> {
@@ -335,6 +359,7 @@ class OrderViewModel(
                         if (item == null) return@onEach
 
                         val itemModel = ItemModel(
+                            itemId = item.id,
                             menuId  = item.menuId,
                             name = item.name,
                             product_id = item.productId,

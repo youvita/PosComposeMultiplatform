@@ -4,19 +4,16 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import core.data.Resource
 import core.data.Status
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import menu.domain.model.MenuModel
-import menu.presentation.OrderEvent
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductMenu
 import ui.stock.domain.model.ProductStock
@@ -170,7 +167,7 @@ class InventoryViewModel(
     private fun onGetProduct(menuId: Long) {
         screenModelScope.launch {
             if (menuId > 0) {
-                repository.getProduct(menuId).collect { product ->
+                repository.getProductByMenuId(menuId).collect { product ->
                     when (product) {
                         is Resource.Success -> {
                             product.data?.let {

@@ -60,6 +60,8 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.format
 import kotlinx.datetime.toLocalDateTime
+import menu.presentation.component.OrderBillsForm
+import orderhistory.presentation.component.OrderBillsDetailForm
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -350,6 +352,11 @@ fun OrderHistoryScreen(
                         elevation = CardDefaults.elevatedCardElevation().also { 10.dp },
                         colors = CardDefaults.cardColors(White),
                     ){
+
+                        //Bill order detail
+                        OrderBillsDetailForm(
+                            orderHistoryState = orderHistoryState
+                        )
 
                     }
                 }

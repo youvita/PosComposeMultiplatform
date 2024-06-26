@@ -10,4 +10,5 @@ interface OrderHistoryRepository {
      fun addProductOrder(listProductOrderEntity: List<ProductOrderEntity>): Flow<Resource<Unit>>
      fun getOrderHistory(): Flow<Resource<List<OrderEntity>>>
      fun getOrderHistoryPaging(limit: Int, offset: Int): Flow<Resource<List<OrderEntity>>>
+     fun getProductByOrderId(id: Long): Flow<Resource<List<ProductOrderEntity>>>
 }
