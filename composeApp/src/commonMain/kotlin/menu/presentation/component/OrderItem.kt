@@ -26,13 +26,10 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -51,7 +48,6 @@ import core.theme.White
 import core.utils.dollar
 import core.utils.formatDouble
 import core.utils.percentOf
-import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
@@ -63,6 +59,7 @@ import setting.domain.model.ItemModel
 @OptIn(ExperimentalLayoutApi::class, ExperimentalResourceApi::class)
 @Composable
 fun OrderItem(
+    isDetailHistory: Boolean = false,
     item: ItemModel? = null,
     onRemove: (ItemModel) -> Unit = {},
     onQtyChanged: (Int) -> Unit? = {}
@@ -168,6 +165,7 @@ fun OrderItem(
                                 .clickable(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() },
+                                    enabled = !isDetailHistory
                                 ) {
                                     //qty change
                                     if ((item?.qtySelected ?: 1) <= 1){
@@ -180,7 +178,7 @@ fun OrderItem(
                                 },
                             painter = painterResource(resource = Res.drawable.ic_remove_circle),
                             contentDescription = "minus",
-                            tint = PrimaryColor
+                            tint = PrimaryColor.takeIf { !isDetailHistory } ?: Color.Gray
                         )
 
                         //show qty item
@@ -190,7 +188,7 @@ fun OrderItem(
                                 .padding(horizontal = 0.dp)
                                 .align(Alignment.CenterVertically),
 //                            value = qty.toString(),
-                            value = item?.qtySelected.toString(),
+                            value = item?.qtySelected.toString().takeIf { !isDetailHistory } ?: item?.qty.toString(),
                             onValueChange = {
                                 val qtyChange =
                                     if(it.isEmpty())
@@ -227,13 +225,23 @@ fun OrderItem(
                                 .clickable(
                                     indication = null,
                                     interactionSource = remember { MutableInteractionSource() },
-                                    enabled = (item?.qtySelected ?: 1) < (item?.qty ?: 0)
+                                    enabled =
+                                        if (isDetailHistory){
+                                            false
+                                        } else {
+                                            (item?.qtySelected ?: 1) < (item?.qty ?: 0)
+                                        }
                                 ) {
                                     onQtyChanged((item?.qtySelected ?: 1).inc())
                                 },
                             painter = painterResource(resource = Res.drawable.ic_add_circle),
                             contentDescription = "plus",
-                            tint = PrimaryColor.takeIf { (item?.qtySelected ?: 1) < (item?.qty ?: 0) }?: Color.Gray
+                            tint =
+                            if (isDetailHistory) {
+                                Color.Gray
+                            } else {
+                                PrimaryColor.takeIf { (item?.qtySelected ?: 1) < (item?.qty ?: 0) } ?: Color.Gray
+                            }
                         )
 
                         //remove item product from order
@@ -242,8 +250,9 @@ fun OrderItem(
                             contentDescription = "remove cart",
                             tint = Color.Red,
                             modifier = Modifier
+                                .alpha(0f.takeIf { isDetailHistory } ?: 1f)
                                 .size(24.dp)
-                                .clickable {
+                                .clickable (enabled = !isDetailHistory){
                                     if (item != null) {
                                         onRemove(item)
                                     }

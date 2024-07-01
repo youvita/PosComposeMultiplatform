@@ -17,4 +17,5 @@ data class OrderHistoryState(
     val allRow: Int = 0,
     val productList: List<ItemModel>? = null,
     val orderSelected: OrderEntity? = null,
+    val selectedId: Long? = null
 )

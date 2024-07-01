@@ -27,6 +27,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import core.theme.ColorCancel
+import core.theme.ColorDDE3F9
 import core.theme.ColorPaid
 import core.theme.ColorPreOrder
 import core.theme.ColorProgress
@@ -104,6 +105,7 @@ fun TransactionTable(
                     LineWrapper()
                     Box(
                         modifier = Modifier
+                            .background(ColorDDE3F9.takeIf { transaction.orderId.toString() == state?.selectedId.toString() } ?: Color.Transparent)
                             .clickable {
                                 //get order detail
                                 historyEvent(OrderHistoryEvent.GetOrderDetail(transaction.orderId?:0))

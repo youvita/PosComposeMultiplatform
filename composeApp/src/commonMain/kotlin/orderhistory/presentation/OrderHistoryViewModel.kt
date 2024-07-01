@@ -176,7 +176,10 @@ class OrderHistoryViewModel (
 
             is OrderHistoryEvent.GetOrderDetail -> {
                 getProductOrderById(event.id)
-                _uiState.value = _uiState.value.copy(orderSelected = getOrderDetail(event.id))
+                _uiState.value = _uiState.value.copy(
+                    orderSelected = getOrderDetail(event.id),
+                    selectedId = event.id
+                )
             }
 
             else -> {}
