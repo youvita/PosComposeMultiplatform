@@ -157,6 +157,7 @@ fun AddNewStock(
     var indexMenu by remember { mutableStateOf(-1) }
     var isSelectCategory by remember { mutableStateOf(false) }
     var menuSelected by remember { mutableStateOf<MenuModel?>(MenuModel(menuId = productItem?.menuId, name = productItem?.menuName, image = productItem?.menuImage)) }
+    var requiredField by remember { mutableStateOf(true) }
 
     val scope = rememberCoroutineScope()
     val singleImagePicker = rememberImagePickerLauncher(
@@ -181,6 +182,18 @@ fun AddNewStock(
 
     LaunchedEffect(true) {
         onEvent(InventoryEvent.GetMenu())
+    }
+
+    //check require field
+    LaunchedEffect(indexMenu,name,barCode,byteImage,price,qty){
+        requiredField = required(
+            sku = barCode,
+            name = name,
+            categoryIndex = indexMenu,
+            byteImage = byteImage,
+            price = price,
+            qty = qty,
+        )
     }
 
     var showAddMenuDialog by remember { mutableStateOf(false) }
@@ -350,7 +363,12 @@ fun AddNewStock(
                                                 price = price,
                                                 discount = discount
                                             )
-                                            onEvent(InventoryEvent.AddProduct(product))
+                                            if (requiredField){
+                                                onEvent(InventoryEvent.AddProduct(product))
+                                                callback()
+                                            } else {
+                                                required = true
+                                            }
                                         } else {
                                             val product = Product(
                                                 menuId = menuSelected?.menuId,
@@ -362,10 +380,13 @@ fun AddNewStock(
                                                 price = price,
                                                 discount = discount
                                             )
-                                            onEvent(InventoryEvent.UpdateProduct(product))
+                                            if (requiredField){
+                                                onEvent(InventoryEvent.UpdateProduct(product))
+                                                callback()
+                                            } else {
+                                                required = true
+                                            }
                                         }
-
-                                        callback()
                                     }
                                 )
                             }
@@ -764,9 +785,7 @@ fun AddNewStock(
                                         text = barCode.toString().takeIf { barCode > 0 } ?: "",
                                         placeholder = "Barcode",
                                         onValueChange = {
-                                            if (it.isNotEmpty()) {
-                                                barCode = it.toLong()
-                                            }
+                                            barCode = if (it.isNotEmpty()) it.toLong() else 0
                                         },
                                         keyboardType = KeyboardType.Number
                                     )
@@ -808,7 +827,17 @@ fun AddNewStock(
                                     Column(
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Text(text = "Price($)")
+                                        Text(text = buildAnnotatedString {
+                                            append("Price($)")
+                                            withStyle(
+                                                SpanStyle(
+                                                    color = Color.Red
+                                                )
+                                            ) {
+                                                append(" ")
+                                                append("*")
+                                            }
+                                        })
 
                                         Spacer(modifier = Modifier.height(5.dp))
 
@@ -831,7 +860,18 @@ fun AddNewStock(
                                     Column(
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Text(text = "Quality")
+
+                                        Text(text = buildAnnotatedString {
+                                            append("Quality")
+                                            withStyle(
+                                                SpanStyle(
+                                                    color = Color.Red
+                                                )
+                                            ) {
+                                                append(" ")
+                                                append("*")
+                                            }
+                                        })
 
                                         Spacer(modifier = Modifier.height(5.dp))
 
@@ -903,4 +943,19 @@ fun AddNewStock(
         }
     }
 
+}
+private fun required(
+    sku: Long,
+    name: String?,
+    categoryIndex: Int,
+    byteImage: ByteArray?,
+    price: String?,
+    qty: String?
+): Boolean{
+    return sku > 0
+            && name?.isNotEmpty() == true
+            && categoryIndex >= 0
+            && byteImage != null
+            && price?.isNotEmpty() == true
+            && qty?.isNotEmpty() == true
 }
