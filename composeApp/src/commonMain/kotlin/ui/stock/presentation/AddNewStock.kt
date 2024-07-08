@@ -955,7 +955,7 @@ private fun required(
     return sku > 0
             && name?.isNotEmpty() == true
             && categoryIndex >= 0
-            && byteImage != null
+//            && byteImage != null
             && price?.isNotEmpty() == true
             && qty?.isNotEmpty() == true
 }

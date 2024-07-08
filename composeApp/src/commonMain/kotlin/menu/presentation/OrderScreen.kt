@@ -299,6 +299,7 @@ fun OrderScreen(
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(3),
                                 horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
                                 modifier = Modifier.fillMaxSize()
                             ){
                                 itemsIndexed(listItem){ index, item ->

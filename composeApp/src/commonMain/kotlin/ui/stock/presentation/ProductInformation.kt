@@ -34,8 +34,15 @@ import core.utils.LineWrapper
 import core.utils.calculateWeight
 import core.utils.dollar
 import core.utils.getTextStyle
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+import poscomposemultiplatform.composeapp.generated.resources.Res
+import poscomposemultiplatform.composeapp.generated.resources.ic_empty
+import poscomposemultiplatform.composeapp.generated.resources.ic_gallery
+import poscomposemultiplatform.composeapp.generated.resources.ic_unknown
 import ui.stock.domain.model.ProductMenu
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ProductInformation(
     data: List<ProductMenu>? = null,
@@ -120,23 +127,28 @@ fun ProductInformation(
                             ) {
                                 columnList.forEachIndexed { columnIndex, _ ->
                                     if (columnIndex == 1) {
-                                        item.image?.let {
-                                            Box(
-                                                modifier = Modifier.weight(0.4f),
-                                                contentAlignment = Alignment.CenterEnd
+                                        Box(
+                                            modifier = Modifier.weight(0.4f),
+                                            contentAlignment = Alignment.CenterEnd
+                                        ) {
+                                            Card(
+                                                modifier = Modifier.size(42.dp),
+                                                shape = RoundedCornerShape(10.dp)
                                             ) {
-                                                Card(
-                                                    modifier = Modifier.size(42.dp),
-                                                    shape = RoundedCornerShape(10.dp)
-                                                ) {
+                                                item.image?.let {
                                                     Image(
                                                         bitmap = it.toImageBitmap(),
                                                         contentDescription = null,
                                                         contentScale = ContentScale.FillBounds
                                                     )
-                                                }
+                                                } ?:
+                                                Image(
+                                                    contentDescription = null,
+                                                    painter = painterResource(resource = Res.drawable.ic_unknown)
+                                                )
                                             }
                                         }
+
                                         item.imageUrl?.let {
                                             if (it.isNotEmpty()) {
                                                 Box(
