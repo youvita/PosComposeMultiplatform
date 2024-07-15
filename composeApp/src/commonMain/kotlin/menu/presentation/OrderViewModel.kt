@@ -6,10 +6,13 @@ import core.data.Resource
 import core.utils.formatDouble
 import core.utils.percentOf
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -25,6 +28,8 @@ import orderhistory.domain.repository.OrderHistoryRepository
 import org.topteam.pos.OrderEntity
 import org.topteam.pos.ProductOrderEntity
 import setting.domain.model.ItemModel
+import setting.domain.model.doesMatchSearchQuery
+import ui.stock.domain.model.ProductMenu
 import ui.stock.domain.repository.InventoryRepository
 
 class OrderViewModel(
@@ -45,6 +50,32 @@ class OrderViewModel(
         generateBillNoAndDate()
 
     }
+
+    val product = _state
+        .onEach {
+            _state.value = _state.value.copy(
+                isSearching = true,
+            )
+        }
+        .combine(_state) { text, product ->
+            if (text.searchText?.isBlank() == true) {
+                product.items
+            } else {
+                product.items?.filter {
+                    it.doesMatchSearchQuery(text.searchText?:"")
+                }
+            }
+        }
+        .onEach {
+            _state.value = _state.value.copy(
+                isSearching = false,
+            )
+        }
+        .stateIn(
+            screenModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            _state.value.items
+        )
 
     private fun getMenu() {
         screenModelScope.launch {

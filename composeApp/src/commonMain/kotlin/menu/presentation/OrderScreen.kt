@@ -109,6 +109,7 @@ import ui.settings.domain.model.WifiData
 @Composable
 fun OrderScreen(
     orderState: OrderState? = null,
+    itemSearchList: List<ItemModel>? = null,
     customerState: CustomerState? = null,
     customerEvent: (CustomerEvent) -> Unit = {},
     orderEvent: (OrderEvent) -> Unit = {},
@@ -185,8 +186,14 @@ fun OrderScreen(
     LaunchedEffect(orderState?.menus){
         menuList = categoryMenuList
     }
+
     LaunchedEffect(orderState?.items){
         listItem = orderState?.items?: emptyList()
+    }
+
+    //If have search item set to listItem
+    LaunchedEffect(itemSearchList,orderState?.searchText){
+        listItem = itemSearchList ?: orderState?.items?: emptyList()
     }
 
     LaunchedEffect(Unit){

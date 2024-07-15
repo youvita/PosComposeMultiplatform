@@ -80,6 +80,8 @@ class MainScreen: Screen, KoinComponent {
         val settingsViewModel = get<SettingsViewModel>()
         val settingsState = settingsViewModel.state.collectAsState().value
 
+        val itemSearchList = orderViewModel.product.collectAsState().value
+
         var isAddItem by remember {
             mutableStateOf(false)
         }
@@ -197,6 +199,7 @@ class MainScreen: Screen, KoinComponent {
 
                     OrderScreen(
                         orderState = orderState,
+                        itemSearchList = itemSearchList,
                         orderEvent = orderViewModel::onEvent
                     )
 

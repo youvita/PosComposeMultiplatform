@@ -25,6 +25,17 @@ data class ItemModel constructor(
     var ice: List<ItemOption>? = null,
 )
 
+fun ItemModel.doesMatchSearchQuery(query: String): Boolean {
+    val matchingCombinations = listOf(
+        "$menuId",
+        "$product_id",
+        "$name"
+    )
+    return matchingCombinations.any {
+        it.contains(query, ignoreCase = true)
+    }
+}
+
 @OptIn(ExperimentalResourceApi::class)
 fun ItemModel.mapItem(): Item {
     return Item(
