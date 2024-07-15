@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
@@ -44,6 +45,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 fun TransactionTable(
     modifier: Modifier = Modifier,
+    focusManager: FocusManager? = null,
     state: OrderHistoryState? = null,
     historyEvent: (OrderHistoryEvent) -> Unit = {}
 ) {
@@ -108,6 +110,7 @@ fun TransactionTable(
                             .background(ColorDDE3F9.takeIf { transaction.orderId.toString() == state?.selectedId.toString() } ?: Color.Transparent)
                             .clickable {
                                 //get order detail
+                                focusManager?.clearFocus()
                                 historyEvent(OrderHistoryEvent.GetOrderDetail(transaction.orderId?:0))
                             }
                     ) {

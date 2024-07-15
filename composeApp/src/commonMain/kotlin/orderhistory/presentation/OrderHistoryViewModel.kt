@@ -158,6 +158,7 @@ class OrderHistoryViewModel (
             }
 
             is OrderHistoryEvent.GetOrderOrderHistoryEvent -> {
+                clearSelected()
                 getAllHistoryList()
             }
 
@@ -181,9 +182,19 @@ class OrderHistoryViewModel (
                     selectedId = event.id
                 )
             }
+            is OrderHistoryEvent.ClearSelectItem -> {
+                clearSelected()
+            }
 
             else -> {}
         }
+    }
+
+    private fun clearSelected() {
+        _uiState.value = _uiState.value.copy(
+            productList = emptyList(),
+            selectedId = 0L
+        )
     }
 
     private fun getOrderDetail(id: Long): OrderEntity? {

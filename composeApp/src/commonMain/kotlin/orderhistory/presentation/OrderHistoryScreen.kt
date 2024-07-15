@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -71,6 +72,8 @@ fun OrderHistoryScreen(
     pagingState: PagingState,
     historyEvent: (OrderHistoryEvent) -> Unit = {}
 ) {
+
+    val focusManager = LocalFocusManager.current
 
     var isInputEmpty by remember { mutableStateOf(true) }
     var date by mutableStateOf("")
@@ -109,6 +112,15 @@ fun OrderHistoryScreen(
     ) { paddingValues ->
         Box(modifier = Modifier
             .fillMaxSize()
+            .clickable (
+                indication = null,
+                interactionSource = remember {
+                    MutableInteractionSource()
+                }
+            ){
+                focusManager.clearFocus()
+                historyEvent(OrderHistoryEvent.ClearSelectItem)
+            }
             .padding(paddingValues)
         ) {
 
@@ -330,6 +342,7 @@ fun OrderHistoryScreen(
                             //Table
                             TransactionTable(
                                 state = orderHistoryState,
+                                focusManager = focusManager,
                                 historyEvent = historyEvent
                             )
                         }

@@ -12,5 +12,6 @@ sealed class OrderHistoryEvent {
 
     object ClearEventOrder: OrderHistoryEvent()
     data class GetOrderDetail(val id: Long) : OrderHistoryEvent()
+    object ClearSelectItem : OrderHistoryEvent()
 
 }
