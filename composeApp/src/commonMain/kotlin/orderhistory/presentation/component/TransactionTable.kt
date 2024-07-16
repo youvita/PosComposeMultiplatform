@@ -17,7 +17,11 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -39,26 +43,43 @@ import orderhistory.domain.model.TransactionHistory
 import orderhistory.presentation.OrderHistoryEvent
 import orderhistory.presentation.OrderHistoryState
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.topteam.pos.OrderEntity
 
 
 @Preview
 @Composable
 fun TransactionTable(
     modifier: Modifier = Modifier,
+    orderSearchList: List<OrderEntity>? = null,
     focusManager: FocusManager? = null,
     state: OrderHistoryState? = null,
     historyEvent: (OrderHistoryEvent) -> Unit = {}
 ) {
-    val context = Locale.current
+    var orderData by remember { mutableStateOf(state?.orderList ?: emptyList()) }
+
+    LaunchedEffect(state?.searchText, state?.orderList){
+        orderData = orderSearchList ?: emptyList()
+    }
+
+    LaunchedEffect(state?.orderList){
+        orderData = state?.orderList ?: emptyList()
+    }
+
+    LaunchedEffect(state?.orderListByDate){
+        orderData = state?.orderListByDate ?: emptyList()
+    }
+
+
     val columnHeaderList = listOf("Bill No", "Date", "Order By", "Discount", "Total", "Status")
     val rowList = arrayListOf<TransactionHistory>()
-    state?.orderList?.forEach{
+
+    orderData.forEach{
         rowList.add(
             TransactionHistory(
                 orderId = it.id,
                 billNo = it.order_no.toString(),
                 date = it.date,
-                orderBy = "Dara (Cashier)",
+                orderBy = "Cashier",
                 discount = it.discount.toString(),
                 total = "$${it.total}",
                 status = it.status

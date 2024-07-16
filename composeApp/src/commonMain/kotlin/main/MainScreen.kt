@@ -81,6 +81,7 @@ class MainScreen: Screen, KoinComponent {
         val settingsState = settingsViewModel.state.collectAsState().value
 
         val itemSearchList = orderViewModel.product.collectAsState().value
+        val itemOrderSearchList = orderHistoryViewModel.orderList.collectAsState().value
 
         var isAddItem by remember {
             mutableStateOf(false)
@@ -210,6 +211,7 @@ class MainScreen: Screen, KoinComponent {
                 1 -> {
                     OrderHistoryScreen(
                         orderHistoryState = historyState,
+                        orderSearchList = itemOrderSearchList,
                         pagingState = pagingState,
                         historyEvent = orderHistoryViewModel::onEvent
                     )

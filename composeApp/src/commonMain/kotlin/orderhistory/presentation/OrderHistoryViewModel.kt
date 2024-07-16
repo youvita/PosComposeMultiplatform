@@ -5,10 +5,16 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import core.data.Resource
 import orderhistory.domain.repository.OrderHistoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.char
 import org.topteam.pos.OrderEntity
 import setting.domain.model.ItemModel
 
@@ -24,6 +30,34 @@ class OrderHistoryViewModel (
     val pagingState: StateFlow<PagingState> = _pagingState.asStateFlow()
 
     var ROW_LIMIT = 5
+
+    val orderList = _uiState
+        .onEach {
+
+        }
+        .combine(_uiState) { stateText, stateItem ->
+            if (stateText.searchText.isBlank()) {
+                stateItem.orderList
+            } else {
+                stateItem.orderList?.filter { orderEntity ->
+                    val matchingCombinations = listOf(
+                        "${orderEntity.order_no}",
+                        "${orderEntity.total}"
+                    )
+                    matchingCombinations.any {
+                        it.contains(stateText.searchText, ignoreCase = true)
+                    }
+                }
+            }
+        }
+        .onEach {
+
+        }
+        .stateIn(
+            screenModelScope,
+            SharingStarted.WhileSubscribed(5000L),
+            _uiState.value.orderList
+        )
 
     private fun getAllHistoryList() {
         orderHistoryRepository.getOrderHistory().onEach { result ->
@@ -47,6 +81,27 @@ class OrderHistoryViewModel (
                     //fetch first page
                     getHistoryListPaging(1,0)
 
+                }
+                is Resource.Error -> {
+                    _uiState.value = uiState.value.copy(
+                        status = result.status,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _uiState.value = uiState.value.copy(isLoading = true)
+                }
+            }
+        }.launchIn(screenModelScope)
+    }
+
+    private fun getHistoryByDate(start: String, end: String) {
+        orderHistoryRepository.getOrderHistory().onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    _uiState.value = uiState.value.copy(
+                        orderListByDate = filterOrderHistoryList(result.data?: emptyList(),start,end)
+                    )
                 }
                 is Resource.Error -> {
                     _uiState.value = uiState.value.copy(
@@ -148,13 +203,19 @@ class OrderHistoryViewModel (
 
     fun onEvent(event: OrderHistoryEvent){
         when(event){
-            is OrderHistoryEvent.SearchEventOrder -> {
+            is OrderHistoryEvent.SearchOrder -> {
                 _uiState.value = _uiState.value.copy(searchText = event.searchText)
 
             }
 
-            is OrderHistoryEvent.ClearEventOrder -> {
+            is OrderHistoryEvent.ClearSearchOrder -> {
                 _uiState.value = _uiState.value.copy(searchText = "")
+            }
+
+            is OrderHistoryEvent.ClearSearchOrderByDate -> {
+                _uiState.value = _uiState.value.copy(
+                    orderListByDate = _uiState.value.orderList
+                )
             }
 
             is OrderHistoryEvent.GetOrderOrderHistoryEvent -> {
@@ -185,6 +246,9 @@ class OrderHistoryViewModel (
             is OrderHistoryEvent.ClearSelectItem -> {
                 clearSelected()
             }
+            is OrderHistoryEvent.SearchOrderByDate -> {
+                getHistoryByDate(event.start, event.end)
+            }
 
             else -> {}
         }
@@ -204,6 +268,29 @@ class OrderHistoryViewModel (
             }
         }
         return null
+    }
+
+    private fun filterOrderHistoryList(orderEntityList: List<OrderEntity>, startDate: String, endDate: String): List<OrderEntity> {
+        try {
+            val dateFormat = LocalDate.Format {
+                dayOfMonth()
+                char(' ')
+                monthName(MonthNames.ENGLISH_ABBREVIATED)
+                char(' ')
+                year()
+            }
+
+            val start = LocalDate.parse(startDate, dateFormat)
+            val end = LocalDate.parse(endDate, dateFormat)
+
+            return orderEntityList.filter { orderEntity ->
+                val transactionDate: LocalDate = LocalDate.parse(orderEntity.date.toString(), dateFormat)
+                transactionDate in start..end
+            }
+        } catch (e:Exception){
+            e.message
+            return emptyList()
+        }
     }
 
 

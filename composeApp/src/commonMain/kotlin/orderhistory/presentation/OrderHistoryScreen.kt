@@ -61,14 +61,15 @@ import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.format
 import kotlinx.datetime.toLocalDateTime
-import menu.presentation.component.OrderBillsForm
 import orderhistory.presentation.component.OrderBillsDetailForm
+import org.topteam.pos.OrderEntity
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OrderHistoryScreen(
     orderHistoryState: OrderHistoryState,
+    orderSearchList: List<OrderEntity>? = null,
     pagingState: PagingState,
     historyEvent: (OrderHistoryEvent) -> Unit = {}
 ) {
@@ -76,7 +77,9 @@ fun OrderHistoryScreen(
     val focusManager = LocalFocusManager.current
 
     var isInputEmpty by remember { mutableStateOf(true) }
-    var date by mutableStateOf("")
+    var date by remember { mutableStateOf("") }
+    var startDate by remember { mutableStateOf("") }
+    var endDate by remember { mutableStateOf("") }
 
     val currentMoment = Clock.System.now()
     val datetimeInSystemZone: LocalDateTime = currentMoment.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -155,14 +158,14 @@ fun OrderHistoryScreen(
                                 value = orderHistoryState?.searchText?:"",
 //                                value = "",
                                 onValueChange = {
-                                    historyEvent(OrderHistoryEvent.SearchEventOrder(it))
+                                    historyEvent(OrderHistoryEvent.SearchOrder(it))
                                     isInputEmpty = it.isEmpty() },
                                 modifier = Modifier
                                     .weight(3f)
                                     .padding(16.dp)
                                     .focusRequester(remember { FocusRequester() }),
                                 shape = RoundedCornerShape(10.dp),
-                                placeholder = { Text("Search order ID, Cashier, Amount", maxLines = 1) },
+                                placeholder = { Text("Search BillNo, Amount", maxLines = 1) },
                                 trailingIcon = {
                                     if (!isInputEmpty){
                                         Icon(
@@ -171,7 +174,7 @@ fun OrderHistoryScreen(
                                             tint = PrimaryColor,
                                             modifier = Modifier.clickable {
                                                 // Handle clear action
-                                                historyEvent(OrderHistoryEvent.ClearEventOrder)
+                                                historyEvent(OrderHistoryEvent.ClearSearchOrder)
                                                 isInputEmpty = true
                                             }
                                         )
@@ -210,6 +213,7 @@ fun OrderHistoryScreen(
                                                     setOffset(UtcOffset(hours = 0))
                                                 }
                                             ).text.substring(5,16) //"Thu, 25 Apr 2024 00:00 GMT" to 25 Apr 2024
+                                            startDate = date
                                         }) {
                                             Text(text = "Confirm")
                                         }
@@ -252,7 +256,7 @@ fun OrderHistoryScreen(
                                     confirmButton = {
                                         TextButton(onClick = {
                                             showDatePickerEnd = false
-                                            date += " - "+TextFieldValue(
+                                            endDate = TextFieldValue(
                                                 DateTimeComponents.Formats.RFC_1123.format {
                                                     setDate(epochMillisToLocalDate(datePickerEndState.selectedDateMillis?:0))
                                                     hour = 0
@@ -261,6 +265,8 @@ fun OrderHistoryScreen(
                                                     setOffset(UtcOffset(hours = 0))
                                                 }
                                             ).text.substring(5,16) //"Thu, 25 Apr 2024 00:00 GMT" to 25 Apr 2024
+                                            historyEvent(OrderHistoryEvent.SearchOrderByDate(startDate, endDate))
+                                            date += " - $endDate"
                                         }) {
                                             Text(text = "Confirm")
                                         }
@@ -325,11 +331,24 @@ fun OrderHistoryScreen(
                                     )
                                 },
                                 trailingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.KeyboardArrowDown,
-                                        tint = PrimaryColor,
-                                        contentDescription = "Pick Date",
-                                    )
+                                    if (date.isNotEmpty()){
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = "Clear",
+                                            tint = PrimaryColor,
+                                            modifier = Modifier.clickable {
+                                                // Handle clear action
+                                                historyEvent(OrderHistoryEvent.ClearSearchOrder)
+                                                date = ""
+                                            }
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.Default.KeyboardArrowDown,
+                                            tint = PrimaryColor,
+                                            contentDescription = "Pick Date",
+                                        )
+                                    }
                                 },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 onValueChange = {
@@ -342,6 +361,7 @@ fun OrderHistoryScreen(
                             //Table
                             TransactionTable(
                                 state = orderHistoryState,
+                                orderSearchList = orderSearchList,
                                 focusManager = focusManager,
                                 historyEvent = historyEvent
                             )
