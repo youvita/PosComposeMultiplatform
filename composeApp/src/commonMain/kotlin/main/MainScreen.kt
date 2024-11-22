@@ -1,32 +1,22 @@
 package main
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
-import core.app.convertToObject
-import core.bluetooth.BluetoothViewModel
-import core.data.Status
 import core.theme.ColorDDE3F9
-import core.theme.White
-import core.utils.Constants
 import core.utils.ProvideAppNavigator
-import core.utils.SharePrefer
 import dev.icerock.moko.permissions.Permission
 import dev.icerock.moko.permissions.PermissionsController
 import dev.icerock.moko.permissions.compose.BindEffect
@@ -52,9 +42,6 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_history_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_order_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_setting_menu
 import poscomposemultiplatform.composeapp.generated.resources.ic_super_mario_menu
-import receipt.BillRowItem
-import setting.domain.model.ItemModel
-import ui.settings.presentation.SettingsEvent
 import ui.settings.presentation.SettingsScreen
 import ui.settings.presentation.SettingsViewModel
 import ui.stock.presentation.InventoryViewModel
@@ -89,18 +76,11 @@ class MainScreen: Screen, KoinComponent {
 
         var startBarCodeScan by remember { mutableStateOf(false) }
 
-        val factory: PermissionsControllerFactory = rememberPermissionsControllerFactory()
-        val controller: PermissionsController = remember(factory) { factory.createPermissionsController() }
-        val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-        val blueViewModel = get<BluetoothViewModel>()
-        val bluetoothState by blueViewModel.deviceState.collectAsState()
-        BindEffect(controller)
-        coroutineScope.launch {
-            controller.providePermission(Permission.BLUETOOTH_CONNECT)
-            controller.providePermission(Permission.BLUETOOTH_SCAN)
-            controller.providePermission(Permission.LOCATION)
-        }
+
+//        val blueViewModel = get<BluetoothViewModel>()
+//        val bluetoothState by blueViewModel.deviceState.collectAsState()
+
 
         val allNavModels = arrayOf(
             NavModel(

@@ -1,28 +1,26 @@
-package core.bluetooth
+package ui.bluetooth.presentation
 
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModel
+import ui.bluetooth.data.BleDelegate
 import dev.bluefalcon.BlueFalcon
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-sealed interface UiEvent {
-    object OnScanClick: UiEvent
-    data class OnConnectClick(val macId: String): UiEvent
-    data class OnDisconnectClick(val macId: String): UiEvent
-}
+import ui.bluetooth.data.DeviceEvent
 
-class BluetoothViewModel(
+class BluetoothDeviceViewModel(
     private val blueFalcon: BlueFalcon,
-    delegate: BluetoothDelegate = BluetoothDelegate()
-): ScreenModel {
+    delegate: BleDelegate = BleDelegate()
+): ViewModel() {
 
     private val _deviceState: MutableStateFlow<BluetoothDeviceState> = MutableStateFlow(
         BluetoothDeviceState()
     )
     val deviceState: StateFlow<BluetoothDeviceState> get() = _deviceState
-
     init {
         delegate.setListener {event ->
             when(event) {
@@ -52,12 +50,11 @@ class BluetoothViewModel(
             }
         }
         blueFalcon.delegates.add(delegate)
-        screenModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             blueFalcon.peripherals.collect { peripherals ->
                 val uniqueKeys = _deviceState.value.devices.keys.toList()
                 val filteredPeripheral = peripherals.filter { !uniqueKeys.contains(it.uuid) }
                 filteredPeripheral.map { peripheral ->
-                    println(">>>>> peripheral::: $peripheral")
                     _deviceState.update {
                         val updateDevices = it.devices.toMutableMap()
                         updateDevices[peripheral.uuid] = EnhancedBluetoothPeripheral(false, peripheral)

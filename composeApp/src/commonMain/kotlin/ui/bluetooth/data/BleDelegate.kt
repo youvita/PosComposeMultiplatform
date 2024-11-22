@@ -1,4 +1,4 @@
-package core.bluetooth
+package ui.bluetooth.data
 
 import AdvertisementDataRetrievalKeys
 import dev.bluefalcon.BlueFalconDelegate
@@ -6,12 +6,8 @@ import dev.bluefalcon.BluetoothCharacteristic
 import dev.bluefalcon.BluetoothCharacteristicDescriptor
 import dev.bluefalcon.BluetoothPeripheral
 
-sealed interface DeviceEvent {
-    data class OnDeviceConnected(val macId: String): DeviceEvent
-    data class OnDeviceDisconnected(val macId: String): DeviceEvent
-}
 
-class BluetoothDelegate: BlueFalconDelegate {
+class BleDelegate: BlueFalconDelegate {
     var writeChar: BluetoothCharacteristic? = null
     var readChar: BluetoothCharacteristic? = null
 

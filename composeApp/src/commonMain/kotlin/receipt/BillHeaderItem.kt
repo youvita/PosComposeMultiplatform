@@ -42,7 +42,7 @@ fun BillHeaderItem(
             (
                     if ((columnSorted.firstOrNull()?.length ?: 0) > columnList[index].length) columnSorted.firstOrNull()?.length
                     else columnList[index].length
-                    ) ?: columnList[index].length
+            ) ?: columnList[index].length
         )
     }
 

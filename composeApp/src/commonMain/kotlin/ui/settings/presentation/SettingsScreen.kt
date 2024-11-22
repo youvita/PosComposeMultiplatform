@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -40,6 +41,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_background
+import ui.bluetooth.presentation.BluetoothDeviceViewModel
+import ui.bluetooth.presentation.components.DeviceScanView
 import ui.settings.components.Preference
 import ui.settings.components.SettingSideBar
 import ui.settings.components.SettingSideBarEvent
@@ -50,6 +53,7 @@ class SettingsScreen: Screen, KoinComponent {
     @Composable
     override fun Content() {
         val settingViewModel = get<SettingsViewModel>()
+        val bluetoothViewModel = get<BluetoothDeviceViewModel>()
         var eventSideBar by rememberSaveable { mutableIntStateOf(0) }
 
         Scaffold {
@@ -118,7 +122,7 @@ class SettingsScreen: Screen, KoinComponent {
 
                             VerticalDivider(thickness = 1.dp, color = ColorD9D9D9)
 
-                            Box(modifier = Modifier.padding(horizontal = 20.dp)){
+                            Box {
                                 when(eventSideBar){
                                     0 ->{
                                         Preference(
@@ -128,7 +132,10 @@ class SettingsScreen: Screen, KoinComponent {
                                     }
 
                                     1 ->{
-
+                                        DeviceScanView(
+                                            state = bluetoothViewModel.deviceState.collectAsState().value,
+                                            onEvent = bluetoothViewModel::onEvent
+                                        )
                                     }
 
                                     2 ->{

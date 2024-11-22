@@ -284,9 +284,9 @@ fun Preference(
     )
 
 
-    Column {
-        Spacer(modifier = Modifier.height(20.dp))
-
+    Column(
+        modifier = Modifier.padding(start = 20.dp, top = 10.dp, bottom = 10.dp, end = 20.dp)
+    ) {
         Row {
             Text(
                 modifier = Modifier

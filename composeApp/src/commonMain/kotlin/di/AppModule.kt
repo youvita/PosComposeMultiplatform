@@ -1,6 +1,4 @@
 package di
-
-import core.bluetooth.BluetoothViewModel
 import orderhistory.data.repository.HistoryRepositoryImpl
 import orderhistory.domain.repository.OrderHistoryRepository
 import orderhistory.presentation.OrderHistoryViewModel
@@ -16,6 +14,7 @@ import org.koin.dsl.module
 import org.topteam.pos.PosDatabase
 import platform.BluetoothDeviceFactory
 import platform.DatabaseDriverFactory
+import ui.bluetooth.presentation.BluetoothDeviceViewModel
 import ui.settings.data.SettingRepositoryImpl
 import ui.settings.domain.repository.SettingRepository
 import ui.settings.presentation.SettingsViewModel
@@ -35,8 +34,8 @@ fun appModule() = module {
         )
     }
 
-    single<BluetoothViewModel> {
-        BluetoothViewModel(blueFalcon = get<BluetoothDeviceFactory>().blueFalcon)
+    single<BluetoothDeviceViewModel> {
+        BluetoothDeviceViewModel(blueFalcon = get<BluetoothDeviceFactory>().blueFalcon)
     }
 
     single<SearchEngineViewModel> {
