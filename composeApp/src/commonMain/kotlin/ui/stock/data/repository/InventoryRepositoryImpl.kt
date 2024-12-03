@@ -26,29 +26,30 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
             stock.stockId?.let { id ->
                 db.updateStock(
                     product.productId,
-                    stock.stockIn,
+                    stock.stockIn?.plus(product.qty?.toLong() ?: 0),
                     stock.stockOut,
                     stock.stockBox,
-                    stock.stockTotal,
-                    getCurrentDateTime(),
+                    stock.stockTotal?.plus(product.qty?.toLong() ?: 0),
+                    getCurrentDate(),
                     stock.dateOut,
-                    stock.timeIn,
+                    getCurrentTime(),
                     stock.timeOut,
                     id
                 )
             }
+
+            db.updateProduct(
+                menu_id = product.menuId,
+                product_id = product.productId,
+                name = product.name,
+                image = product.image,
+                imageUrl = product.imageUrl,
+                qty = stock.stockTotal?.plus(product.qty?.toLong() ?: 0).toString(),
+                price = product.price,
+                discount = product.discount,
+                product_id_ = product.productId
+            )
         }
-        db.updateProduct(
-            menu_id = product.menuId,
-            product_id = product.productId,
-            name = product.name,
-            image = product.image,
-            imageUrl = product.imageUrl,
-            qty = product.qty,
-            price = product.price,
-            discount = product.discount,
-            product_id_ = product.productId
-        )
     }
 
     override suspend fun updateProductQty(id: Long, qty: String): Flow<Resource<Unit>> = flow{

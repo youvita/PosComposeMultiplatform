@@ -57,6 +57,7 @@ fun getCurrentDate(): String {
 
 fun getCurrentTime(): String {
     var dateFormat = ""
+    var timeZone = ""
     try {
         val now = Clock.System.now()
         val dateTime: LocalDateTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -66,12 +67,21 @@ fun getCurrentTime(): String {
             minute = dateTime.time.minute
             second = dateTime.time.second
             setOffset(UtcOffset(hours = 0))
+
+            hour?.let {
+                timeZone = if (it <= 12) {
+                    "AM"
+                } else {
+                    "PM"
+                }
+            }
+
         }
-        dateFormat = (format.substring(17, 22).takeIf { format.length > 28 } ?: format.subSequence(17, 21)).toString()
+        dateFormat = (format.substring(16, 22).takeIf { format.length > 28 } ?: format.subSequence(16, 21)).toString()
     } catch (e: Exception) {
         e.message
     }
-    return dateFormat
+    return "$dateFormat $timeZone"
 }
 
 fun getDateByPeriodOfDay(days: Int): String {
