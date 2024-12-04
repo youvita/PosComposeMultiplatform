@@ -26,7 +26,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
             stock.stockId?.let { id ->
                 db.updateStock(
                     product.productId,
-                    stock.stockIn?.plus(product.qty?.toLong() ?: 0),
+                    product.qty?.toLong(),
                     stock.stockOut,
                     stock.stockBox,
                     stock.stockTotal?.plus(product.qty?.toLong() ?: 0),
@@ -52,6 +52,32 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         }
     }
 
+    override suspend fun adjustProduct(product: Product) {
+        val result = db.getStockByProductId(product.productId).executeAsList()
+        if (result.isNotEmpty()) {
+            val stock = result.last().toStock()
+            stock.stockId?.let { id ->
+                db.updateStock(
+                    product.productId,
+                    stock.stockIn,
+                    product.qty?.toLong(),
+                    stock.stockBox,
+                    stock.stockTotal?.minus(product.qty?.toLong() ?: 0),
+                    stock.dateIn,
+                    getCurrentDate(),
+                    stock.timeIn,
+                    getCurrentTime(),
+                    id
+                )
+
+                db.updateProductQty(
+                    qty = stock.stockTotal?.minus(product.qty?.toLong() ?: 0).toString(),
+                    id = id
+                )
+            }
+        }
+    }
+
     override suspend fun updateProductQty(id: Long, qty: String): Flow<Resource<Unit>> = flow{
         emit(Resource.Loading())
         emit(Resource.Success(db.updateProductQty(qty = qty, id = id)))
@@ -60,14 +86,15 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
     override suspend fun addProduct(product: Product) {
         val result = db.getStockByProductId(product.productId).executeAsList()
         if (result.isNotEmpty()) {
+            // add existing stock
             val stock = result.last().toStock()
             stock.stockId?.let { id ->
                 db.updateStock(
                     product.productId,
-                    stock.stockIn?.plus(1),
+                    product.qty?.toLong(),
                     stock.stockOut,
                     stock.stockBox,
-                    stock.stockTotal?.plus(1),
+                    stock.stockTotal?.plus(product.qty?.toLong() ?: 0),
                     getCurrentDate(),
                     stock.dateOut,
                     getCurrentTime(),
@@ -78,10 +105,10 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         } else {
             db.insertStock(
                 product_id = product.productId,
-                stock_in = 1,
+                stock_in = product.qty?.toLong(),
                 stock_out = 0,
                 stock_box = 0,
-                total = 1,
+                total = product.qty?.toLong(),
                 date_in = getCurrentDate(),
                 date_out = "",
                 time_in = getCurrentTime(),
@@ -192,7 +219,9 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 productImageUrl = item.imageUrl,
                 categoryName = item.menuName,
                 dateIn = item.date_in,
-                timeIn = item.time_in
+                timeIn = item.time_in,
+                dateOut = item.date_out,
+                timeOut = item.time_out
             )
             productStock.add(match)
         }

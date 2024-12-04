@@ -84,6 +84,9 @@ class InventoryViewModel(
             is InventoryEvent.UpdateProduct -> {
                 onUpdateProduct(event.product)
             }
+            is InventoryEvent.AdjustProduct -> {
+                onAdjustProduct(event.product)
+            }
             is InventoryEvent.GetMenu -> {
                 onGetMenu()
             }
@@ -112,6 +115,12 @@ class InventoryViewModel(
     private fun onUpdateProduct(product: Product) {
         screenModelScope.launch {
             repository.updateProduct(product)
+        }
+    }
+
+    private fun onAdjustProduct(product: Product) {
+        screenModelScope.launch {
+            repository.adjustProduct(product)
         }
     }
 

@@ -8,6 +8,7 @@ sealed class InventoryEvent {
     class SearchProductByDate(val startDate: String, val endDate: String): InventoryEvent()
     class AddProduct(val product: Product) : InventoryEvent()
     class UpdateProduct(val product: Product) : InventoryEvent()
+    class AdjustProduct(val product: Product) : InventoryEvent()
     class GetMenu : InventoryEvent()
     class GetProductStock : InventoryEvent()
     class GetProduct(val menuId: Long) : InventoryEvent()

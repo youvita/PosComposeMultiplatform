@@ -60,6 +60,7 @@ class AddStockScreen: Screen, KoinComponent {
         val marioViewModel = get<MarioViewModel>()
 
         var addNewProduct by remember { mutableStateOf(false) }
+        var adjustStock by remember { mutableStateOf(false) }
         var previousScreen by remember { mutableStateOf(listOf("Super Mario (admin)")) }
         var currentScreen by remember { mutableStateOf(listOf("Product & Stock")) }
         var productItem by remember { mutableStateOf<ProductMenu?>(null) }
@@ -111,6 +112,11 @@ class AddStockScreen: Screen, KoinComponent {
                                             previousScreen = previousScreen.toMutableList().apply { removeLast() }
 
                                             addNewProduct = false
+                                            adjustStock = false
+
+                                            // refresh data table
+                                            inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
+                                            inventoryViewModel.onEvent(InventoryEvent.GetProduct(0))
                                         }
                                     },
                                 text = previousScreen[it],
@@ -152,7 +158,7 @@ class AddStockScreen: Screen, KoinComponent {
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     AnimatedVisibility(
-                        visible = addNewProduct,
+                        visible = addNewProduct && !adjustStock,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
@@ -167,13 +173,12 @@ class AddStockScreen: Screen, KoinComponent {
                                 addNewProduct = false
                                 currentScreen = currentScreen.toMutableList().apply { removeLast() }
                                 previousScreen = previousScreen.toMutableList().apply { removeLast() }
-                                inventoryViewModel.onEvent(InventoryEvent.GetProduct(0))
                             }
                         )
                     }
 
                     AnimatedVisibility(
-                        visible = !addNewProduct,
+                        visible = !addNewProduct && !adjustStock,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
@@ -186,12 +191,30 @@ class AddStockScreen: Screen, KoinComponent {
                             callBack = { product ->
                                 productItem = product
                                 addNewProduct = true
-                                currentScreen = currentScreen.toMutableList().apply { add("New".takeIf { product == null } ?: "Detail") }
+                                currentScreen = currentScreen.toMutableList().apply { add("New".takeIf { product == null } ?: "Edit") }
                                 previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
                             },
                             menuClick = {
                                 inventoryViewModel.onEvent(InventoryEvent.GetProduct(it))
+                            },
+                            adjustStock = {
+                                adjustStock = true
+                                addNewProduct = false
+                                currentScreen = currentScreen.toMutableList().apply { add("Adjustment") }
+                                previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
                             }
+                        )
+                    }
+
+                    // Adjust stock
+                    AnimatedVisibility(
+                        visible = adjustStock,
+                        enter = fadeIn() + slideInHorizontally(),
+                        exit = fadeOut() + slideOutHorizontally()
+                    ) {
+                        AdjustStock(
+                            state = inventoryState,
+                            onEvent = inventoryViewModel::onEvent
                         )
                     }
                 }

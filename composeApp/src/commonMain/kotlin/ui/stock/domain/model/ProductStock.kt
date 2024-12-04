@@ -13,5 +13,7 @@ data class ProductStock(
     val productImageUrl: String? = null,
     val categoryName: String? = null,
     val dateIn: String? = null,
-    val timeIn: String? = null
+    val timeIn: String? = null,
+    val dateOut: String? = null,
+    val timeOut: String? = null
 )

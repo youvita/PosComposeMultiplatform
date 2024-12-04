@@ -2,6 +2,7 @@ package ui.stock.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,13 +37,14 @@ import ui.stock.domain.model.ProductStock
 
 @Composable
 fun StockInformation(
-    state: InventoryState
+    state: InventoryState,
+    onItemClick: (ProductStock) -> Unit = {}
 ) {
 
     Box(
         modifier = Modifier.fillMaxWidth().background(White).padding(start = 36.dp, top = 30.dp, end = 36.dp)
     ) {
-        val columnList = listOf("No", "", "Product Name", "Category", "SKU", "Stock In", "Stock Out", "Total", "Date")
+        val columnList = listOf("No", "", "Product Name", "Category", "SKU", "Stock In", "Stock Out", "Total", "Date In", "Date Out")
         val rowList = state.data
 
         val columnWeight = remember { MutableList(columnList.size) { 0f } } //column header weight
@@ -93,7 +95,9 @@ fun StockInformation(
                 rowList?.forEachIndexed { _, item ->
 
                     Column(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().clickable {
+                            onItemClick(item)
+                        }
                     ) {
                         Spacer(modifier = Modifier.height(5.dp))
 
@@ -169,7 +173,8 @@ private fun getColumnValue(item: ProductStock, index: Int): String {
         5 -> "+${item.stockIn.toString()}"
         6 -> "-".takeIf { item.stockOut?.toInt() == 0 } ?: "-${item.stockOut.toString()}"
         7 -> item.stockTotal.toString()
-        else -> "${item.dateIn} ${item.timeIn}"
+        8 -> "${item.dateIn} ${item.timeIn}"
+        else -> "${item.dateOut} ${item.timeOut}"
     }
 }
 

@@ -118,6 +118,7 @@ fun AddNewProduct(
     searchText: String? = null,
     marioEvent: (MarioEvent) -> Unit = {},
     callBack: (ProductMenu?) -> Unit = {},
+    adjustStock: () -> Unit,
     menuClick: (Long) -> Unit = {}
 ) {
 
@@ -483,6 +484,16 @@ fun AddNewProduct(
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
+
+                        PrimaryButton(
+                            text = "Adjust Stock",
+                            icon = Res.drawable.ic_plus,
+                            onClick = {
+                                adjustStock()
+                            }
+                        )
+
+                        Spacer(modifier = Modifier.width(5.dp))
 
                         PrimaryButton(
                             text = "New Product",

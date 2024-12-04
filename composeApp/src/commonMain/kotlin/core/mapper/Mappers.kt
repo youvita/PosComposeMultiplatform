@@ -17,6 +17,8 @@ fun StockEntity.toStock(): Stock {
         stockIn = stock_in,
         stockOut = stock_out,
         stockTotal = total,
+        dateIn = date_in,
+        dateOut = date_out,
         timeIn = time_in,
         timeOut = time_out
     )

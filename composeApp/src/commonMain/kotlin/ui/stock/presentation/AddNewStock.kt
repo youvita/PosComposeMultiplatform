@@ -97,6 +97,7 @@ import core.utils.DialogLoading
 import core.utils.DialogPreview
 import core.utils.DialogSuccess
 import core.utils.ImageLoader
+import core.utils.LabelInputRequire
 import core.utils.LineWrapper
 import core.utils.PrimaryButton
 import core.utils.TextInputDefault
@@ -125,6 +126,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
 import poscomposemultiplatform.composeapp.generated.resources.ic_upload
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductMenu
+import ui.stock.domain.model.ProductStock
 
 @OptIn(ExperimentalResourceApi::class, ExperimentalLayoutApi::class)
 @Composable
