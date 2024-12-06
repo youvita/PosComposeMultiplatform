@@ -293,13 +293,11 @@ fun DialogPreview(
     ){
         Column(
             modifier = Modifier
-                .padding(20.dp)
                 .fillMaxWidth()
                 .background(White, shape = RoundedCornerShape(8.dp))
                 .padding(10.dp)
-
         ){
-            Row{
+            Row {
                 Text(
                     modifier = Modifier
                         .padding(start = 10.dp)

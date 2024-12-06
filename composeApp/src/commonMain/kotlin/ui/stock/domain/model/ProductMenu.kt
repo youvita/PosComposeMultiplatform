@@ -18,7 +18,9 @@ data class ProductMenu(
         val matchingCombinations = listOf(
             "$menuId",
             "$menuName",
-            "$name"
+            "$name",
+            "$productId",
+            "$price"
         )
         return matchingCombinations.any {
             it.contains(query, ignoreCase = true)

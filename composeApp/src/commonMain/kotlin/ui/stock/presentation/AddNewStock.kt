@@ -156,8 +156,7 @@ fun AddNewStock(
 //    var stockQty by remember { mutableStateOf(Long.MIN_VALUE) }
     var byteImage by remember { mutableStateOf(productItem?.image) }
     var indexSelected by remember { mutableStateOf(-1) }
-    var indexMenu by remember { mutableStateOf(-1) }
-    var isSelectCategory by remember { mutableStateOf(false) }
+    var isSelectCategory by remember { mutableStateOf(productItem != null) }
     var menuSelected by remember { mutableStateOf<MenuModel?>(MenuModel(menuId = productItem?.menuId, name = productItem?.menuName, image = productItem?.menuImage)) }
     var requiredField by remember { mutableStateOf(true) }
 
@@ -187,11 +186,11 @@ fun AddNewStock(
     }
 
     //check require field
-    LaunchedEffect(indexMenu,name,barCode,byteImage,price,qty){
+    LaunchedEffect(isSelectCategory,name,barCode,byteImage,price,qty){
         requiredField = required(
             sku = barCode,
             name = name,
-            categoryIndex = indexMenu,
+            categorySelected = isSelectCategory,
             byteImage = byteImage,
             price = price,
             qty = qty,
@@ -740,14 +739,14 @@ fun AddNewStock(
                                                         modifier = Modifier,
                                                         shape = Shapes.medium,
                                                         colors = CardDefaults.cardColors(White),
-                                                        border = BorderStroke(2.dp.takeIf { indexMenu == index } ?: 0.dp, PrimaryColor.takeIf { indexMenu == index } ?: White),
+                                                        border = BorderStroke(2.dp.takeIf { menuSelected?.menuId == item.menuId } ?: 0.dp, PrimaryColor.takeIf { menuSelected?.menuId == item.menuId } ?: White),
                                                         elevation = CardDefaults.cardElevation(2.dp)
                                                     ) {
                                                         Box(modifier = Modifier
                                                             .clip(Shapes.medium)
                                                             .clickable {
-                                                            menuSelected = item
-                                                            indexMenu = index
+                                                                menuSelected = item
+                                                                isSelectCategory = index >= 0
                                                         }) {
                                                             CategoryItem(
                                                                 modifier = Modifier.fillMaxWidth(),
@@ -949,15 +948,10 @@ fun AddNewStock(
 private fun required(
     sku: Long,
     name: String?,
-    categoryIndex: Int,
+    categorySelected: Boolean,
     byteImage: ByteArray?,
     price: String?,
     qty: String?
 ): Boolean{
-    return sku > 0
-            && name?.isNotEmpty() == true
-            && categoryIndex >= 0
-//            && byteImage != null
-            && price?.isNotEmpty() == true
-            && qty?.isNotEmpty() == true
+    return (sku > 0 && name?.isNotEmpty() == true) && categorySelected && byteImage != null && price?.isNotEmpty() == true && qty?.isNotEmpty() == true
 }

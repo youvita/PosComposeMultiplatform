@@ -81,7 +81,7 @@ fun LabelInputNormal(
             text = label,
             style = labelTextStyle
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         TextInputNormal(
             modifier = modifier,
             text = text,

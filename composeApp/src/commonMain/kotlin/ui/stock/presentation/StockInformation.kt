@@ -44,7 +44,7 @@ fun StockInformation(
     Box(
         modifier = Modifier.fillMaxWidth().background(White).padding(start = 36.dp, top = 30.dp, end = 36.dp)
     ) {
-        val columnList = listOf("No", "", "Product Name", "Category", "SKU", "Stock In", "Stock Out", "Total", "Date In", "Date Out")
+        val columnList = listOf("No ", "", "Product Name", "Category", "SKU", "Stock In", "Stock Out", "Total", "Date In", "Date Out")
         val rowList = state.data
 
         val columnWeight = remember { MutableList(columnList.size) { 0f } } //column header weight
@@ -75,7 +75,7 @@ fun StockInformation(
                     Text(
                         modifier = Modifier.weight(0.4f.takeIf { columnIndex == 1 } ?: columnWeight[columnIndex]),
                         text = item,
-                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 }
+                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 || columnIndex == columnList.size - 2 }
                     )
                     if (columnIndex != columnList.size - 1) Spacer(modifier = Modifier.width(10.dp))
                 }
@@ -145,7 +145,7 @@ fun StockInformation(
                                         modifier = Modifier.weight(columnWeight[columnIndex]),
                                         text = getColumnValue(item, columnIndex),
                                         style = getTextStyle(typography = Styles.BodyMedium),
-                                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 },
+                                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 || columnIndex == columnList.size - 2 },
                                         color = getColorValue(item, columnIndex)
                                     )
                                 }

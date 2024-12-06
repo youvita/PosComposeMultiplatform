@@ -72,7 +72,7 @@ SELECT * FROM ProductEntity JOIN MenuEntity JOIN StockEntity ON ProductEntity.me
 -- SELECT * FROM ProductEntity JOIN MenuEntity;
 
 getProductByDate:
-SELECT * FROM ProductEntity JOIN MenuEntity JOIN StockEntity ON ProductEntity.menu_id = MenuEntity.id AND ProductEntity.product_id = StockEntity.product_id WHERE date_in >= ? AND date_in <= ?;
+SELECT * FROM ProductEntity JOIN MenuEntity JOIN StockEntity ON ProductEntity.menu_id = MenuEntity.id AND ProductEntity.product_id = StockEntity.product_id WHERE date_in AND date_out >= ? AND date_in AND date_out <= ?;
 
 CREATE TABLE OrderEntity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,

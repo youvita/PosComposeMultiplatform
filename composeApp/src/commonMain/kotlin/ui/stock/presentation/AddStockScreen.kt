@@ -114,7 +114,7 @@ class AddStockScreen: Screen, KoinComponent {
                                             addNewProduct = false
                                             adjustStock = false
 
-                                            // refresh data table
+                                            // load data table
                                             inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
                                             inventoryViewModel.onEvent(InventoryEvent.GetProduct(0))
                                         }
@@ -173,6 +173,9 @@ class AddStockScreen: Screen, KoinComponent {
                                 addNewProduct = false
                                 currentScreen = currentScreen.toMutableList().apply { removeLast() }
                                 previousScreen = previousScreen.toMutableList().apply { removeLast() }
+
+                                // refresh product table
+                                inventoryViewModel.onEvent(InventoryEvent.GetProduct(0))
                             }
                         )
                     }
@@ -202,6 +205,9 @@ class AddStockScreen: Screen, KoinComponent {
                                 addNewProduct = false
                                 currentScreen = currentScreen.toMutableList().apply { add("Adjustment") }
                                 previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
+
+                                // refresh stock table
+                                inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
                             }
                         )
                     }
