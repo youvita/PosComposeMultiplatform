@@ -247,10 +247,11 @@ fun OrderBillsForm(
             }else{
                 LazyColumn{
                     items(list){item ->
+                        println(">>>item ${item.qty}")
                         OrderItem(
                             item = item,
                             onQtyChanged = {
-//                                item.qty = it
+                                println(">>>> $it")
 //                                orderEvent(OrderEvent.QuantityChangeEvent(item))
                                   orderEvent(OrderEvent.QuantityChangeEvent(item,it))
                             },

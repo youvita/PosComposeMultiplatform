@@ -49,7 +49,7 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_back
 import ui.stock.domain.model.ProductMenu
 
 @OptIn(ExperimentalResourceApi::class)
-class AddStockScreen: Screen, KoinComponent {
+class InventoryScreen: Screen, KoinComponent {
 
     @Composable
     override fun Content() {

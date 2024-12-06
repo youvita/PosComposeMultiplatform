@@ -92,17 +92,15 @@ fun StockInformation(
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                rowList?.forEachIndexed { _, item ->
+                rowList?.forEachIndexed { rowIndex , item ->
 
                     Column(
                         modifier = Modifier.fillMaxWidth().clickable {
                             onItemClick(item)
                         }
                     ) {
-                        Spacer(modifier = Modifier.height(5.dp))
-
                         Row(
-                            modifier = Modifier,
+                            modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
                             horizontalArrangement = Arrangement.Start,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -154,7 +152,11 @@ fun StockInformation(
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(5.dp))
+                        if (rowIndex != rowList.size - 1) {
+                            LineWrapper(
+                                modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                            )
+                        }
                     }
                 }
             }
