@@ -37,6 +37,7 @@ qrScanner = "1.0.2"
 material3Android = "1.2.1"
 ktor = "2.3.10"
 sonner = "0.3.6"
+poi = "4.0.0"
 
 [libraries]
 constraintlayout-compose-multiplatform = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
@@ -95,6 +96,9 @@ stately-common = { module = "co.touchlab:stately-common", version.ref = "stately
 
 # Printer
 printer-android = { module = "com.github.KhairoHumsi:Printer-ktx", version.ref = "printer-android" }
+
+# Excel
+poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
 
 # Security
 security-crypto = { module = "androidx.security:security-crypto", version.ref = "security_crypto_ktx" }

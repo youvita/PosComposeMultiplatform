@@ -240,6 +240,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 productName = item.name,
                 productImage = item.image?.toImageBitmap(),
                 productImageUrl = item.imageUrl,
+                productPrice = item.price,
                 categoryName = item.menuName,
                 dateIn = item.date_in,
                 timeIn = item.time_in,

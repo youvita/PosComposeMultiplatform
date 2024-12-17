@@ -19,16 +19,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import core.app.convertToString
 import core.utils.DialogPreview
 import core.utils.LabelInputRequire
 import core.utils.PrimaryButton
+import getPlatform
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_adjust_stock
-import poscomposemultiplatform.composeapp.generated.resources.ic_back
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductStock
+import ui.stock.domain.model.toStockItem
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -36,8 +38,17 @@ fun AdjustStock(
     state: InventoryState,
     onEvent: (InventoryEvent) -> Unit
 ) {
+    val platform = getPlatform()
+    var isDownload by remember { mutableStateOf(false) }
     var isAdjustStock by remember { mutableStateOf(false) }
     var productStock by remember { mutableStateOf(ProductStock()) }
+
+    if (isDownload) {
+        platform.download(
+            convertToString(state.data?.map { it.toStockItem() })
+        )
+        isDownload = false
+    }
 
     // alert dialog to adjust stock
     if (isAdjustStock) {
@@ -109,11 +120,28 @@ fun AdjustStock(
         }
     }
 
-    StockInformation(
-        state = state,
-        onItemClick = {
-            productStock = it
-            isAdjustStock = true
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.End
+    ) {
+        Box(
+            modifier = Modifier.padding(10.dp)
+        ) {
+            PrimaryButton(
+                text = "Download Report",
+                onClick = {
+                    isDownload = true
+                }
+            )
         }
-    )
+
+        StockInformation(
+            state = state,
+            onItemClick = {
+                productStock = it
+                isAdjustStock = true
+            }
+        )
+
+    }
 }

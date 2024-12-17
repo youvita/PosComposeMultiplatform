@@ -76,9 +76,14 @@ kotlin {
             // sql
             implementation(libs.sqlDelight.android)
 
+            // print
             implementation(libs.printer.android)
 
+            // network
             implementation(libs.ktor.client.okhttp)
+
+            // generate excel
+            implementation(libs.poi.ooxml)
         }
 
         commonMain.dependencies {
@@ -127,13 +132,6 @@ kotlin {
             implementation(libs.bundles.onseok)
 
             implementation(libs.sonner.toast)
-
-//            // peekaboo-ui
-//            implementation(libs.peekaboo.ui)
-//
-//            // peekaboo-image-picker
-//            implementation(libs.peekaboo.image.picker)
-
         }
 
         iosMain.dependencies {

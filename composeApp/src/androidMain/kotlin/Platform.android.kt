@@ -1,6 +1,9 @@
 
+import android.content.Context
 import android.os.Build
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import org.topteam.pos.excel.createWorkbook
 import org.topteam.pos.printer.CaptureImage
 import org.topteam.pos.printer.printOut
 
@@ -14,6 +17,12 @@ class AndroidPlatform : Platform {
 
     override fun printer() {
         printOut()
+    }
+
+    @Composable
+    override fun download(data: String) {
+        val context = LocalContext.current
+        createWorkbook(context, data)
     }
 }
 
