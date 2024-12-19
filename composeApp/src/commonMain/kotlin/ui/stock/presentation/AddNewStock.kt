@@ -159,6 +159,7 @@ fun AddNewStock(
     var isSelectCategory by remember { mutableStateOf(productItem != null) }
     var menuSelected by remember { mutableStateOf<MenuModel?>(MenuModel(menuId = productItem?.menuId, name = productItem?.menuName, image = productItem?.menuImage)) }
     var requiredField by remember { mutableStateOf(true) }
+    var productImageSelected by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val singleImagePicker = rememberImagePickerLauncher(
@@ -168,6 +169,7 @@ fun AddNewStock(
             it.firstOrNull()?.let { image ->
                 indexSelected = 0
                 byteImage = image
+                productImageSelected = true
             }
         }
     )
@@ -186,12 +188,12 @@ fun AddNewStock(
     }
 
     //check require field
-    LaunchedEffect(isSelectCategory,name,barCode,byteImage,price,qty){
+    LaunchedEffect(isSelectCategory,name,barCode,productImageSelected,price,qty){
         requiredField = required(
             sku = barCode,
             name = name,
             categorySelected = isSelectCategory,
-            byteImage = byteImage,
+            productImageSelected = productImageSelected,
             price = price,
             qty = qty,
         )
@@ -586,6 +588,7 @@ fun AddNewStock(
                                                                         indexSelected = 1
                                                                         barImage = url
                                                                         byteImage = null
+                                                                        productImageSelected = true
                                                                     },
                                                                 image = url
                                                             )
@@ -628,6 +631,7 @@ fun AddNewStock(
                                                                         indexSelected = 2
                                                                         barImage = url
                                                                         byteImage = null
+                                                                        productImageSelected = true
                                                                     },
                                                                 image = url
                                                             )
@@ -670,6 +674,7 @@ fun AddNewStock(
                                                                         indexSelected = 3
                                                                         barImage = url
                                                                         byteImage = null
+                                                                        productImageSelected = true
                                                                     },
                                                                 image = url
                                                             )
@@ -949,9 +954,9 @@ private fun required(
     sku: Long,
     name: String?,
     categorySelected: Boolean,
-    byteImage: ByteArray?,
+    productImageSelected: Boolean,
     price: String?,
     qty: String?
 ): Boolean{
-    return (sku > 0 && name?.isNotEmpty() == true) && categorySelected && byteImage != null && price?.isNotEmpty() == true && qty?.isNotEmpty() == true
+    return (sku > 0 && name?.isNotEmpty() == true) && categorySelected && productImageSelected && price?.isNotEmpty() == true && qty?.isNotEmpty() == true
 }

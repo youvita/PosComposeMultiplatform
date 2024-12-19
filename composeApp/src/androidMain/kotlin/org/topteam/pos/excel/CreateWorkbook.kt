@@ -6,8 +6,12 @@ import androidx.core.content.FileProvider
 import core.app.convertToObject
 import io.kamel.core.utils.File
 import kotlinx.serialization.Serializable
+import org.apache.poi.hssf.usermodel.HSSFRichTextString
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.ss.usermodel.Font
+import org.apache.poi.ss.usermodel.RichTextString
 import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.Workbook
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -117,7 +121,7 @@ private fun addData(rowIndex: Int, sheet: Sheet, value: ProductStock) {
     cell2.setCellValue(value.categoryName)
 
     val cell3 = row.createCell(3)
-    cell3.setCellValue(value.productId?.toDouble() ?: 0.0)
+    cell3.setCellValue(value.productId.toString())
 
     val cell4 = row.createCell(4)
     cell4.setCellValue(value.stockIn?.toDouble() ?: 0.0)
