@@ -78,9 +78,9 @@ fun BillRowItem(
 private fun getColumnValue(item: ItemModel, index: Int): String? {
     return when (index) {
         0 -> item.name
-        1 -> item.qty.toString()
+        1 -> item.qtySelected.toString()
         2 -> item.price.toString()
         3 -> item.discount.toString()
-        else -> item.qty?.let { item.price?.times(it) }.toString()
+        else -> item.qtySelected?.let { item.price?.times(it) }.toString()
     }
 }

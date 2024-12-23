@@ -26,7 +26,10 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -62,7 +65,7 @@ fun OrderItem(
     isDetailHistory: Boolean = false,
     item: ItemModel? = null,
     onRemove: (ItemModel) -> Unit = {},
-    onQtyChanged: (Int) -> Unit? = {}
+    onQtyChanged: (Boolean, Int) -> Unit? = { _, _ ->}
 ){
     val focusManager = LocalFocusManager.current
     val discount = item?.discount ?: 0
@@ -70,6 +73,7 @@ fun OrderItem(
 
     val sizes = item?.size?: arrayListOf()
     val size: String = if(sizes.isEmpty()) "" else "Size " + sizes[0].option
+    var isIncreased by remember { mutableStateOf(false) }
 
 
     Row(
@@ -173,7 +177,8 @@ fun OrderItem(
                                             onRemove(item)
                                         }
                                     } else {
-                                        onQtyChanged((item?.qtySelected ?: 1).dec())
+                                        isIncreased = false
+                                        onQtyChanged(isIncreased, (item?.qtySelected ?: 1).dec())
                                     }
                                 },
                             painter = painterResource(resource = Res.drawable.ic_remove_circle),
@@ -197,7 +202,7 @@ fun OrderItem(
                                         item?.qty?:0
                                     else
                                         it.toInt()
-                                onQtyChanged(qtyChange)
+                                onQtyChanged(isIncreased, qtyChange)
                             },
                             textStyle = TextStyle(
                                 fontSize = 15.sp,
@@ -229,10 +234,11 @@ fun OrderItem(
                                         if (isDetailHistory){
                                             false
                                         } else {
-                                            (item?.qtySelected ?: 1) < (item?.qty ?: 0)
+                                            (item?.qty ?: 0) > 0
                                         }
                                 ) {
-                                    onQtyChanged((item?.qtySelected ?: 1).inc())
+                                    isIncreased = true
+                                    onQtyChanged(isIncreased, (item?.qtySelected ?: 1).inc())
                                 },
                             painter = painterResource(resource = Res.drawable.ic_add_circle),
                             contentDescription = "plus",
@@ -240,7 +246,7 @@ fun OrderItem(
                             if (isDetailHistory) {
                                 Color.Gray
                             } else {
-                                PrimaryColor.takeIf { (item?.qtySelected ?: 1) < (item?.qty ?: 0) } ?: Color.Gray
+                                PrimaryColor.takeIf { (item?.qty ?: 0) > 0 } ?: Color.Gray
                             }
                         )
 

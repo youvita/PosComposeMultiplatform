@@ -15,6 +15,7 @@ sealed class OrderEvent {
     data class FindCustomerOrdersEvent(val cusId: Long) : OrderEvent()
     data class PreOrderEvent(val customerModel: CustomerModel) : OrderEvent()
     data class QuantityChangeEvent(
+        val increased: Boolean,
         val item: ItemModel,
         val qtyChanged: Int
     ) : OrderEvent()

@@ -190,6 +190,9 @@ class OrderViewModel(
 
                     }
                     is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            status = result.status
+                        )
                     }
                 }
             }.launchIn(screenModelScope)
@@ -252,9 +255,15 @@ class OrderViewModel(
                     discountAmount += ((it.discount?:0) percentOf (it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0))
                 }
 
+                // Cut of qty after selected billing order
                 _state.value = _state.value.copy(
-                    orders = ordered,
+                    orders = ordered.mapIndexed { index, itemModel ->
+                        itemModel.copy(
+                            qty = if (index == ordered.size - 1) itemModel.qty?.minus(1) else itemModel.qty
+                        )
+                    }
                 )
+
                 updateBillState(
                     totalQty = qtyTotal,
                     totalItem = ordered.size,
@@ -286,10 +295,14 @@ class OrderViewModel(
                 )
 
                 //update qty a item by index
-                ordered?.set(
-                    ordered.indexOf(event.item),
-                    item
-                )
+                try {
+                    ordered?.set(
+                        ordered.indexOf(event.item),
+                        item
+                    )
+                } catch (e: Exception) {
+                    e.message
+                }
 
                 //update state total_qty,sub_total
                 ordered?.map {
@@ -297,8 +310,13 @@ class OrderViewModel(
                     subTotal += it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0
                     discountAmount += ((it.discount?:0) percentOf (it.price?.times(it.qtySelected?.toDouble()?:1.0) ?: 0.0))
                 }
+
                 _state.value = _state.value.copy(
-                    orders = ordered,
+                    orders = ordered?.mapIndexed { index, itemModel ->
+                        itemModel.copy(
+                            qty = if (ordered.indexOf(item) == index) if (event.increased) itemModel.qty?.minus(1) else itemModel.qty?.plus(1) else itemModel.qty
+                        )
+                    }
                 )
                 updateBillState(
                     totalQty = qtyTotal,

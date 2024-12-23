@@ -89,8 +89,6 @@ fun OrderBillsForm(
     val isOrderUpdated by rememberUpdatedState(orderState?.orders)
     LaunchedEffect(isOrderUpdated) {
         list = orderState?.orders?: arrayListOf()
-
-        println(">>>>>>list:::  $list")
     }
 
     if(showCustomerDialog){
@@ -249,10 +247,9 @@ fun OrderBillsForm(
                     items(list){item ->
                         OrderItem(
                             item = item,
-                            onQtyChanged = {
-                                println(">>>> $it")
+                            onQtyChanged = { isIncreased, qty ->
 //                                orderEvent(OrderEvent.QuantityChangeEvent(item))
-                                  orderEvent(OrderEvent.QuantityChangeEvent(item,it))
+                                  orderEvent(OrderEvent.QuantityChangeEvent(isIncreased, item, qty))
                             },
                             onRemove = {
                                 orderEvent(OrderEvent.OnRemoveOrder(it))

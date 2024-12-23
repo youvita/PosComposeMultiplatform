@@ -43,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -164,7 +165,7 @@ fun OrderScreen(
     }
 
     var selectedItem by remember { mutableIntStateOf(-1) }
-    var listItem by remember { mutableStateOf<List<ItemModel>>(emptyList()) }
+    var listItem by rememberSaveable { mutableStateOf<List<ItemModel>>(emptyList()) }
     var footerItem by remember { mutableStateOf(BillModel()) }
     var selectedMenuIndex by remember { mutableIntStateOf(0) }
     var isInputEmpty by remember { mutableStateOf(true) }
