@@ -62,6 +62,7 @@ class MainScreen: Screen, KoinComponent {
 
         val searchViewModel = get<SearchEngineViewModel>()
         val inventoryViewModel = get<InventoryViewModel>()
+        val inventoryState = inventoryViewModel.stateProductStock.collectAsState().value
         val searchState = searchViewModel.state.collectAsState().value
 
         val settingsViewModel = get<SettingsViewModel>()
@@ -180,8 +181,10 @@ class MainScreen: Screen, KoinComponent {
 
                     OrderScreen(
                         orderState = orderState,
+                        inventoryState = inventoryState,
                         itemSearchList = itemSearchList,
-                        orderEvent = orderViewModel::onEvent
+                        orderEvent = orderViewModel::onEvent,
+                        inventoryEvent = inventoryViewModel::onEvent
                     )
 
                     // call to refresh receipt data for print

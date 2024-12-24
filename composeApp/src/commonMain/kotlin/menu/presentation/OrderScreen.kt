@@ -103,6 +103,9 @@ import ui.settings.domain.model.QueueData
 import ui.settings.domain.model.SavePointData
 import ui.settings.domain.model.ShopData
 import ui.settings.domain.model.WifiData
+import ui.stock.domain.model.Product
+import ui.stock.presentation.InventoryEvent
+import ui.stock.presentation.InventoryState
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class,
     ExperimentalResourceApi::class
@@ -110,10 +113,12 @@ import ui.settings.domain.model.WifiData
 @Composable
 fun OrderScreen(
     orderState: OrderState? = null,
+    inventoryState: InventoryState? = null,
     itemSearchList: List<ItemModel>? = null,
     customerState: CustomerState? = null,
     customerEvent: (CustomerEvent) -> Unit = {},
     orderEvent: (OrderEvent) -> Unit = {},
+    inventoryEvent: (InventoryEvent) -> Unit = {}
 ) {
     val platform = getPlatform()
     var shopData = ShopData()
@@ -166,6 +171,7 @@ fun OrderScreen(
 
     var selectedItem by remember { mutableIntStateOf(-1) }
     var listItem by rememberSaveable { mutableStateOf<List<ItemModel>>(emptyList()) }
+    var orderItem by remember { mutableStateOf<List<ItemModel>>(emptyList()) }
     var footerItem by remember { mutableStateOf(BillModel()) }
     var selectedMenuIndex by remember { mutableIntStateOf(0) }
     var isInputEmpty by remember { mutableStateOf(true) }
@@ -188,12 +194,12 @@ fun OrderScreen(
         menuList = categoryMenuList
     }
 
-    LaunchedEffect(orderState?.items){
-        listItem = orderState?.items?: emptyList()
-    }
+//    LaunchedEffect(orderState?.items){
+//        listItem = orderState?.items?: emptyList()
+//    }
 
     //If have search item set to listItem
-    LaunchedEffect(itemSearchList,orderState?.searchText){
+    LaunchedEffect(itemSearchList, orderState?.searchText){
         listItem = itemSearchList ?: orderState?.items?: emptyList()
     }
 
@@ -444,7 +450,7 @@ fun OrderScreen(
                                     modifier = Modifier.fillMaxWidth().background(White)
                                 ) {
                                     val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                                    val rowList = listItem
+                                    val rowList = orderItem
                                     BillHeaderItem(
                                         columnList = columnList,
                                         rowList = rowList
@@ -457,7 +463,7 @@ fun OrderScreen(
                                     modifier = Modifier.fillMaxWidth().background(White)
                                 ) {
                                     val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                                    val rowList = listItem
+                                    val rowList = orderItem
                                     BillRowItem(
                                         columnList = columnList,
                                         rowList = rowList
@@ -565,8 +571,23 @@ fun OrderScreen(
                         customerEvent = customerEvent,
                         onPrint = { items, subItem ->
                             footerItem = subItem
-                            listItem = items
+                            orderItem = items
                             isPreview = true
+
+                            for (item in orderItem) {
+                                val product = Product(
+                                    menuId = null,
+                                    productId = item.product_id,
+                                    name = null,
+                                    image = null,
+                                    imageUrl = null,
+                                    qty = item.qtySelected.toString(),
+                                    price = null,
+                                    discount = null
+                                )
+                                inventoryEvent(InventoryEvent.AdjustProduct(product))
+                            }
+                            orderEvent(OrderEvent.GetItemsEvent(selectedMenuIndex.toLong()))
                         }
                     )
 
@@ -642,7 +663,7 @@ fun OrderScreen(
                                             modifier = Modifier.fillMaxWidth().background(White)
                                         ) {
                                             val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                                            val rowList = listItem
+                                            val rowList = orderItem
                                             BillHeaderItem(
                                                 isPreview = isPreview,
                                                 columnList = columnList,
@@ -654,10 +675,10 @@ fun OrderScreen(
                                             modifier = Modifier.fillMaxWidth().background(White)
                                         ) {
                                             val columnList = listOf("Description", "Qty", "Price", "Dis.", "Amount")
-                                            val rowList = listItem
+                                            val rowList = orderItem
 
                                             // display each item as a rows
-                                            for (item in listItem) {
+                                            for (item in orderItem) {
                                                 Column {
                                                     BillRowItem(
                                                         isPreview = isPreview,

@@ -81,7 +81,7 @@ fun OrderBillsForm(
     orderEvent: (OrderEvent) -> Unit = {},
     onPrint: (List<ItemModel>, BillModel) -> Unit = {_, _ ->}
 ){
-    var list by rememberSaveable { mutableStateOf<List<ItemModel>>(emptyList()) }
+    var list by remember { mutableStateOf<List<ItemModel>>(emptyList()) }
     var selectedCustomer by remember { mutableStateOf(CustomerModel()) }
     var showCustomerDialog by rememberSaveable { mutableStateOf(false) }
     var selectedPaymentMethod by rememberSaveable { mutableIntStateOf(0) }
@@ -472,6 +472,7 @@ fun OrderBillsForm(
 //                        }
                         if (list.isNotEmpty()) {
                             onPrint(list, orderState?.bill ?: BillModel())
+                            list = emptyList()
                         }
                     },
                     colors = ButtonDefaults.elevatedButtonColors(
