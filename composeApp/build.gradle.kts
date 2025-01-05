@@ -84,6 +84,9 @@ kotlin {
 
             // generate excel
             implementation(libs.poi.ooxml)
+
+            // generate barcode
+            implementation(libs.barcode.generate.android)
         }
 
         commonMain.dependencies {

@@ -38,6 +38,7 @@ material3Android = "1.2.1"
 ktor = "2.3.10"
 sonner = "0.3.6"
 poi = "4.0.0"
+barcode = "3.5.2"
 
 [libraries]
 constraintlayout-compose-multiplatform = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
@@ -113,6 +114,8 @@ moko-permission = { module = "dev.icerock.moko:permissions-compose", version.ref
 
 qr-scanner = { module = "network.chaintech:qr-kit", version.ref = "qrScanner" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+
+barcode-generate-android = { module = "com.google.zxing:core", version.ref = "barcode"}
 
 
 [plugins]

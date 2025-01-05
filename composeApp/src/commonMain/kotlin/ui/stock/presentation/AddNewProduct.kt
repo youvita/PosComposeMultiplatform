@@ -104,7 +104,6 @@ import orderhistory.presentation.OrderHistoryEvent
 import orderhistory.presentation.epochMillisToLocalDate
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import poscomposemultiplatform.composeapp.generated.resources.Res
-import poscomposemultiplatform.composeapp.generated.resources.ic_edit
 import poscomposemultiplatform.composeapp.generated.resources.ic_plus
 import setting.domain.model.ItemModel
 import ui.stock.domain.model.Product
@@ -488,7 +487,7 @@ fun AddNewProduct(
 
                         PrimaryButton(
                             text = "Adjust Stock",
-                            icon = Res.drawable.ic_edit,
+                            icon = Res.drawable.ic_plus,
                             onClick = {
                                 adjustStock()
                             }

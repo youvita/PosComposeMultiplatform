@@ -28,6 +28,8 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.img_employee
+import poscomposemultiplatform.composeapp.generated.resources.img_parking
+import ui.parking.presentation.ParkingScreen
 import ui.stock.presentation.InventoryScreen
 
 data class GraphMarioScreen(
@@ -96,6 +98,17 @@ data class GraphMarioScreen(
                             ) {
                                 navigator.push(
                                     InventoryScreen()
+                                )
+                            }
+                        }
+
+                        item{
+                            MarioItem(
+                                name = "Parking",
+                                image = Res.drawable.img_parking
+                            ) {
+                                navigator.push(
+                                    ParkingScreen()
                                 )
                             }
                         }
