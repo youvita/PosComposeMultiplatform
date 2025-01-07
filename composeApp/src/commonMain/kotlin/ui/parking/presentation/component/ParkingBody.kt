@@ -10,10 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import receipt.ResultItem
+import ui.parking.domain.model.Parking
 
 @Composable
 fun ParkingBody(
     isPreview: Boolean = false,
+    parking: Parking? = null
 ) {
     Column(
         modifier = Modifier
@@ -27,27 +29,42 @@ fun ParkingBody(
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp),
         ) {
-            ResultItem(
-                label = "កាលបរិច្ឆេទចូល / Enter Date :",
-                value = "23 Jan 2024 14:00",
-                isPreview = isPreview
-            )
+            parking?.checkIn?.let { checkIn ->
+                ResultItem(
+                    label = "កាលបរិច្ឆេទចូល / Check In :",
+                    value = checkIn,
+                    isPreview = isPreview
+                )
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            ResultItem(
-                label = "កាលបរិច្ឆេទចេញ / Exit Date :",
-                value = "23 Jan 2024 15:00",
-                isPreview = isPreview
-            )
+            if (parking?.checkOut.isNullOrEmpty()) {
+                ResultItem(
+                    label = "កាលបរិច្ឆេទចេញ / Check Out :",
+                    value = "-",
+                    isPreview = isPreview
+                )
+            } else {
+                parking?.checkOut?.let { checkOut ->
+                    ResultItem(
+                        label = "កាលបរិច្ឆេទចេញ / Check Out :",
+                        value = checkOut,
+                        isPreview = isPreview
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            ResultItem(
-                label = "រយះពេល / Duration :",
-                value = "1 Hours",
-                isPreview = isPreview
-            )
+            parking?.duration?.let { duration ->
+                ResultItem(
+                    label = "រយះពេល / Duration :",
+                    value = "$duration",
+                    isPreview = isPreview
+                )
+            }
+
         }
     }
 }

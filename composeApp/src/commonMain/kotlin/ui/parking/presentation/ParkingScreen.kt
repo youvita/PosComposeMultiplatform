@@ -1,14 +1,10 @@
 package ui.parking.presentation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,14 +53,18 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.topteam.pos.ui.features.history.presentation.component.PaginationContent
+import core.data.Status
 import core.theme.PrimaryColor
 import core.theme.White
+import core.utils.PrimaryButton
+import core.utils.getCurrentDateTime
 import getPlatform
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.format.DateTimeComponents
@@ -82,8 +82,10 @@ import org.koin.core.component.get
 import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_back
 import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
+import ui.parking.domain.model.Parking
 import ui.parking.presentation.component.ParkingBody
 import ui.parking.presentation.component.ParkingHeader
+import ui.parking.presentation.component.ParkingTable
 import ui.stock.domain.model.ProductMenu
 
 @OptIn(ExperimentalResourceApi::class)
@@ -95,9 +97,16 @@ class ParkingScreen: Screen, KoinComponent {
         val navigator = LocalNavigator.currentOrThrow
         val platform = getPlatform()
 
+        val parkingViewModel = get<ParkingViewModel>()
+        val state = parkingViewModel.state.collectAsState().value
+
+        var parkingNo by remember { mutableStateOf("") }
+        var parking by remember { mutableStateOf(Parking()) }
+
         var barcode by remember { mutableStateOf(ImageBitmap(100, 50)) }
         var isPreview by remember { mutableStateOf(false) }
         var isPrint by remember { mutableStateOf(false) }
+
 
         Scaffold(
             modifier = Modifier.padding(10.dp),
@@ -134,7 +143,7 @@ class ParkingScreen: Screen, KoinComponent {
                 modifier = Modifier.padding(top = 10.dp)
             ) {
                 Row(
-                    modifier = Modifier
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     //Transaction History
                     Card(
@@ -148,12 +157,15 @@ class ParkingScreen: Screen, KoinComponent {
                         Row(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Row {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
                                 TextField(
-                                    value = "",
+                                    value = parkingNo,
                                     onValueChange = {
-//                                        historyEvent(OrderHistoryEvent.SearchOrder(it))
-//                                        isInputEmpty = it.isEmpty()
+                                        parkingNo = it
+//                                        parkingViewModel.onEvent(ParkingEvent.SearchParking(it))
                                     },
                                     modifier = Modifier
                                         .weight(3f)
@@ -193,36 +205,46 @@ class ParkingScreen: Screen, KoinComponent {
                                     )
                                 )
 
-                                Button(
-                                    onClick = {
-                                        isPreview = true
-                                        platform.generateBarcode(
-                                            data = "AT-123-000",
-                                            width = 500,
-                                            height = 100
-                                        )
-                                        barcode = platform.barcode
-                                    }
+                                Box(
+                                    modifier = Modifier.padding(10.dp)
                                 ) {
-                                    Text("Booking")
+                                    PrimaryButton(
+                                        text = "Check In",
+                                        onClick = {
+                                            val parking = Parking(
+                                                parkingNo = parkingNo,
+                                                checkIn = getCurrentDateTime()
+                                            )
+                                            parkingViewModel.onEvent(ParkingEvent.AddParking(parking))
+                                            parkingViewModel.onEvent(ParkingEvent.GetParking())
+                                        }
+                                    )
                                 }
                             }
-
-                            Box(modifier = Modifier.weight(1f)) {
-                                //Table
-//                                TransactionTable(
-//                                    state = orderHistoryState,
-//                                    orderSearchList = orderSearchList,
-//                                    focusManager = focusManager,
-//                                    historyEvent = historyEvent
-//                                )
-                            }
-
 //                            PaginationContent(
 //                                pagingState = pagingState,
 //                                historyEvent = historyEvent
 //                            )
 
+                        }
+
+                        Box(modifier = Modifier.weight(1f)) {
+                            //Table
+                            ParkingTable(
+                                state = state,
+                                onItemClick = {
+                                    parking = it
+                                    isPreview = true
+                                    it.parkingNo?.let { parkingNo ->
+                                        platform.generateBarcode(
+                                            data = parkingNo,
+                                            width = 800,
+                                            height = 150
+                                        )
+                                    }
+                                    barcode = platform.barcode
+                                }
+                            )
                         }
 
                     }
@@ -239,22 +261,28 @@ class ParkingScreen: Screen, KoinComponent {
                         colors = CardDefaults.cardColors(White),
                     ) {
                         Box(
-                            modifier = Modifier.fillMaxWidth().padding(20.dp),
+                            modifier = Modifier.fillMaxSize().padding(20.dp),
                             contentAlignment = Alignment.CenterEnd
                         ) {
                             if (isPreview) {
-                                ParkingForm(
-                                    imageBitmap = barcode
-                                )
-                            }
-                        }
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    ParkingForm(
+                                        imageBitmap = barcode,
+                                        isPreview = isPreview,
+                                        parking = parking
+                                    )
 
-                        Button(
-                            onClick = {
-                                isPrint = true
+                                    PrimaryButton(
+                                        text = "Print",
+                                        onClick = {
+                                            isPrint = true
+                                        }
+                                    )
+                                }
                             }
-                        ) {
-                            Text("Print")
                         }
                     }
                 }

@@ -12,10 +12,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import core.utils.DashedDivider
 import receipt.ResultItem
+import ui.parking.domain.model.Parking
 
 @Composable
 fun ParkingHeader(
     isPreview: Boolean = false,
+    parking: Parking? = null
 ) {
     Column(
         modifier = Modifier
@@ -29,19 +31,15 @@ fun ParkingHeader(
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp),
         ) {
-            ResultItem(
-                label = "កាលបរិច្ឆេទ / Date :",
-                value = "23 Jan 2024 14:00",
-                isPreview = isPreview
-            )
-
             Spacer(modifier = Modifier.height(5.dp))
 
-            ResultItem(
-                label = "ស្លាកលេខ / Parking No. :",
-                value = "AC-5151-2222",
-                isPreview = isPreview
-            )
+            parking?.parkingNo?.let { parkingNo ->
+                ResultItem(
+                    label = "ស្លាកលេខ / Parking No. :",
+                    value = parkingNo,
+                    isPreview = isPreview
+                )
+            }
 
             Spacer(modifier = Modifier.height(10.dp))
 

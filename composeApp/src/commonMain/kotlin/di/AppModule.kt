@@ -15,6 +15,9 @@ import org.topteam.pos.PosDatabase
 import platform.BluetoothDeviceFactory
 import platform.DatabaseDriverFactory
 import ui.bluetooth.presentation.BluetoothDeviceViewModel
+import ui.parking.data.repository.ParkingRepositoryImpl
+import ui.parking.domain.repository.ParkingRepository
+import ui.parking.presentation.ParkingViewModel
 import ui.settings.data.SettingRepositoryImpl
 import ui.settings.domain.repository.SettingRepository
 import ui.settings.presentation.SettingsViewModel
@@ -69,6 +72,10 @@ fun appModule() = module {
         SettingsViewModel(repository = get())
     }
 
+    single<ParkingViewModel> {
+        ParkingViewModel(repository = get())
+    }
+
     single<LoginRepository> {
         LoginRepositoryImpl()
     }
@@ -91,6 +98,10 @@ fun appModule() = module {
 
     single<SettingRepository> {
         SettingRepositoryImpl(get())
+    }
+
+    single<ParkingRepository> {
+        ParkingRepositoryImpl(get())
     }
 
     single<OrderHistoryViewModel> {

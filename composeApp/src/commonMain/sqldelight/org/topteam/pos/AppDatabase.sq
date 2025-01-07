@@ -141,3 +141,24 @@ UPDATE PreferenceEntity SET prefer_item = ? WHERE prefer_id = ?;
 
 getPreference:
 SELECT * FROM PreferenceEntity;
+
+CREATE TABLE ParkingEntity (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    parking_no TEXT,
+    check_in TEXT,
+    check_out TEXT,
+    duration INTEGER,
+    total INTEGER
+);
+
+insertParking:
+INSERT INTO ParkingEntity(parking_no, check_in, check_out, duration, total) VALUES(?,?, ?,?,?);
+
+updateParking:
+UPDATE ParkingEntity SET check_out = ?, duration = ?, total = ? WHERE parking_no = ?;
+
+getParking:
+SELECT * FROM ParkingEntity;
+
+getParkingById:
+SELECT * FROM ParkingEntity WHERE parking_no = ?;

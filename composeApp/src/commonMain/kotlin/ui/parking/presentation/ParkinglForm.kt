@@ -45,27 +45,28 @@ import menu.presentation.component.utils.EmptyBox
 import orderhistory.presentation.OrderHistoryState
 import receipt.ResultItem
 import setting.domain.model.ItemModel
+import ui.parking.domain.model.Parking
 import ui.parking.presentation.component.ParkingBody
 import ui.parking.presentation.component.ParkingFooter
 import ui.parking.presentation.component.ParkingHeader
 
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ParkingForm(
     isPreview: Boolean = false,
-    imageBitmap: ImageBitmap
+    imageBitmap: ImageBitmap,
+    parking: Parking
 ){
     Column(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ParkingHeader(isPreview = isPreview)
+        ParkingHeader(isPreview = isPreview, parking = parking)
 
-        ParkingBody(isPreview = isPreview)
+        ParkingBody(isPreview = isPreview, parking = parking)
 
-        ParkingFooter(isPreview = isPreview, barcode = imageBitmap)
+        ParkingFooter(isPreview = isPreview, barcode = imageBitmap, parking = parking)
     }
 
 }
