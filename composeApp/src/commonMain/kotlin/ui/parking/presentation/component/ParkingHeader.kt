@@ -40,15 +40,15 @@ fun ParkingHeader(
                     isPreview = isPreview
                 )
             }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            DashedDivider(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 5.dp),
-                color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
-
-            Spacer(modifier = Modifier.height(10.dp))
         }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        DashedDivider(modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 5.dp),
+            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
+
+        Spacer(modifier = Modifier.height(10.dp))
     }
 }

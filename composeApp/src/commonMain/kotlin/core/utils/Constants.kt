@@ -13,6 +13,7 @@ object Constants {
         const val WIFI = 8
         const val QUEUE = 9
         const val FOOTER = 10
+        const val PARKING_FEE = 11
     }
 
 }

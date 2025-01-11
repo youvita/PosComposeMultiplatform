@@ -143,5 +143,12 @@ class SettingsViewModel(
         footerPrefer?.preferItem?.let { prefer ->
             SharePrefer.putPrefer("${Constants.PreferenceType.FOOTER}", prefer)
         }
+
+        // parking fee
+        val parkingFeePrefer = data?.find { it.preferId == Constants.PreferenceType.PARKING_FEE }
+        parkingFeePrefer?.preferItem?.let { prefer ->
+            println(">>>> prefer: $prefer")
+            SharePrefer.putPrefer("${Constants.PreferenceType.PARKING_FEE}", prefer)
+        }
     }
 }

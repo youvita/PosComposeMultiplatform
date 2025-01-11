@@ -13,21 +13,50 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
+import core.app.convertToObject
+import core.utils.Constants
 import core.utils.DashedDivider
+import core.utils.SharePrefer
+import core.utils.dollar
 import receipt.ResultItem
 import ui.parking.domain.model.Parking
+import ui.settings.domain.model.ParkingFeeData
 
 @Composable
 fun ParkingFooter(
     isPreview: Boolean = false,
     barcode: ImageBitmap,
-    parking: Parking
+    parking: Parking? = null
 ) {
+    var parkingData = ParkingFeeData()
+    val parkingFee = SharePrefer.getPrefer("${Constants.PreferenceType.PARKING_FEE}")
+
+    if (parkingFee.isNotEmpty()) {
+        parkingData = convertToObject<ParkingFeeData>(parkingFee)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        Spacer(modifier = Modifier.height(5.dp))
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp, end = 10.dp),
+        ) {
+            if (parkingData.isUsed) {
+                ResultItem(
+                    label = "តំលៃក្នុង១ម៉ោង / Price per hour :",
+                    value = parkingData.fee?.dollar(),
+                    isPreview = isPreview
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(10.dp))
 
         DashedDivider(modifier = Modifier
@@ -42,29 +71,30 @@ fun ParkingFooter(
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp),
         ) {
-            parking.total?.let { total ->
+            parking?.duration?.let { duration ->
+                val fee = parkingData.fee ?: 0.00
                 ResultItem(
                     label = "បង់ប្រាក់សរុប / Total :",
-                    value = "$total",
+                    value = (duration.toDouble() * fee).dollar(),
                     isPreview = isPreview
                 )
             }
 
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        if (parking?.checkOut.isNullOrEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, top = 20.dp, end = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(bitmap = barcode, contentDescription = null)
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, top = 20.dp, end = 10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(bitmap = barcode, contentDescription = null)
+                Spacer(modifier = Modifier.height(10.dp))
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text("Show Your Ticket Barcode")
+                Text("Show Your Ticket Barcode")
+            }
         }
     }
 }

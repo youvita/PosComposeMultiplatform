@@ -3,7 +3,6 @@ package ui.settings.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -66,7 +65,6 @@ import core.app.convertToString
 import core.data.Status
 import core.theme.Black
 import core.theme.ColorD9D9D9
-import core.theme.ColorDDE3F9
 import core.theme.ColorE4E4E4
 import core.theme.PrimaryColor
 import core.theme.Shapes
@@ -89,6 +87,7 @@ import ui.settings.domain.model.ExchangeRateData
 import ui.settings.domain.model.InvoiceData
 import ui.settings.domain.model.InvoiceFooterData
 import ui.settings.domain.model.InvoiceSealData
+import ui.settings.domain.model.ParkingFeeData
 import ui.settings.domain.model.PaymentData
 import ui.settings.domain.model.QueueData
 import ui.settings.domain.model.SavePointData
@@ -122,6 +121,7 @@ fun Preference(
     var hasCompanySeal by rememberSaveable { mutableStateOf(false) }
     var hasQueueNumber by rememberSaveable { mutableStateOf(false) }
     var hasInvoiceFooter by rememberSaveable { mutableStateOf(false) }
+    var hasParkingFee by rememberSaveable { mutableStateOf(false) }
 
     var shopLogo by rememberSaveable { mutableStateOf(ByteArray(0)) }
     var shopAddress by rememberSaveable { mutableStateOf("") }
@@ -142,7 +142,7 @@ fun Preference(
     var wifiPassword by rememberSaveable { mutableStateOf("") }
     var note by rememberSaveable { mutableStateOf("") }
     var indexQueueNumber by rememberSaveable { mutableIntStateOf(0) }
-
+    var parkingFee by rememberSaveable { mutableDoubleStateOf(0.10) }
 
     val isLoading by rememberUpdatedState(newValue = state?.isLoading)
     LaunchedEffect(isLoading) {
@@ -243,6 +243,13 @@ fun Preference(
                 note = footer.note.orEmpty()
             }
 
+            // parking fee
+            val parkingFeePrefer = state.data?.find { it.preferId == Constants.PreferenceType.PARKING_FEE }
+            parkingFeePrefer?.preferItem?.let { prefer ->
+                val feeObj = convertToObject<ParkingFeeData>(prefer)
+                hasParkingFee = feeObj.isUsed
+                parkingFee = feeObj.fee ?: 0.0
+            }
         }
     }
 
@@ -298,66 +305,6 @@ fun Preference(
                     fontWeight = FontWeight.Bold
                 )
             )
-
-//            OutlinedButton(
-//                onClick = {
-//                    preview = !preview
-////                    settingEvent(SettingEvent.PreviewSettingEvent(
-////                        PreferenceModel(
-////                            hasBillHeader = hasBillHeader,
-////                            shopLogo = shopLogo,
-////                            shopNameKH = shopNameKH,
-////                            shopNameEN = shopNameEN,
-////                            shopAddress = shopAddress,
-////                            hasInvoiceNo = hasInvoiceNo,
-////                            indexIssueDateFormat = indexIssueDateFormat,
-////                            indexCountingSequence = indexCountingSequence,
-////                            hasExchangeRate = hasExchangeRate,
-////                            hasStartEndTime = hasStartEndTime,
-////                            hasTableNo = hasTableNo,
-////                            hasCustomer = hasCustomer,
-////                            hasVat = hasVat,
-////                            hasSavePoint = hasSavePoint,
-////                            hasPaymentMethod = hasPaymentMethod,
-////                            rateKHR = rateKHR,
-////                            vat = vat,
-////                            amtUsdExchange = amtUsdExchange,
-////                            point = point,
-////                            imageKHQR = imageKHQR,
-////                            bankName = bankName,
-////                            accountNo = accountNo,
-////                            accountName = accountName,
-////                            signatureImage = signatureImage,
-////                            hasCompanySeal = hasCompanySeal,
-////                            hasWifiPassword = hasWifi,
-////                            wifiPassword = wifiPassword,
-////                            hasQueueNumber = hasQueueNumber,
-////                            indexQueueNumber = indexQueueNumber,
-////                            hasInvoiceFooter = hasInvoiceFooter,
-////                            note = note
-////                        )
-////                    ))
-//                },
-//                colors = ButtonDefaults.elevatedButtonColors(
-//                    containerColor = ColorDDE3F9,
-//                    contentColor = PrimaryColor
-//                ),
-//                border = null,
-//                shape = Shapes.medium,
-//                contentPadding = PaddingValues(10.dp),
-//                modifier = Modifier
-//                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-//            )  {
-//                Text(
-//                    text = "Preview",
-//                    style = TextStyle(
-//                        fontSize = 14.sp,
-//                        fontWeight = FontWeight.Normal
-//                    )
-//                )
-//            }
-//
-//            Spacer(modifier = Modifier.width(16.dp))
 
             OutlinedButton(
                 onClick = {
@@ -467,6 +414,16 @@ fun Preference(
                             InvoiceFooterData(
                                 isUsed = hasInvoiceFooter,
                                 note = note
+                            )
+                        )
+                    ))
+
+                    onEvent(SettingsEvent.AddPreference(
+                        preferId = Constants.PreferenceType.PARKING_FEE,
+                        preferItem = convertToString(
+                            ParkingFeeData(
+                                isUsed = hasParkingFee,
+                                fee = parkingFee
                             )
                         )
                     ))
@@ -1033,6 +990,37 @@ fun Preference(
                     text = note,
                     onValueChange = { note = it }
                 )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Display Parking Information",
+                style = TextStyle(
+                    fontSize = fontSizeTitle,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Toggle(
+                text = "Parking Fee",
+                checked = hasParkingFee,
+                onCheckedChange = { hasParkingFee = it }
+            )
+
+            AnimatedVisibility(visible = hasParkingFee) {
+                Column {
+                    LabelInputRequire(
+                        label = "Enter fee per hour",
+                        text = parkingFee.toString(),
+                        keyboardType = KeyboardType.Decimal,
+                        onValueChange = { fee ->
+                            parkingFee = 0.00.takeIf { fee.isEmpty() } ?: fee.toDouble()
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
             }
         }
 
