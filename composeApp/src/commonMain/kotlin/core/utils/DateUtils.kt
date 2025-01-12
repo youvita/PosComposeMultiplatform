@@ -28,6 +28,7 @@ import kotlin.time.Duration
 
 fun getCurrentDateTime(): String {
     var dateFormat = ""
+    var timeZone = ""
     try {
         val now = Clock.System.now()
         val dateTime: LocalDateTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
@@ -37,12 +38,20 @@ fun getCurrentDateTime(): String {
             minute = dateTime.time.minute
             second = dateTime.time.second
             setOffset(UtcOffset(hours = 0))
+
+            hour?.let {
+                timeZone = if (it <= 12) {
+                    "AM"
+                } else {
+                    "PM"
+                }
+            }
         }
         dateFormat = (format.substring(5, 22).takeIf { format.length > 28 } ?: format.subSequence(5, 21)).toString()
     } catch (e: Exception) {
         e.message
     }
-    return dateFormat
+    return "$dateFormat $timeZone"
 }
 
 fun getCurrentDate(): String {
@@ -167,7 +176,19 @@ fun getDateTimePeriod(startDateTime: String, endDateTime: String): Int {
     val startInstant = convertDateTimeToInstant(startDateTime)
     val endInstant = convertDateTimeToInstant(endDateTime)
 
-    return startInstant.until(endInstant, DateTimeUnit.HOUR, TimeZone.currentSystemDefault()).toInt()
+    var duration = startInstant.until(endInstant, DateTimeUnit.HOUR, TimeZone.currentSystemDefault()).toInt()
+    if (duration == 0) {
+        duration = startInstant.until(endInstant, DateTimeUnit.MINUTE, TimeZone.currentSystemDefault()).toInt()
+    }
+
+    return duration
+}
+
+fun checkTimeWithinHour(startDateTime: String, endDateTime: String): Boolean {
+    val startInstant = convertDateTimeToInstant(startDateTime)
+    val endInstant = convertDateTimeToInstant(endDateTime)
+    val duration = startInstant.until(endInstant, DateTimeUnit.HOUR, TimeZone.currentSystemDefault()).toInt()
+    return duration != 0
 }
 
 fun convertDateTimeToInstant(dateTime: String): Instant {

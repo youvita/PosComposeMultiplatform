@@ -6,5 +6,7 @@ data class Parking(
     val checkIn: String? = null,
     val checkOut: String? = null,
     val duration: Int? = null,
-    val total: Int? = null
+    val timeUnit: String? = null,
+    val fee: Double? = null,
+    val total: Double? = null
 )

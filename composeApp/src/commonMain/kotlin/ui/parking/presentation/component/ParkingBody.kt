@@ -60,7 +60,7 @@ fun ParkingBody(
             parking?.duration?.let { duration ->
                 ResultItem(
                     label = "រយះពេល / Duration :",
-                    value = "$duration ${"hour".takeIf { duration < 10 } ?: "hours"}",
+                    value = "$duration ${parking.timeUnit}",
                     isPreview = isPreview
                 )
             }

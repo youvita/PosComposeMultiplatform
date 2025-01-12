@@ -32,6 +32,7 @@ import core.theme.White
 import core.utils.ImageLoader
 import core.utils.LineWrapper
 import core.utils.calculateWeight
+import core.utils.dollar
 import core.utils.getTextStyle
 import ui.parking.domain.model.Parking
 import ui.parking.presentation.ParkingState
@@ -46,7 +47,7 @@ fun ParkingTable(
     Box(
         modifier = Modifier.fillMaxWidth().background(White).padding(start = 36.dp, top = 30.dp, end = 36.dp)
     ) {
-        val columnList = listOf("No", "Parking No", "Check In", "Check Out", "Duration", "Total Amount")
+        val columnList = listOf("No ", "Parking No", "Check In", "Check Out", "Duration", "Total Amount")
         val rowList = state.data
 
         val columnWeight = remember { MutableList(columnList.size) { 0f } } //column header weight
@@ -77,7 +78,7 @@ fun ParkingTable(
                     Text(
                         modifier = Modifier.weight(columnWeight[columnIndex]),
                         text = item,
-                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 || columnIndex == columnList.size - 2 }
+                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 }
                     )
                     if (columnIndex != columnList.size - 1) Spacer(modifier = Modifier.width(10.dp))
                 }
@@ -111,7 +112,7 @@ fun ParkingTable(
                                     modifier = Modifier.weight(columnWeight[columnIndex]),
                                     text = getColumnValue(item, columnIndex),
                                     style = getTextStyle(typography = Styles.BodyMedium),
-                                    textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 || columnIndex == columnList.size - 2 },
+                                    textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1},
                                 )
 
                                 if (columnIndex != columnList.size - 1) Spacer(modifier = Modifier.width(10.dp))
@@ -137,7 +138,7 @@ private fun getColumnValue(item: Parking, index: Int): String {
         1 -> item.parkingNo.toString()
         2 -> item.checkIn.toString()
         3 -> "-".takeIf { item.checkOut.isNullOrEmpty() } ?: item.checkOut.toString()
-        4 -> item.duration.toString()
-        else -> item.total.toString()
+        4 -> "${item.duration.toString()} ${"".takeIf { item.timeUnit.isNullOrEmpty() } ?: item.timeUnit}"
+        else -> item.total?.dollar() ?: "-"
     }
 }

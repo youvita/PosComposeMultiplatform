@@ -28,13 +28,6 @@ fun ParkingFooter(
     barcode: ImageBitmap,
     parking: Parking? = null
 ) {
-    var parkingData = ParkingFeeData()
-    val parkingFee = SharePrefer.getPrefer("${Constants.PreferenceType.PARKING_FEE}")
-
-    if (parkingFee.isNotEmpty()) {
-        parkingData = convertToObject<ParkingFeeData>(parkingFee)
-    }
-
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -48,10 +41,10 @@ fun ParkingFooter(
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp),
         ) {
-            if (parkingData.isUsed) {
+            parking?.fee?.let {
                 ResultItem(
                     label = "តំលៃក្នុង១ម៉ោង / Price per hour :",
-                    value = parkingData.fee?.dollar(),
+                    value = it.dollar(),
                     isPreview = isPreview
                 )
             }
@@ -71,11 +64,10 @@ fun ParkingFooter(
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp),
         ) {
-            parking?.duration?.let { duration ->
-                val fee = parkingData.fee ?: 0.00
+            parking?.total?.let { total ->
                 ResultItem(
                     label = "បង់ប្រាក់សរុប / Total :",
-                    value = (duration.toDouble() * fee).dollar(),
+                    value = total.dollar(),
                     isPreview = isPreview
                 )
             }

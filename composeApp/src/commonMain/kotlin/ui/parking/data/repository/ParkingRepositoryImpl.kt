@@ -19,7 +19,8 @@ class ParkingRepositoryImpl(posDatabase: PosDatabase): ParkingRepository {
                 check_in = parking.checkIn,
                 check_out = null,
                 duration = 0,
-                total = 0
+                time_unit = null,
+                total = null
             )
         }
     }
@@ -31,7 +32,8 @@ class ParkingRepositoryImpl(posDatabase: PosDatabase): ParkingRepository {
                 parking_no = parking.parkingNo,
                 check_out = parking.checkOut,
                 duration = parking.duration?.toLong(),
-                total = parking.total?.toLong()
+                time_unit = parking.timeUnit,
+                total = parking.total?.toString()
             )
         }
     }
@@ -47,7 +49,8 @@ class ParkingRepositoryImpl(posDatabase: PosDatabase): ParkingRepository {
                 checkIn = item.check_in,
                 checkOut = item.check_out,
                 duration = item.duration?.toInt(),
-                total = item.total?.toInt(),
+                timeUnit = item.time_unit,
+                total = item.total?.toDouble(),
             )
             parking.add(match)
         }
@@ -65,7 +68,8 @@ class ParkingRepositoryImpl(posDatabase: PosDatabase): ParkingRepository {
                 checkIn = item.check_in,
                 checkOut = item.check_out,
                 duration = item.duration?.toInt(),
-                total = item.total?.toInt(),
+                timeUnit = item.time_unit,
+                total = item.total?.toDouble(),
             )
             parking.add(match)
         }

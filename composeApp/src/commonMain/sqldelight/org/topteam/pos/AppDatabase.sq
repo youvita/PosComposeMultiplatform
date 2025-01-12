@@ -148,14 +148,15 @@ CREATE TABLE ParkingEntity (
     check_in TEXT,
     check_out TEXT,
     duration INTEGER,
-    total INTEGER
+    time_unit TEXT,
+    total TEXT
 );
 
 insertParking:
-INSERT INTO ParkingEntity(parking_no, check_in, check_out, duration, total) VALUES(?,?, ?,?,?);
+INSERT INTO ParkingEntity(parking_no, check_in, check_out, duration, time_unit, total) VALUES(?,?, ?,?,?,?);
 
 updateParking:
-UPDATE ParkingEntity SET check_out = ?, duration = ?, total = ? WHERE parking_no = ?;
+UPDATE ParkingEntity SET check_out = ?, duration = ?, time_unit = ?, total = ? WHERE parking_no = ?;
 
 getParking:
 SELECT * FROM ParkingEntity;
