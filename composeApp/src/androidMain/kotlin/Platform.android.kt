@@ -8,6 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 import org.topteam.pos.barcode.createBarcodeBitmap
 import org.topteam.pos.excel.createWorkbook
 import org.topteam.pos.printer.CaptureImage
+import org.topteam.pos.printer.clearAll
 import org.topteam.pos.printer.printOut
 
 class AndroidPlatform : Platform {
@@ -21,6 +22,10 @@ class AndroidPlatform : Platform {
 
     override fun printer() {
         printOut()
+    }
+
+    override fun clearPrinter() {
+        clearAll()
     }
 
     @Composable

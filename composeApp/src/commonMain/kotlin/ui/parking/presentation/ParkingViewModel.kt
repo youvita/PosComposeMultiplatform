@@ -2,10 +2,12 @@ package ui.parking.presentation
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import core.data.Resource
 import core.data.Status
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ui.parking.domain.model.Parking
 import ui.parking.domain.repository.ParkingRepository
@@ -68,10 +70,27 @@ class ParkingViewModel(
 
     private fun onSearchParking(parkingNo: String) {
         screenModelScope.launch {
-            repository.searchParking(parkingNo).collect { parking ->
-                _state.value = _state.value.copy(
-                    data = parking.data
-                )
+            repository.searchParking(parkingNo).collect { result ->
+                when(result) {
+                    is Resource.Success -> {
+                        _state.value = _state.value.copy(
+                            status = result.status,
+                            data = result.data,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            status = result.status,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                }
             }
         }
     }

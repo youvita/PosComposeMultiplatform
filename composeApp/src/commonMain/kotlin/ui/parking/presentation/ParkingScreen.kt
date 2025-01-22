@@ -30,10 +30,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +53,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import core.app.convertToObject
+import core.data.Status
 import core.scanner.QrScannerScreen
 import core.theme.PrimaryColor
 import core.theme.White
@@ -61,6 +65,8 @@ import core.utils.checkTimeWithinHour
 import core.utils.getCurrentDateTime
 import core.utils.getDateTimePeriod
 import getPlatform
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.koin.core.component.KoinComponent
@@ -71,11 +77,10 @@ import poscomposemultiplatform.composeapp.generated.resources.ic_scanner
 import poscomposemultiplatform.composeapp.generated.resources.parking
 import ui.parking.domain.model.Parking
 import ui.parking.presentation.component.ParkingBody
+import ui.parking.presentation.component.ParkingFooter
 import ui.parking.presentation.component.ParkingHeader
 import ui.parking.presentation.component.ParkingTable
 import ui.settings.domain.model.ParkingFeeData
-import ui.settings.domain.model.ShopData
-import ui.stock.presentation.InventoryEvent
 
 @OptIn(ExperimentalResourceApi::class)
 class ParkingScreen: Screen, KoinComponent {
@@ -102,6 +107,43 @@ class ParkingScreen: Screen, KoinComponent {
         var isCheckIn by remember { mutableStateOf(false) }
         var startBarCodeScan by remember { mutableStateOf(false) }
         var isPaid by remember { mutableStateOf(false) }
+
+        val scope = rememberCoroutineScope()
+
+        val isLoading by rememberUpdatedState(state.isLoading)
+        LaunchedEffect(isLoading) {
+            if (state.status == Status.SUCCESS) {
+            val list = state.data?.last()
+            list?.let { item ->
+                var parkingData = ParkingFeeData()
+                val parkingFee = SharePrefer.getPrefer("${Constants.PreferenceType.PARKING_FEE}")
+
+                if (parkingFee.isNotEmpty()) {
+                    parkingData = convertToObject<ParkingFeeData>(parkingFee)
+                }
+                isPaid = item.checkOut?.isNotEmpty() == true
+                val isWithinHour = checkTimeWithinHour(
+                    item.checkIn.orEmpty(),
+                    item.checkOut.orEmpty().takeIf { isPaid } ?: getCurrentDateTime())
+                val fee = parkingData.fee ?: 0.00
+                val period = getDateTimePeriod(item.checkIn ?: "", getCurrentDateTime())
+                val price =
+                    (period.toDouble() * fee).takeIf { isWithinHour } ?: (period.toDouble() * 0.05)
+
+
+                parking = item.copy(
+                    parkingNo = item.parkingNo,
+                    checkOut = item.checkOut.takeIf { isPaid } ?: getCurrentDateTime(),
+                    duration = item.duration.takeIf { isPaid } ?: period,
+                    timeUnit = "hour".takeIf { isWithinHour } ?: "minute",
+                    total = item.total.takeIf { isPaid } ?: price)
+
+                isPreview = true
+                isCheckIn = false
+                parkingNo = ""
+            }
+            }
+        }
 
         Scaffold(
             modifier = Modifier.padding(10.dp),
@@ -298,7 +340,9 @@ class ParkingScreen: Screen, KoinComponent {
                                 Box(
                                     modifier = Modifier.fillMaxWidth().background(White)
                                 ) {
-                                    ParkingHeader()
+                                    ParkingHeader(
+                                        parking = parking
+                                    )
                                 }
                             }
 
@@ -306,7 +350,9 @@ class ParkingScreen: Screen, KoinComponent {
                                 Box(
                                     modifier = Modifier.fillMaxWidth().background(White)
                                 ) {
-                                    ParkingBody()
+                                    ParkingBody(
+                                        parking = parking
+                                    )
                                 }
                             }
 
@@ -314,9 +360,20 @@ class ParkingScreen: Screen, KoinComponent {
                                 Box(
                                     modifier = Modifier.fillMaxWidth().background(White)
                                 ) {
-                                    ParkingHeader()
+                                    ParkingFooter(
+                                        barcode = barcode,
+                                        parking = parking
+                                    )
                                 }
                             }
+
+                            scope.launch {
+                                delay(1000L)
+                                platform.printer()
+                                isPrint = false
+                            }
+                        } else {
+                            platform.clearPrinter()
                         }
 
                         Card(
@@ -383,8 +440,6 @@ class ParkingScreen: Screen, KoinComponent {
                                         PrimaryButton(
                                             text = "Check In",
                                             onClick = {
-                                                isPreview = true
-                                                isCheckIn = true
                                                 platform.generateBarcode(
                                                     data = parkingNo,
                                                     width = 800,
@@ -398,6 +453,8 @@ class ParkingScreen: Screen, KoinComponent {
                                                 )
                                                 parking = item
                                                 parkingViewModel.onEvent(ParkingEvent.AddParking(item))
+                                                isPreview = true
+                                                isCheckIn = true
                                             }
                                         )
                                     }

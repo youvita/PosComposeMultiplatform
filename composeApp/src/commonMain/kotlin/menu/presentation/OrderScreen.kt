@@ -561,6 +561,8 @@ fun OrderScreen(
                                     }
                                 }
                             }
+
+                            platform.printer()
                         }
                     }
 

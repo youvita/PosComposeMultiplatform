@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.Dp
@@ -34,7 +35,8 @@ fun CaptureImage(
             ComposeView(it).apply {
                 setContent {
                     Row(
-                        modifier = Modifier.size(380.dp, height = Dp.Infinity)
+                        modifier = Modifier.size(width = 380.dp, height = Dp.Infinity),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         content()
                     }
@@ -44,7 +46,7 @@ fun CaptureImage(
             it.run {
                 doOnLayout { view ->
                     val bitmap = Bitmap.createBitmap(
-                        1080,
+                        view.measuredWidth,
                         view.measuredHeight,
                         Bitmap.Config.ARGB_8888
                     ).applyCanvas {
@@ -56,6 +58,10 @@ fun CaptureImage(
             }
         })
     }
+}
+
+fun clearAll() {
+    imageList.clear()
 }
 
 fun printOut() {

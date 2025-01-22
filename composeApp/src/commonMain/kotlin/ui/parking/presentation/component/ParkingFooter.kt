@@ -39,11 +39,11 @@ fun ParkingFooter(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp),
+//                .padding(start = 5.dp, end = 5.dp),
         ) {
             parking?.fee?.let {
                 ResultItem(
-                    label = "តំលៃក្នុង១ម៉ោង / Price per hour :",
+                    label = "តំលៃក្នុង១ម៉ោង\nPrice per hour :",
                     value = it.dollar(),
                     isPreview = isPreview
                 )
@@ -54,19 +54,19 @@ fun ParkingFooter(
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 5.dp),
-            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
+            .padding(horizontal = 0.dp),
+            color = Color.Black, thickness = 1.dp.takeIf { !isPreview } ?: 1.dp)
 
         Spacer(modifier = Modifier.height(10.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp),
+//                .padding(start = 5.dp, end = 5.dp),
         ) {
             parking?.total?.let { total ->
                 ResultItem(
-                    label = "បង់ប្រាក់សរុប / Total :",
+                    label = "បង់ប្រាក់សរុប\nTotal:",
                     value = total.dollar(),
                     isPreview = isPreview
                 )
@@ -78,7 +78,7 @@ fun ParkingFooter(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, top = 20.dp, end = 10.dp),
+                    .padding(start = 0.dp, top = 20.dp, end = 0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(bitmap = barcode, contentDescription = null)

@@ -24,18 +24,18 @@ fun ParkingHeader(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp),
+//                .padding(start = 5.dp, end = 5.dp),
         ) {
             Spacer(modifier = Modifier.height(5.dp))
 
             parking?.parkingNo?.let { parkingNo ->
                 ResultItem(
-                    label = "ស្លាកលេខ / Parking No. :",
+                    label = "ស្លាកលេខ\nParking No.:",
                     value = parkingNo,
                     isPreview = isPreview
                 )
@@ -46,8 +46,8 @@ fun ParkingHeader(
 
         DashedDivider(modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 5.dp),
-            color = Color.Black, thickness = 2.dp.takeIf { !isPreview } ?: 1.dp)
+            .padding(horizontal = 0.dp),
+            color = Color.Black, thickness = 1.dp.takeIf { !isPreview } ?: 1.dp)
 
         Spacer(modifier = Modifier.height(10.dp))
     }

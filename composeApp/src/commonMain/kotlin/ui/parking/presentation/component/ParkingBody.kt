@@ -27,11 +27,11 @@ fun ParkingBody(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp),
+//                .padding(start = 5.dp, end = 5.dp),
         ) {
             parking?.checkIn?.let { checkIn ->
                 ResultItem(
-                    label = "កាលបរិច្ឆេទចូល / Check In :",
+                    label = "កាលបរិច្ឆេទចូល\nCheck In:",
                     value = checkIn,
                     isPreview = isPreview
                 )
@@ -41,14 +41,14 @@ fun ParkingBody(
 
             if (parking?.checkOut.isNullOrEmpty()) {
                 ResultItem(
-                    label = "កាលបរិច្ឆេទចេញ / Check Out :",
+                    label = "កាលបរិច្ឆេទចេញ\nCheck Out:",
                     value = "-",
                     isPreview = isPreview
                 )
             } else {
                 parking?.checkOut?.let { checkOut ->
                     ResultItem(
-                        label = "កាលបរិច្ឆេទចេញ / Check Out :",
+                        label = "កាលបរិច្ឆេទចេញ\nCheck Out:",
                         value = checkOut,
                         isPreview = isPreview
                     )
@@ -59,7 +59,7 @@ fun ParkingBody(
 
             parking?.duration?.let { duration ->
                 ResultItem(
-                    label = "រយះពេល / Duration :",
+                    label = "រយះពេល\nDuration:",
                     value = "$duration ${parking.timeUnit}",
                     isPreview = isPreview
                 )

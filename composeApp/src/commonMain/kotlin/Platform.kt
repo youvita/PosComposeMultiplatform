@@ -13,6 +13,8 @@ interface Platform {
 
     fun printer()
 
+    fun clearPrinter()
+
     fun generateBarcode(data: String, width: Int, height: Int)
 }
 

@@ -159,7 +159,7 @@ fun AddNewStock(
     var isSelectCategory by remember { mutableStateOf(productItem != null) }
     var menuSelected by remember { mutableStateOf<MenuModel?>(MenuModel(menuId = productItem?.menuId, name = productItem?.menuName, image = productItem?.menuImage)) }
     var requiredField by remember { mutableStateOf(true) }
-    var productImageSelected by remember { mutableStateOf(false) }
+    var productImageSelected by remember { mutableStateOf(false.takeIf { byteImage?.isEmpty() == true } ?: true) }
 
     val scope = rememberCoroutineScope()
     val singleImagePicker = rememberImagePickerLauncher(
@@ -189,6 +189,8 @@ fun AddNewStock(
 
     //check require field
     LaunchedEffect(isSelectCategory,name,barCode,productImageSelected,price,qty){
+        if (productImageSelected) indexSelected = 0
+
         requiredField = required(
             sku = barCode,
             name = name,
@@ -425,7 +427,7 @@ fun AddNewStock(
 
                                         Card(
                                             modifier = Modifier
-                                                .size(width = 120.dp, height = 111.dp)
+                                                .size(width = 120.dp, height = 120.dp)
                                                 .clip(Shapes.medium)
                                                 .clickable {
                                                     singleImagePicker.launch()
@@ -502,7 +504,7 @@ fun AddNewStock(
                                             ) {
                                                 Card(
                                                     modifier = Modifier
-                                                        .size(width = 120.dp, height = 111.dp)
+                                                        .size(width = 120.dp, height = 120.dp)
                                                         .clip(Shapes.medium)
                                                         .clickable {
                                                             startBarCodeScan = true
@@ -528,6 +530,8 @@ fun AddNewStock(
                                                         Text(text = "Scan", color = Black)
                                                     }
                                                 }
+
+                                                Spacer(modifier = Modifier.width(20.dp))
 
                                                 Image(
                                                     modifier = Modifier.size(107.dp),
@@ -557,7 +561,7 @@ fun AddNewStock(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Card(
-                                                modifier = Modifier.size(width = 120.dp, height = 111.dp),
+                                                modifier = Modifier.size(width = 120.dp, height = 120.dp),
                                                 shape = RoundedCornerShape(10.dp),
                                                 border = BorderStroke(2.dp.takeIf { indexSelected == 1 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 1 } ?: White),
                                                 colors = CardDefaults.cardColors(
@@ -600,7 +604,7 @@ fun AddNewStock(
                                             Spacer(modifier = Modifier.width(10.dp))
 
                                             Card(
-                                                modifier = Modifier.size(width = 120.dp, height = 111.dp),
+                                                modifier = Modifier.size(width = 120.dp, height = 120.dp),
                                                 shape = RoundedCornerShape(10.dp),
                                                 border = BorderStroke(2.dp.takeIf { indexSelected == 2 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 2 } ?: White),
                                                 colors = CardDefaults.cardColors(
@@ -643,7 +647,7 @@ fun AddNewStock(
                                             Spacer(modifier = Modifier.width(10.dp))
 
                                             Card(
-                                                modifier = Modifier.size(width = 120.dp, height = 111.dp),
+                                                modifier = Modifier.size(width = 120.dp, height = 120.dp),
                                                 shape = RoundedCornerShape(10.dp),
                                                 border = BorderStroke(2.dp.takeIf { indexSelected == 3 } ?: 0.dp, PrimaryColor.takeIf { indexSelected == 3 } ?: White),
                                                 colors = CardDefaults.cardColors(
