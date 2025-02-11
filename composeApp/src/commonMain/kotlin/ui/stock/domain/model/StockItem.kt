@@ -12,8 +12,7 @@ data class StockItem(
     val productName: String? = null,
     val productPrice: String? = null,
     val categoryName: String? = null,
-    val dateIn: String? = null,
-    val timeIn: String? = null,
-    val dateOut: String? = null,
-    val timeOut: String? = null
+    val status: String? = null,
+    val date: String? = null,
+    val time: String? = null,
 )

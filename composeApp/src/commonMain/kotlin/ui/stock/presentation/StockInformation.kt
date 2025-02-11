@@ -172,11 +172,11 @@ private fun getColumnValue(item: ProductStock, index: Int): String {
         2 -> item.productName.toString()
         3 -> item.categoryName.toString()
         4 -> item.productId.toString()
-        5 -> "+${item.stockIn.toString()}"
+        5 -> "-".takeIf { item.stockIn?.toInt() == 0 } ?: "+${item.stockIn.toString()}"
         6 -> "-".takeIf { item.stockOut?.toInt() == 0 } ?: "-${item.stockOut.toString()}"
         7 -> item.stockTotal.toString()
-        8 -> "${item.dateIn} ${item.timeIn}"
-        else -> "${item.dateOut} ${item.timeOut}"
+        8 -> "${item.status}"
+        else -> "${item.date} ${item.time}"
     }
 }
 

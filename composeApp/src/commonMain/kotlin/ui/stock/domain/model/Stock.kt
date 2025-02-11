@@ -7,8 +7,8 @@ data class Stock(
     val stockOut: Long? = null,
     val stockBox: Long? = null,
     val stockTotal: Long? = null,
-    val dateIn: String? = null,
-    val dateOut: String? = null,
-    val timeIn: String? = null,
-    val timeOut: String? = null,
+    val unitPrice: Long? = null,
+    val status: String? = null,
+    val date: String? = null,
+    val time: String? = null,
 )

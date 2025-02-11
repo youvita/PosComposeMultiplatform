@@ -242,8 +242,10 @@ class MarioViewModel(
                         name = event.item.name?:"",
                         image = event.item.image_product,
                         imageUrl = event.item.imageUrl,
+                        uom = event.item.uom.toString(),
                         qty = event.item.qty.toString(),
                         price = event.item.price.toString(),
+                        amount = event.item.amount.toString(),
                         discount = event.item.discount.toString()
                     )
                 )

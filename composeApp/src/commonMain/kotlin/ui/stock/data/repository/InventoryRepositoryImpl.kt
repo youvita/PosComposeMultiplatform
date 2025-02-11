@@ -31,10 +31,10 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                     stock.stockOut,
                     stock.stockBox,
                     product.qty?.toLong(),
+                    product.price?.toLong(),
+                    stock.status,
                     getCurrentDate(),
-                    stock.dateOut,
                     getCurrentTime(),
-                    stock.timeOut,
                     id
                 )
             }
@@ -45,6 +45,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 name = product.name,
                 image = product.image,
                 imageUrl = product.imageUrl,
+                uom = product.uom,
                 qty = product.qty,
                 price = product.price,
                 discount = product.discount,
@@ -61,17 +62,28 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         if (result.isNotEmpty()) {
             val stock = result.last().toStock()
             stock.stockId?.let { id ->
-                db.updateStock(
-                    product.productId,
-                    stock.stockIn,
-                    product.qty?.toLong(),
-                    stock.stockBox,
-                    stock.stockTotal?.minus(product.qty?.toLong() ?: 0),
-                    stock.dateIn,
-                    getCurrentDate(),
-                    stock.timeIn,
-                    getCurrentTime(),
-                    id
+//                db.updateStock(
+//                    product.productId,
+//                    stock.stockIn,
+//                    product.qty?.toLong(),
+//                    stock.stockBox,
+//                    stock.stockTotal?.minus(product.qty?.toLong() ?: 0),
+//                    stock.dateIn,
+//                    getCurrentDate(),
+//                    stock.timeIn,
+//                    getCurrentTime(),
+//                    id
+//                )
+                db.insertStock(
+                    product_id = product.productId,
+                    stock_in = 0,
+                    stock_out = product.qty?.toLong(),
+                    stock_box = 0,
+                    total = product.qty?.toLong(),
+                    price = product.price?.toLong(),
+                    status = "",
+                    date = getCurrentDate(),
+                    time = getCurrentTime()
                 )
 
                 db.updateProductQty(
@@ -102,10 +114,10 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                     stock.stockOut,
                     stock.stockBox,
                     stock.stockTotal?.plus(product.qty?.toLong() ?: 0),
+                    stock.unitPrice,
+                    stock.status,
                     getCurrentDate(),
-                    stock.dateOut,
                     getCurrentTime(),
-                    stock.timeOut,
                     id
                 )
             }
@@ -116,6 +128,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 name = product.name,
                 image = product.image,
                 imageUrl = product.imageUrl,
+                uom = product.uom,
                 qty = stock.stockTotal?.plus(product.qty?.toLong() ?: 0).toString(),
                 price = product.price,
                 discount = product.discount,
@@ -129,10 +142,10 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 stock_out = 0,
                 stock_box = 0,
                 total = product.qty?.toLong(),
-                date_in = getCurrentDate(),
-                date_out = "",
-                time_in = getCurrentTime(),
-                time_out = ""
+                price = product.price?.toLong(),
+                status = getCurrentDate(),
+                date = "",
+                time = getCurrentTime(),
             )
 
             db.insertProduct(
@@ -141,6 +154,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 name = product.name,
                 image = product.image,
                 imageUrl = product.imageUrl,
+                uom = product.uom,
                 qty = product.qty,
                 price = product.price,
                 discount = product.discount
@@ -165,10 +179,12 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 name = item.name,
                 image = item.image,
                 imageUrl = item.imageUrl,
+                uom = item.uom,
                 qty = item.qty,
                 price = item.price,
                 discount = item.discount,
-                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
+                date = item.date
+//                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
             )
             productMenu.add(match)
         }
@@ -180,25 +196,27 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
         endDate: String,
     ): Flow<Resource<List<ProductMenu>>> = flow {
         emit(Resource.Loading())
-        val result = db.getProductByDate(startDate, endDate).executeAsList()
+//        val result = db.getProductByDate(startDate, endDate).executeAsList()
         val productMenu = mutableListOf<ProductMenu>()
-        for (item in result) {
-            val match = ProductMenu(
-                id = item.id,
-                menuId = item.menu_id,
-                menuName = item.menuName,
-                menuImage = item.menuImage,
-                productId = item.product_id,
-                name = item.name,
-                image = item.image,
-                imageUrl = item.imageUrl,
-                qty = item.qty,
-                price = item.price,
-                discount = item.discount,
-                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
-            )
-            productMenu.add(match)
-        }
+//        for (item in result) {
+//            val match = ProductMenu(
+//                id = item.id,
+//                menuId = item.menu_id,
+//                menuName = item.menuName,
+//                menuImage = item.menuImage,
+//                productId = item.product_id,
+//                name = item.name,
+//                image = item.image,
+//                imageUrl = item.imageUrl,
+//                uom = item.uom,
+//                qty = item.qty,
+//                price = item.price,
+//                discount = item.discount,
+//                date = item.date
+////                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
+//            )
+//            productMenu.add(match)
+//        }
         emit(Resource.Success(productMenu))
     }
 
@@ -216,10 +234,12 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 name = item.name,
                 image = item.image,
                 imageUrl = item.imageUrl,
+                uom = item.uom,
                 qty = item.qty,
                 price = item.price,
                 discount = item.discount,
-                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
+                date = item.date
+//                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
             )
             productMenu.add(match)
         }
@@ -240,12 +260,10 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 productName = item.name,
                 productImage = item.image?.toImageBitmap(),
                 productImageUrl = item.imageUrl,
-                productPrice = item.price,
+                productPrice = item.price?.toString(),
                 categoryName = item.menuName,
-                dateIn = item.date_in,
-                timeIn = item.time_in,
-                dateOut = item.date_out,
-                timeOut = item.time_out
+                date = item.date,
+                time = item.time
             )
             productStock.add(match)
         }

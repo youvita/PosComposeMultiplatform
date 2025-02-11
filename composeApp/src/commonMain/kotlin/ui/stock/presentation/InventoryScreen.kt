@@ -62,7 +62,7 @@ class InventoryScreen: Screen, KoinComponent {
         var addNewProduct by remember { mutableStateOf(false) }
         var adjustStock by remember { mutableStateOf(false) }
         var previousScreen by remember { mutableStateOf(listOf("Super Mario (admin)")) }
-        var currentScreen by remember { mutableStateOf(listOf("Product & Stock")) }
+        var currentScreen by remember { mutableStateOf(listOf("Product")) }
         var productItem by remember { mutableStateOf<ProductMenu?>(null) }
 
         val marioState = marioViewModel.state.collectAsState().value
@@ -158,11 +158,11 @@ class InventoryScreen: Screen, KoinComponent {
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     AnimatedVisibility(
-                        visible = addNewProduct && !adjustStock,
+                        visible = addNewProduct,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
-                        AddNewStock(
+                        AddNewProduct(
                             state = inventoryState,
                             productItem = productItem,
                             searchViewModel = searchViewModel,
@@ -181,11 +181,11 @@ class InventoryScreen: Screen, KoinComponent {
                     }
 
                     AnimatedVisibility(
-                        visible = !addNewProduct && !adjustStock,
+                        visible = !addNewProduct,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
-                        AddNewProduct(
+                        ProductList(
                             data = productState,
                             searchText = inventoryViewModel.searchText.collectAsState().value,
                             onEvent = inventoryViewModel::onEvent,
@@ -193,21 +193,30 @@ class InventoryScreen: Screen, KoinComponent {
                             marioEvent = marioViewModel::onEvent,
                             callBack = { product ->
                                 productItem = product
+//                                adjustStock = true
                                 addNewProduct = true
-                                currentScreen = currentScreen.toMutableList().apply { add("New".takeIf { product == null } ?: "Edit") }
-                                previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
+                                currentScreen = currentScreen.toMutableList().apply { add("New Product") }
+                                previousScreen = previousScreen.toMutableList().apply { add("Product") }
+
+                                // refresh stock table
+                                inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
+
+
+//                                addNewProduct = true
+//                                currentScreen = currentScreen.toMutableList().apply { add("New".takeIf { product == null } ?: "Edit") }
+//                                previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
                             },
                             menuClick = {
                                 inventoryViewModel.onEvent(InventoryEvent.GetProduct(it))
                             },
                             adjustStock = {
-                                adjustStock = true
-                                addNewProduct = false
-                                currentScreen = currentScreen.toMutableList().apply { add("Adjustment") }
-                                previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
-
-                                // refresh stock table
-                                inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
+//                                adjustStock = true
+//                                addNewProduct = false
+//                                currentScreen = currentScreen.toMutableList().apply { add("Adjustment") }
+//                                previousScreen = previousScreen.toMutableList().apply { add("Product & Stock") }
+//
+//                                // refresh stock table
+//                                inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
                             }
                         )
                     }
@@ -218,8 +227,9 @@ class InventoryScreen: Screen, KoinComponent {
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
-                        AdjustStock(
+                        StockList(
                             state = inventoryState,
+                            product = productItem,
                             onEvent = inventoryViewModel::onEvent
                         )
                     }

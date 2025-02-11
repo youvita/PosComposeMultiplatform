@@ -354,6 +354,15 @@ fun formatDouble(value: Double): String {
     }
 }
 
+fun calculateAmount(qty: String?, price: String?): String {
+    if (qty?.isEmpty() == true || price?.isEmpty() == true) return ""
+
+    val a = qty?.toDouble() ?: 0.0
+    val b = price?.toDouble() ?: 0.0
+    val amount = a * b
+    return amount.dollar()
+}
+
 
 fun formatNumberWithCommas(number: String): String {
     val parts = number.split(".")

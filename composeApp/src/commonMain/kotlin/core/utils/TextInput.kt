@@ -4,6 +4,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.BasicTextField
@@ -21,14 +25,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.fontSizeContent
@@ -259,5 +268,36 @@ fun TextInputDefault(
         keyboardActions = KeyboardActions(onDone = {
             focusManager.clearFocus()
         }),
+    )
+}
+
+@Composable
+fun TextFieldWrapper(
+    modifier: Modifier = Modifier,
+    value: String = "",
+    onValueChange: (String) -> Unit = {},
+    label: String? = null,
+    valueColor: Color = Color.Black,
+    enableInput: Boolean = true,
+    singleLine: Boolean = true,
+    focusRequester: FocusRequester = FocusRequester(),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        shape = Shapes.medium,
+        value = value,
+        onValueChange = onValueChange,
+        enabled = enableInput,
+        textStyle = TextStyle(fontSize = fontSizeContent),
+        colors = textInputColors,
+        singleLine = singleLine,
+        keyboardOptions = keyboardOptions,
+        visualTransformation = visualTransformation,
+        keyboardActions = keyboardActions
     )
 }

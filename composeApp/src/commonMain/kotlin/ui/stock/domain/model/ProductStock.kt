@@ -13,10 +13,9 @@ data class ProductStock(
     val productImageUrl: String? = null,
     val productPrice: String? = null,
     val categoryName: String? = null,
-    val dateIn: String? = null,
-    val timeIn: String? = null,
-    val dateOut: String? = null,
-    val timeOut: String? = null
+    val status: String? = null,
+    val date: String? = null,
+    val time: String? = null
 )
 
 fun ProductStock.toStockItem(): StockItem {
@@ -29,9 +28,8 @@ fun ProductStock.toStockItem(): StockItem {
         productName = productName,
         productPrice = productPrice,
         categoryName = categoryName,
-        dateIn = dateIn,
-        timeIn = timeIn,
-        dateOut = dateOut,
-        timeOut = timeOut
+        status = status,
+        date = date,
+        time = time
     )
 }

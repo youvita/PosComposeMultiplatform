@@ -16,6 +16,8 @@ data class ItemModel constructor(
     var remark: String? = null,
     var discount: Int? = null,
     var price: Double? = null,
+    var uom: String? = null,
+    var amount: Double? = null,
     var qty: Int? = null,
     var qtySelected: Int? = 1,
     var bookmark: Boolean? = false,

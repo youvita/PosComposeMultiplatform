@@ -583,8 +583,10 @@ fun OrderScreen(
                                     name = null,
                                     image = null,
                                     imageUrl = null,
+                                    uom = null,
                                     qty = item.qtySelected.toString(),
                                     price = null,
+                                    amount = null,
                                     discount = null
                                 )
                                 inventoryEvent(InventoryEvent.AdjustProduct(product))
