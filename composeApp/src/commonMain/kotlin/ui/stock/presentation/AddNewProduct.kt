@@ -332,48 +332,69 @@ fun AddNewProduct(
                                 })
 
                                 PrimaryButton(
-                                    text = "Save Product".takeIf { isNew } ?: "Update Product",
+                                    text = "Save Product",
                                     icon = Res.drawable.ic_plus,
                                     onClick = {
-                                        if (isNew) {
-                                            val product = Product(
-                                                menuId = menuSelected?.menuId,
-                                                productId = barCode,
-                                                name = name,
-                                                image = byteImage,
-                                                imageUrl = barImage,
-                                                uom = uom,
-                                                qty = qty,
-                                                price = price,
-                                                amount = amount,
-                                                discount = discount
-                                            )
-                                            if (requiredField){
-                                                onEvent(InventoryEvent.AddProduct(product))
-                                                callback()
-                                            } else {
-                                                required = true
-                                            }
+                                        val product = Product(
+                                            menuId = menuSelected?.menuId,
+                                            productId = barCode,
+                                            name = name,
+                                            image = byteImage,
+                                            imageUrl = barImage,
+                                            uom = uom,
+                                            qty = qty,
+                                            price = price,
+                                            amount = amount,
+                                            discount = discount,
+                                            status = "In"
+                                        )
+                                        if (requiredField){
+                                            onEvent(InventoryEvent.AddProduct(product))
+                                            callback()
                                         } else {
-                                            val product = Product(
-                                                menuId = menuSelected?.menuId,
-                                                productId = barCode,
-                                                name = name,
-                                                image = byteImage,
-                                                imageUrl = barImage,
-                                                uom = uom,
-                                                qty = qty,
-                                                price = price,
-                                                amount = amount,
-                                                discount = discount
-                                            )
-                                            if (requiredField){
-                                                onEvent(InventoryEvent.UpdateProduct(product))
-                                                callback()
-                                            } else {
-                                                required = true
-                                            }
+                                            required = true
                                         }
+//                                        if (isNew) {
+//                                            val product = Product(
+//                                                menuId = menuSelected?.menuId,
+//                                                productId = barCode,
+//                                                name = name,
+//                                                image = byteImage,
+//                                                imageUrl = barImage,
+//                                                uom = uom,
+//                                                qty = qty,
+//                                                price = price,
+//                                                amount = amount,
+//                                                discount = discount,
+//                                                status = "In"
+//                                            )
+//                                            if (requiredField){
+//                                                onEvent(InventoryEvent.AddProduct(product))
+//                                                callback()
+//                                            } else {
+//                                                required = true
+//                                            }
+//                                        } else {
+//                                            val product = Product(
+//                                                menuId = menuSelected?.menuId,
+//                                                productId = barCode,
+//                                                name = name,
+//                                                image = byteImage,
+//                                                imageUrl = barImage,
+//                                                uom = uom,
+//                                                qty = qty,
+//                                                price = price,
+//                                                amount = amount,
+//                                                discount = discount,
+//                                                status = ""
+//                                            )
+//                                            if (requiredField){
+//                                                onEvent(InventoryEvent.UpdateProduct(product))
+//                                                callback()
+//                                            } else {
+//                                                required = true
+//                                            }
+//                                        }
                                     }
                                 )
                             }

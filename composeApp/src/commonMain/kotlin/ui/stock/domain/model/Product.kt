@@ -11,5 +11,6 @@ data class Product(
     val qty: String?,
     val price: String?,
     val amount: String?,
-    val discount: String?
+    val discount: String?,
+    val status: String? = null
 )

@@ -23,10 +23,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import core.theme.Shapes
 import core.theme.Styles
 import core.theme.White
 import core.utils.ImageLoader
@@ -44,7 +46,7 @@ fun StockInformation(
     Box(
         modifier = Modifier.fillMaxWidth().background(White).padding(start = 36.dp, top = 30.dp, end = 36.dp)
     ) {
-        val columnList = listOf("No ", "", "Product Name", "Category", "SKU", "Stock In", "Stock Out", "Total", "Date In", "Date Out")
+        val columnList = listOf("No ", "", "Product Name", "Category", "SKU", "StockIn", "StockOut", "Total", "Status", "Date")
         val rowList = state.data
 
         val columnWeight = remember { MutableList(columnList.size) { 0f } } //column header weight
@@ -140,10 +142,19 @@ fun StockInformation(
                                     }
                                 } else {
                                     Text(
-                                        modifier = Modifier.weight(columnWeight[columnIndex]),
+                                        modifier = Modifier.then(
+                                            if (columnIndex == columnList.size - 2) {
+                                                Modifier
+                                                    .weight(columnWeight[columnIndex])
+                                                    .background(color = getColorStatus(item.status), Shapes.medium)
+                                                    .padding(start = 4.dp, top = 2.dp, bottom = 2.dp, end = 4.dp)
+                                            } else {
+                                                Modifier.weight(columnWeight[columnIndex])
+                                            }
+                                        ),
                                         text = getColumnValue(item, columnIndex),
                                         style = getTextStyle(typography = Styles.BodyMedium),
-                                        textAlign = TextAlign.End.takeIf { columnIndex == columnList.size - 1 || columnIndex == columnList.size - 2 },
+                                        textAlign = TextAlign.Center.takeIf { columnIndex == columnList.size - 2 } ?: TextAlign.End.takeIf { columnIndex == columnList.size - 1 },
                                         color = getColorValue(item, columnIndex)
                                     )
                                 }
@@ -176,14 +187,32 @@ private fun getColumnValue(item: ProductStock, index: Int): String {
         6 -> "-".takeIf { item.stockOut?.toInt() == 0 } ?: "-${item.stockOut.toString()}"
         7 -> item.stockTotal.toString()
         8 -> "${item.status}"
-        else -> "${item.date} ${item.time}"
+        else -> "${item.date}"
     }
 }
 
 private fun getColorValue(item: ProductStock, index: Int): Color {
     return when (index) {
         5 -> Color(0xFF000000).takeIf { item.stockIn?.toInt() == 0 } ?: Color(0xFF04D000)
-        6-> Color(0xFF000000).takeIf { item.stockOut?.toInt() == 0 } ?: Color(0xFFFF0000)
+        6 -> Color(0xFF000000).takeIf { item.stockOut?.toInt() == 0 } ?: Color(0xFFFF0000)
+        8 -> Color(0xFFFFFFFF)
         else -> Color(0xFF000000)
+    }
+}
+
+private fun getColorStatus(status: String?): Color {
+    return when (status) {
+        "In" -> Color(0xFF04D000)
+        "Out" -> Color(0xFFFF0000)
+        "Adjust" -> Color(0xFFFCCFFF)
+        else -> Color(0xFF000000)
+    }
+}
+
+private fun getTextAlign(index: Int): TextAlign {
+    return when(index) {
+        8 -> TextAlign.Center
+        9 -> TextAlign.End
+        else -> TextAlign.Right
     }
 }

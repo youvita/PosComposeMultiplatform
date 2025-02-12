@@ -59,8 +59,8 @@ class InventoryScreen: Screen, KoinComponent {
         val inventoryViewModel = get<InventoryViewModel>()
         val marioViewModel = get<MarioViewModel>()
 
-        var addNewProduct by remember { mutableStateOf(false) }
-        var adjustStock by remember { mutableStateOf(false) }
+        var isNewProduct by remember { mutableStateOf(false) }
+        var isNewStock by remember { mutableStateOf(false) }
         var previousScreen by remember { mutableStateOf(listOf("Super Mario (admin)")) }
         var currentScreen by remember { mutableStateOf(listOf("Product")) }
         var productItem by remember { mutableStateOf<ProductMenu?>(null) }
@@ -111,8 +111,8 @@ class InventoryScreen: Screen, KoinComponent {
                                             currentScreen = currentScreen.toMutableList().apply { removeLast() }
                                             previousScreen = previousScreen.toMutableList().apply { removeLast() }
 
-                                            addNewProduct = false
-                                            adjustStock = false
+                                            isNewProduct = false
+                                            isNewStock = false
 
                                             // load data table
                                             inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
@@ -158,7 +158,7 @@ class InventoryScreen: Screen, KoinComponent {
                     elevation = CardDefaults.cardElevation(2.dp)
                 ) {
                     AnimatedVisibility(
-                        visible = addNewProduct,
+                        visible = isNewProduct,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
@@ -170,7 +170,7 @@ class InventoryScreen: Screen, KoinComponent {
                             marioState = marioState,
                             marioEvent = marioViewModel::onEvent,
                             callback = {
-                                addNewProduct = false
+                                isNewProduct = false
                                 currentScreen = currentScreen.toMutableList().apply { removeLast() }
                                 previousScreen = previousScreen.toMutableList().apply { removeLast() }
 
@@ -181,7 +181,7 @@ class InventoryScreen: Screen, KoinComponent {
                     }
 
                     AnimatedVisibility(
-                        visible = !addNewProduct,
+                        visible = !isNewProduct && !isNewStock,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {
@@ -193,10 +193,17 @@ class InventoryScreen: Screen, KoinComponent {
                             marioEvent = marioViewModel::onEvent,
                             callBack = { product ->
                                 productItem = product
-//                                adjustStock = true
-                                addNewProduct = true
-                                currentScreen = currentScreen.toMutableList().apply { add("New Product") }
-                                previousScreen = previousScreen.toMutableList().apply { add("Product") }
+                                isNewProduct = true.takeIf { product == null } ?: false
+                                isNewStock = false.takeIf { product == null } ?: true
+
+                                if (isNewProduct) {
+                                    currentScreen = currentScreen.toMutableList().apply { add("New Product") }
+                                    previousScreen = previousScreen.toMutableList().apply { add("Product") }
+                                } else {
+                                    currentScreen = currentScreen.toMutableList().apply { add("Stock") }
+                                    previousScreen = previousScreen.toMutableList().apply { add("Product") }
+                                }
+
 
                                 // refresh stock table
                                 inventoryViewModel.onEvent(InventoryEvent.GetProductStock())
@@ -223,7 +230,7 @@ class InventoryScreen: Screen, KoinComponent {
 
                     // Adjust stock
                     AnimatedVisibility(
-                        visible = adjustStock,
+                        visible = isNewStock,
                         enter = fadeIn() + slideInHorizontally(),
                         exit = fadeOut() + slideOutHorizontally()
                     ) {

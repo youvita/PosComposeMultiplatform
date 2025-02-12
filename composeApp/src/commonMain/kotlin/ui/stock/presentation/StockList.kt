@@ -36,7 +36,6 @@ import poscomposemultiplatform.composeapp.generated.resources.Res
 import poscomposemultiplatform.composeapp.generated.resources.ic_adjust_stock
 import ui.stock.domain.model.Product
 import ui.stock.domain.model.ProductMenu
-import ui.stock.domain.model.ProductStock
 import ui.stock.domain.model.toStockItem
 
 @OptIn(ExperimentalResourceApi::class)
@@ -48,10 +47,11 @@ fun StockList(
 ) {
     val platform = getPlatform()
     var isDownload by remember { mutableStateOf(false) }
-    var isAdjustStock by remember { mutableStateOf(false) }
-    var productStock by remember { mutableStateOf(ProductStock()) }
+    var isUpdate by remember { mutableStateOf(false) }
+    var product by remember { mutableStateOf(product) }
     var startBarCodeScan by remember { mutableStateOf(false) }
     var isStockIn by remember { mutableStateOf(false) }
+    var stockStatus by remember { mutableStateOf("") }
 
     if (isDownload) {
         platform.download(
@@ -61,17 +61,17 @@ fun StockList(
     }
 
     // alert dialog to adjust stock
-    if (isAdjustStock) {
+    if (isUpdate) {
         var productQty by remember { mutableStateOf(0) }
         var unitPrice by remember { mutableStateOf(0) }
 
         DialogPreview(
             title = "Stock outs tracking and management",
             onClose = {
-                isAdjustStock = false
+                isUpdate = false
             },
             onDismissRequest = {
-                isAdjustStock = false
+                isUpdate = false
             }
         ) {
             Box(
@@ -128,21 +128,22 @@ fun StockList(
                             PrimaryButton(
                                 text = "Update",
                                 onClick = {
-                                    val product = Product(
+                                    val item = Product(
                                         menuId = null,
-                                        productId = productStock.productId,
+                                        productId = product?.productId,
                                         name = null,
                                         image = null,
                                         imageUrl = null,
                                         uom = null,
                                         qty = productQty.toString(),
-                                        price = unitPrice.toString(),
+                                        price = product?.price.takeIf { stockStatus == "In" } ?: unitPrice.toString(),
                                         amount = null,
-                                        discount = null
+                                        discount = null,
+                                        status = stockStatus
                                     )
-                                    onEvent(InventoryEvent.AdjustProduct(product))
+                                    onEvent(InventoryEvent.AdjustProduct(item))
                                     onEvent(InventoryEvent.GetProductStock())
-                                    isAdjustStock = false
+                                    isUpdate = false
                                 }
                             )
                         }
@@ -191,8 +192,9 @@ fun StockList(
                     PrimaryButton(
                         text = "Stock In",
                         onClick = {
+                            stockStatus = "In"
                             isStockIn = true
-                            isAdjustStock = true
+                            isUpdate = true
                         }
                     )
                 }
@@ -203,8 +205,9 @@ fun StockList(
                     PrimaryButton(
                         text = "Stock Out",
                         onClick = {
+                            stockStatus = "Out"
                             isStockIn = false
-                            isAdjustStock = true
+                            isUpdate = true
                         }
                     )
                 }
@@ -226,7 +229,10 @@ fun StockList(
         StockInformation(
             state = state,
             onItemClick = {
-                productStock = it
+                stockStatus = "Adjust"
+                isStockIn = false
+                isUpdate = true
+//                productStock = it
 //                isAdjustStock = true
             }
         )

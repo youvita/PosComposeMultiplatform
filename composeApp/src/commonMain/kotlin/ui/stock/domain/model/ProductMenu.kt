@@ -13,6 +13,7 @@ data class ProductMenu(
     val qty: String?,
     val price: String?,
     val discount: String?,
+    val status: String?,
     val date: String?
 ) {
     fun doesMatchSearchQuery(query: String): Boolean {

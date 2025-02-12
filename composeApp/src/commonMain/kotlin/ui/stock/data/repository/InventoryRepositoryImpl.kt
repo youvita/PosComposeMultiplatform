@@ -74,27 +74,29 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 //                    getCurrentTime(),
 //                    id
 //                )
-                db.insertStock(
-                    product_id = product.productId,
-                    stock_in = 0,
-                    stock_out = product.qty?.toLong(),
-                    stock_box = 0,
-                    total = product.qty?.toLong(),
-                    price = product.price?.toLong(),
-                    status = "",
-                    date = getCurrentDate(),
-                    time = getCurrentTime()
-                )
-
                 db.updateProductQty(
                     qty = stock.stockTotal?.minus(product.qty?.toLong() ?: 0).toString(),
                     id = id
                 )
             }
 
+            db.insertStock(
+                product_id = product.productId,
+                stock_in = product.qty?.toLong().takeIf { product.status == "In" } ?: 0,
+                stock_out = product.qty?.toLong().takeIf { product.status == "Out" } ?: 0,
+                stock_box = 0,
+                total = product.qty?.toLong(),
+                price = product.price?.toLong(),
+                status = product.status,
+                date = getCurrentDate(),
+                time = getCurrentTime()
+            )
+
             // lasted update for date out
             SharePrefer.putPrefer("ADD", "")
         }
+
+
     }
 
     override suspend fun updateProductQty(id: Long, qty: String): Flow<Resource<Unit>> = flow{
@@ -143,8 +145,8 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 stock_box = 0,
                 total = product.qty?.toLong(),
                 price = product.price?.toLong(),
-                status = getCurrentDate(),
-                date = "",
+                status = product.status,
+                date = getCurrentDate(),
                 time = getCurrentTime(),
             )
 
@@ -183,6 +185,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 qty = item.qty,
                 price = item.price,
                 discount = item.discount,
+                status = item.status,
                 date = item.date
 //                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
             )
@@ -238,6 +241,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 qty = item.qty,
                 price = item.price,
                 discount = item.discount,
+                status = item.status,
                 date = item.date
 //                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
             )
@@ -262,6 +266,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 productImageUrl = item.imageUrl,
                 productPrice = item.price?.toString(),
                 categoryName = item.menuName,
+                status = item.status,
                 date = item.date,
                 time = item.time
             )

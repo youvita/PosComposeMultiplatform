@@ -64,7 +64,7 @@ fun getCurrentDate(): String {
             hour = dateTime.time.hour
             minute = dateTime.time.minute
             second = dateTime.time.second
-            setOffset(UtcOffset(hours = hour))
+            setOffset(UtcOffset(hours = 0))
         }
         dateFormat = format.substring(5, 16)
     } catch (e: Exception) {
