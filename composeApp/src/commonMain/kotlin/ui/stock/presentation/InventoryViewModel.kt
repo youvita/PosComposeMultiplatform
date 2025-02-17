@@ -81,8 +81,8 @@ class InventoryViewModel(
             is InventoryEvent.AddProduct -> {
                 onAddProduct(event.product)
             }
-            is InventoryEvent.UpdateProduct -> {
-                onUpdateProduct(event.product)
+            is InventoryEvent.UpdateStock -> {
+                onUpdateStock(event.product)
             }
             is InventoryEvent.AdjustProduct -> {
                 onAdjustProduct(event.product)
@@ -112,9 +112,9 @@ class InventoryViewModel(
         }
     }
 
-    private fun onUpdateProduct(product: Product) {
+    private fun onUpdateStock(product: Product) {
         screenModelScope.launch {
-            repository.updateProduct(product)
+            repository.updateStock(product)
         }
     }
 

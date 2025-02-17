@@ -8,7 +8,8 @@ data class Stock(
     val stockBox: Long? = null,
     val stockTotal: Long? = null,
     val unitPrice: Long? = null,
-    val status: String? = null,
+    val statusCode: String? = null,
+    val statusName: String? = null,
     val date: String? = null,
     val time: String? = null,
 )

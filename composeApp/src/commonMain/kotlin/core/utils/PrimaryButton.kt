@@ -35,6 +35,7 @@ fun PrimaryButton(
     text: String,
     icon: DrawableResource? = null,
     iconColor: Color = White,
+    containColor: Color = PrimaryColor,
     isEnable: Boolean = true,
     onClick: () -> Unit = {}
 ) {
@@ -46,7 +47,7 @@ fun PrimaryButton(
             }
             .alpha(1f.takeIf { isEnable }?:0.5f),
         shape = Shapes.medium,
-        colors = CardDefaults.cardColors(PrimaryColor),
+        colors = CardDefaults.cardColors(containColor),
         elevation = CardDefaults.cardElevation(2.dp)
     ){
         Row(

@@ -48,7 +48,7 @@ fun ProductInformation(
     data: List<ProductMenu>? = null,
     onItemClick: (ProductMenu) -> Unit = {}
 ) {
-    val columnList = listOf("No", "", "Product Name", "Category", "SKU", "Price", "Discount", "Stock Qty", "Stock Update")
+    val columnList = listOf("No", "", "Product Name", "Category", "SKU", "Amount", "Discount", "Qty", "Date")
     val columnWeight = remember { MutableList(columnList.size) { 0f } } //column header weight
 
     for (index in columnList.indices) {
@@ -203,7 +203,7 @@ private fun getColumnValue(item: ProductMenu, rowIndex: Int, colIndex: Int): Str
         3 -> item.menuName.orEmpty()
         4 -> item.productId.toString()
         5 -> item.price?.toDouble()?.dollar().toString()
-        6 -> item.discount.orEmpty()
+        6 -> "-".takeIf { item.discount.isNullOrEmpty() } ?: item.discount.orEmpty()
         7 -> item.qty.toString()
         else -> item.date.orEmpty()
     }

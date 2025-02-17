@@ -84,25 +84,25 @@ class MainScreen: Screen, KoinComponent {
 
 
         val allNavModels = arrayOf(
+//            NavModel(
+//                id = 0,
+//                icon = painterResource(resource = Res.drawable.ic_order_menu),
+//                label = "Menu"
+//            ),
+//            NavModel(
+//                id = 1,
+//                icon = painterResource(resource = Res.drawable.ic_history_menu),
+//                label = "History"
+//            ),
             NavModel(
                 id = 0,
-                icon = painterResource(resource = Res.drawable.ic_order_menu),
-                label = "Menu"
+                icon = painterResource(resource = Res.drawable.ic_super_mario_menu),
+                label = "Mario"
             ),
             NavModel(
                 id = 1,
-                icon = painterResource(resource = Res.drawable.ic_history_menu),
-                label = "History"
-            ),
-            NavModel(
-                id = 2,
                 icon = painterResource(resource = Res.drawable.ic_setting_menu),
                 label = "Settings"
-            ),
-            NavModel(
-                id = 3,
-                icon = painterResource(resource = Res.drawable.ic_super_mario_menu),
-                label = "Mario"
             ),
 //            NavModel(
 //                id = 4,
@@ -126,6 +126,7 @@ class MainScreen: Screen, KoinComponent {
 
             when(selectedItem) {
                 0 -> {
+                    TabMarioScreen()
 //                    Row {
 //                        Button(
 //                            onClick = {
@@ -179,28 +180,26 @@ class MainScreen: Screen, KoinComponent {
 //                        }
 //                    }
 
-                    OrderScreen(
-                        orderState = orderState,
-                        inventoryState = inventoryState,
-                        itemSearchList = itemSearchList,
-                        orderEvent = orderViewModel::onEvent,
-                        inventoryEvent = inventoryViewModel::onEvent
-                    )
+//                    OrderScreen(
+//                        orderState = orderState,
+//                        inventoryState = inventoryState,
+//                        itemSearchList = itemSearchList,
+//                        orderEvent = orderViewModel::onEvent,
+//                        inventoryEvent = inventoryViewModel::onEvent
+//                    )
 
                     // call to refresh receipt data for print
 //                    settingsViewModel.onEvent(SettingsEvent.GetPreference())
                 }
 
                 1 -> {
-                    OrderHistoryScreen(
-                        orderHistoryState = historyState,
-                        orderSearchList = itemOrderSearchList,
-                        pagingState = pagingState,
-                        historyEvent = orderHistoryViewModel::onEvent
-                    )
-                }
+//                    OrderHistoryScreen(
+//                        orderHistoryState = historyState,
+//                        orderSearchList = itemOrderSearchList,
+//                        pagingState = pagingState,
+//                        historyEvent = orderHistoryViewModel::onEvent
+//                    )
 
-                2 -> {
                     Navigator(
                         screen = SettingsScreen(),
                         content = { navigator ->
@@ -212,8 +211,20 @@ class MainScreen: Screen, KoinComponent {
                     )
                 }
 
+                2 -> {
+//                    Navigator(
+//                        screen = SettingsScreen(),
+//                        content = { navigator ->
+//                            ProvideAppNavigator(
+//                                navigator = navigator,
+//                                content = { SlideTransition(navigator = navigator) },
+//                            )
+//                        }
+//                    )
+                }
+
                 3 -> {
-                    TabMarioScreen()
+//                    TabMarioScreen()
                 }
             }
         }

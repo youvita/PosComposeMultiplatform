@@ -74,6 +74,7 @@ import core.theme.ColorF1F1F1
 import core.theme.PrimaryColor
 import core.theme.Shapes
 import core.theme.White
+import core.utils.Constants
 import core.utils.DialogError
 import core.utils.DialogLoading
 import core.utils.DialogPreview
@@ -346,7 +347,8 @@ fun AddNewProduct(
                                             price = price,
                                             amount = amount,
                                             discount = discount,
-                                            status = "In"
+                                            statusCode = Constants.StockType.STOCK_IN,
+                                            statusName = "In"
                                         )
                                         if (requiredField){
                                             onEvent(InventoryEvent.AddProduct(product))

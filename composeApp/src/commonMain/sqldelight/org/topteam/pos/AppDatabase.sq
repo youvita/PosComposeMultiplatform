@@ -26,16 +26,17 @@ CREATE TABLE StockEntity (
     stock_box INTEGER,
     total INTEGER,
     price INTEGER,
-    status TEXT,
+    status_code TEXT,
+    status_name TEXT,
     date TEXT,
     time TEXT
 );
 
 insertStock:
-INSERT INTO StockEntity(product_id, stock_in, stock_out, stock_box, total, price, status, date, time) VALUES( ?,?,?, ?, ?, ?, ?,?,?);
+INSERT INTO StockEntity(product_id, stock_in, stock_out, stock_box, total, price, status_code, status_name, date, time) VALUES( ?,?,?,?, ?, ?, ?, ?,?,?);
 
 updateStock:
-UPDATE StockEntity SET product_id = ?, stock_in = ?, stock_out = ?, stock_box = ?, total = ?, price = ?, status = ?, date = ?, time = ? WHERE stock_id = ?;
+UPDATE StockEntity SET stock_in = ?, stock_out = ?, total = ?, price = ?, status_name = ?, date = ?, time = ? WHERE stock_id = ?;
 
 getStockByProductId:
 SELECT * FROM StockEntity WHERE product_id = ?;

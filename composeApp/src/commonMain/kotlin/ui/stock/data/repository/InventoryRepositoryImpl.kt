@@ -4,6 +4,7 @@ import com.preat.peekaboo.image.picker.toImageBitmap
 import core.data.Resource
 import core.mapper.toMenu
 import core.mapper.toStock
+import core.utils.Constants
 import core.utils.SharePrefer
 import core.utils.getCurrentDate
 import core.utils.getCurrentDateTime
@@ -20,37 +21,35 @@ import ui.stock.domain.repository.InventoryRepository
 class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 
     private val db = posDatabase.appDatabaseQueries
-    override suspend fun updateProduct(product: Product) {
+    override suspend fun updateStock(product: Product) {
         val result = db.getStockByProductId(product.productId).executeAsList()
         if (result.isNotEmpty()) {
-            val stock = result.last().toStock()
-            stock.stockId?.let { id ->
-                db.updateStock(
-                    product.productId,
-                    product.qty?.toLong(),
-                    stock.stockOut,
-                    stock.stockBox,
-                    product.qty?.toLong(),
-                    product.price?.toLong(),
-                    stock.status,
-                    getCurrentDate(),
-                    getCurrentTime(),
-                    id
-                )
-            }
-
-            db.updateProduct(
-                menu_id = product.menuId,
-                product_id = product.productId,
-                name = product.name,
-                image = product.image,
-                imageUrl = product.imageUrl,
-                uom = product.uom,
-                qty = product.qty,
-                price = product.price,
-                discount = product.discount,
-                product_id_ = product.productId
+            val stock = result.find {
+                it.stock_id == product.id
+            }?.toStock()
+            db.updateStock(
+                stock_in = product.qty?.toLong().takeIf { product.statusCode == Constants.StockType.STOCK_IN } ?: 0,
+                stock_out = product.qty?.toLong().takeIf { product.statusCode == Constants.StockType.STOCK_OUT } ?: 0,
+                total = product.qty?.toLong(),
+                price = product.price?.toLong().takeIf { product.statusCode == Constants.StockType.STOCK_OUT } ?: stock?.unitPrice,
+                status_name = product.statusName,
+                date = getCurrentDate(),
+                time = getCurrentTime(),
+                stock_id = product.id
             )
+
+//            db.updateProduct(
+//                menu_id = product.menuId,
+//                product_id = product.productId,
+//                name = product.name,
+//                image = product.image,
+//                imageUrl = product.imageUrl,
+//                uom = product.uom,
+//                qty = product.qty,
+//                price = product.price,
+//                discount = product.discount,
+//                product_id_ = product.productId
+//            )
 
             // lasted update for date in
             SharePrefer.putPrefer("ADD", "add")
@@ -82,12 +81,13 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 
             db.insertStock(
                 product_id = product.productId,
-                stock_in = product.qty?.toLong().takeIf { product.status == "In" } ?: 0,
-                stock_out = product.qty?.toLong().takeIf { product.status == "Out" } ?: 0,
+                stock_in = product.qty?.toLong().takeIf { product.statusCode == Constants.StockType.STOCK_IN } ?: 0,
+                stock_out = product.qty?.toLong().takeIf { product.statusCode == Constants.StockType.STOCK_OUT } ?: 0,
                 stock_box = 0,
                 total = product.qty?.toLong(),
                 price = product.price?.toLong(),
-                status = product.status,
+                status_code = Constants.StockType.STOCK_IN.takeIf { product.statusCode == Constants.StockType.STOCK_IN } ?: Constants.StockType.STOCK_OUT,
+                status_name = product.statusName,
                 date = getCurrentDate(),
                 time = getCurrentTime()
             )
@@ -106,38 +106,36 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
 
     override suspend fun addProduct(product: Product) {
         val result = db.getStockByProductId(product.productId).executeAsList()
-        if (result.isNotEmpty()) {
-            // add existing stock
-            val stock = result.last().toStock()
-            stock.stockId?.let { id ->
-                db.updateStock(
-                    product.productId,
-                    product.qty?.toLong(),
-                    stock.stockOut,
-                    stock.stockBox,
-                    stock.stockTotal?.plus(product.qty?.toLong() ?: 0),
-                    stock.unitPrice,
-                    stock.status,
-                    getCurrentDate(),
-                    getCurrentTime(),
-                    id
-                )
-            }
-
-            db.updateProduct(
-                menu_id = product.menuId,
-                product_id = product.productId,
-                name = product.name,
-                image = product.image,
-                imageUrl = product.imageUrl,
-                uom = product.uom,
-                qty = stock.stockTotal?.plus(product.qty?.toLong() ?: 0).toString(),
-                price = product.price,
-                discount = product.discount,
-                product_id_ = product.productId
-            )
-
-        } else {
+//        if (result.isNotEmpty()) {
+//            // add existing stock
+//            val stock = result.last().toStock()
+//            stock.stockId?.let { id ->
+//                db.updateStock(
+//                    product.productId,
+//                    product.qty?.toLong(),
+//                    stock.stockOut,
+//                    product.qty?.toLong(),
+//                    stock.statusCode,
+//                    getCurrentDate(),
+//                    getCurrentTime(),
+//                    id
+//                )
+//            }
+//
+//            db.updateProduct(
+//                menu_id = product.menuId,
+//                product_id = product.productId,
+//                name = product.name,
+//                image = product.image,
+//                imageUrl = product.imageUrl,
+//                uom = product.uom,
+//                qty = stock.stockTotal?.plus(product.qty?.toLong() ?: 0).toString(),
+//                price = product.price,
+//                discount = product.discount,
+//                product_id_ = product.productId
+//            )
+//
+//        } else {
             db.insertStock(
                 product_id = product.productId,
                 stock_in = product.qty?.toLong(),
@@ -145,7 +143,8 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 stock_box = 0,
                 total = product.qty?.toLong(),
                 price = product.price?.toLong(),
-                status = product.status,
+                status_code = Constants.StockType.STOCK_IN,
+                status_name = product.statusName,
                 date = getCurrentDate(),
                 time = getCurrentTime(),
             )
@@ -161,7 +160,7 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 price = product.price,
                 discount = product.discount
             )
-        }
+//        }
 
         // lasted update for date in
         SharePrefer.putPrefer("ADD", "add")
@@ -185,7 +184,8 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 qty = item.qty,
                 price = item.price,
                 discount = item.discount,
-                status = item.status,
+                statusCode = item.status_code,
+                statusName = item.status_name,
                 date = item.date
 //                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
             )
@@ -241,7 +241,8 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 qty = item.qty,
                 price = item.price,
                 discount = item.discount,
-                status = item.status,
+                statusCode = item.status_code,
+                statusName = item.status_name,
                 date = item.date
 //                date = (item.date_in + "" + item.time_in).takeIf { SharePrefer.getPrefer("ADD") == "add" } ?: (item.date_out + " " + item.time_out)
             )
@@ -266,7 +267,8 @@ class InventoryRepositoryImpl(posDatabase: PosDatabase): InventoryRepository {
                 productImageUrl = item.imageUrl,
                 productPrice = item.price?.toString(),
                 categoryName = item.menuName,
-                status = item.status,
+                statusName = item.status_name,
+                statusCode = item.status_code,
                 date = item.date,
                 time = item.time
             )

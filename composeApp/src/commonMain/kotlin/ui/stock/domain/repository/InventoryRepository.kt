@@ -8,7 +8,7 @@ import ui.stock.domain.model.ProductMenu
 import ui.stock.domain.model.ProductStock
 
 interface InventoryRepository {
-    suspend fun updateProduct(product: Product)
+    suspend fun updateStock(product: Product)
     suspend fun adjustProduct(product: Product)
     suspend fun updateProductQty(id: Long, qty: String): Flow<Resource<Unit>>
     suspend fun addProduct(product: Product)

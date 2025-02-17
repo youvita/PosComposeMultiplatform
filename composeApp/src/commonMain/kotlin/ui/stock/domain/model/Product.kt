@@ -12,5 +12,7 @@ data class Product(
     val price: String?,
     val amount: String?,
     val discount: String?,
-    val status: String? = null
+    val statusCode: String? = null,
+    val statusName: String? = null,
+    val isStockIn: Boolean? = false
 )

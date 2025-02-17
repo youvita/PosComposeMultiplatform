@@ -18,7 +18,8 @@ fun StockEntity.toStock(): Stock {
         stockOut = stock_out,
         stockTotal = total,
         unitPrice = price,
-        status = status,
+        statusCode = status_code,
+        statusName = status_name,
         date = date,
         time = time
     )

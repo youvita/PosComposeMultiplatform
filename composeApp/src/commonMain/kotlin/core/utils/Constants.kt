@@ -16,4 +16,9 @@ object Constants {
         const val PARKING_FEE = 11
     }
 
+    object StockType {
+        const val STOCK_IN = "1"
+        const val STOCK_OUT = "2"
+    }
+
 }
