@@ -110,40 +110,40 @@ class ParkingScreen: Screen, KoinComponent {
 
         val scope = rememberCoroutineScope()
 
-        val isLoading by rememberUpdatedState(state.isLoading)
-        LaunchedEffect(isLoading) {
-            if (state.status == Status.SUCCESS) {
-            val list = state.data?.last()
-            list?.let { item ->
-                var parkingData = ParkingFeeData()
-                val parkingFee = SharePrefer.getPrefer("${Constants.PreferenceType.PARKING_FEE}")
-
-                if (parkingFee.isNotEmpty()) {
-                    parkingData = convertToObject<ParkingFeeData>(parkingFee)
-                }
-                isPaid = item.checkOut?.isNotEmpty() == true
-                val isWithinHour = checkTimeWithinHour(
-                    item.checkIn.orEmpty(),
-                    item.checkOut.orEmpty().takeIf { isPaid } ?: getCurrentDateTime())
-                val fee = parkingData.fee ?: 0.00
-                val period = getDateTimePeriod(item.checkIn ?: "", getCurrentDateTime())
-                val price =
-                    (period.toDouble() * fee).takeIf { isWithinHour } ?: (period.toDouble() * 0.05)
-
-
-                parking = item.copy(
-                    parkingNo = item.parkingNo,
-                    checkOut = item.checkOut.takeIf { isPaid } ?: getCurrentDateTime(),
-                    duration = item.duration.takeIf { isPaid } ?: period,
-                    timeUnit = "hour".takeIf { isWithinHour } ?: "minute",
-                    total = item.total.takeIf { isPaid } ?: price)
-
-                isPreview = true
-                isCheckIn = false
-                parkingNo = ""
-            }
-            }
-        }
+//        val isLoading by rememberUpdatedState(state.isLoading)
+//        LaunchedEffect(isLoading) {
+//            if (state.status == Status.SUCCESS) {
+//            val list = state.data?.last()
+//            list?.let { item ->
+//                var parkingData = ParkingFeeData()
+//                val parkingFee = SharePrefer.getPrefer("${Constants.PreferenceType.PARKING_FEE}")
+//
+//                if (parkingFee.isNotEmpty()) {
+//                    parkingData = convertToObject<ParkingFeeData>(parkingFee)
+//                }
+//                isPaid = item.checkOut?.isNotEmpty() == true
+//                val isWithinHour = checkTimeWithinHour(
+//                    item.checkIn.orEmpty(),
+//                    item.checkOut.orEmpty().takeIf { isPaid } ?: getCurrentDateTime())
+//                val fee = parkingData.fee ?: 0.00
+//                val period = getDateTimePeriod(item.checkIn ?: "", getCurrentDateTime())
+//                val price =
+//                    (period.toDouble() * fee).takeIf { isWithinHour } ?: (period.toDouble() * 0.05)
+//
+//
+//                parking = item.copy(
+//                    parkingNo = item.parkingNo,
+//                    checkOut = item.checkOut.takeIf { isPaid } ?: getCurrentDateTime(),
+//                    duration = item.duration.takeIf { isPaid } ?: period,
+//                    timeUnit = "hour".takeIf { isWithinHour } ?: "minute",
+//                    total = item.total.takeIf { isPaid } ?: price)
+//
+//                isPreview = true
+//                isCheckIn = false
+//                parkingNo = ""
+//            }
+//            }
+//        }
 
         Scaffold(
             modifier = Modifier.padding(10.dp),
@@ -280,20 +280,98 @@ class ParkingScreen: Screen, KoinComponent {
                                         )
                                     )
 
-                                    Box(
-                                        modifier = Modifier
-                                            .clip(CircleShape)
-                                            .clickable {
-                                                startBarCodeScan = true
-                                            }
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Image(
+                                        TextField(
+                                            value = parkingNo,
+                                            onValueChange = {
+                                                parkingNo = it
+//                                        parkingViewModel.onEvent(ParkingEvent.SearchParking(it))
+                                            },
                                             modifier = Modifier
-                                                .padding(10.dp)
-                                                .size(24.dp),
-                                            contentDescription = null,
-                                            painter = painterResource(resource = Res.drawable.ic_scanner))
+                                                .weight(3f)
+                                                .padding(16.dp)
+                                                .focusRequester(remember { FocusRequester() }),
+                                            shape = RoundedCornerShape(10.dp),
+                                            placeholder = {
+                                                Text(
+                                                    "Enter Parking No.",
+                                                    maxLines = 1
+                                                )
+                                            },
+                                            trailingIcon = {
+//                                        if (!isInputEmpty) {
+//                                            Icon(
+//                                                imageVector = Icons.Default.Clear,
+//                                                contentDescription = "Clear",
+//                                                tint = PrimaryColor,
+//                                                modifier = Modifier.clickable {
+//                                                    // Handle clear action
+//                                                    historyEvent(OrderHistoryEvent.ClearSearchOrder)
+//                                                    isInputEmpty = true
+//                                                }
+//                                            )
+//                                        } else {
+//                                            Icon(
+//                                                imageVector = Icons.Outlined.Search,
+//                                                contentDescription = "Search",
+//                                                tint = PrimaryColor
+//                                            )
+//                                        }
+                                            },
+                                            colors = TextFieldDefaults.textFieldColors(
+                                                focusedIndicatorColor = Color.Transparent,
+                                                unfocusedIndicatorColor = Color.Transparent,
+                                                disabledIndicatorColor = Color.Transparent
+                                            )
+                                        )
+
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(CircleShape)
+                                                .clickable {
+                                                    startBarCodeScan = true
+                                                }
+                                        ) {
+                                            Image(
+                                                modifier = Modifier
+                                                    .padding(10.dp)
+                                                    .size(24.dp),
+                                                contentDescription = null,
+                                                painter = painterResource(resource = Res.drawable.ic_scanner))
+                                        }
+
+                                        Box(
+                                            modifier = Modifier.padding(10.dp)
+                                        ) {
+                                            PrimaryButton(
+                                                text = "Check In",
+                                                onClick = {
+                                                    if (parkingNo.isEmpty()) return@PrimaryButton
+
+                                                    platform.generateBarcode(
+                                                        data = parkingNo,
+                                                        width = 800,
+                                                        height = 150
+                                                    )
+                                                    barcode = platform.barcode
+                                                    val item = Parking(
+                                                        parkingNo = parkingNo,
+                                                        checkIn = getCurrentDateTime(),
+                                                        checkOut = null
+                                                    )
+                                                    parking = item
+                                                    parkingViewModel.onEvent(ParkingEvent.AddParking(item))
+                                                    isPreview = true
+                                                    isCheckIn = true
+                                                }
+                                            )
+                                        }
                                     }
+
+
                                 }
 
                                 //Table
@@ -386,79 +464,79 @@ class ParkingScreen: Screen, KoinComponent {
                             Column(
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    TextField(
-                                        value = parkingNo,
-                                        onValueChange = {
-                                            parkingNo = it
-//                                        parkingViewModel.onEvent(ParkingEvent.SearchParking(it))
-                                        },
-                                        modifier = Modifier
-                                            .weight(3f)
-                                            .padding(16.dp)
-                                            .focusRequester(remember { FocusRequester() }),
-                                        shape = RoundedCornerShape(10.dp),
-                                        placeholder = {
-                                            Text(
-                                                "Enter Parking No.",
-                                                maxLines = 1
-                                            )
-                                        },
-                                        trailingIcon = {
-//                                        if (!isInputEmpty) {
-//                                            Icon(
-//                                                imageVector = Icons.Default.Clear,
-//                                                contentDescription = "Clear",
-//                                                tint = PrimaryColor,
-//                                                modifier = Modifier.clickable {
-//                                                    // Handle clear action
-//                                                    historyEvent(OrderHistoryEvent.ClearSearchOrder)
-//                                                    isInputEmpty = true
-//                                                }
+//                                Row(
+//                                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
+//                                    verticalAlignment = Alignment.CenterVertically
+//                                ) {
+//                                    TextField(
+//                                        value = parkingNo,
+//                                        onValueChange = {
+//                                            parkingNo = it
+////                                        parkingViewModel.onEvent(ParkingEvent.SearchParking(it))
+//                                        },
+//                                        modifier = Modifier
+//                                            .weight(3f)
+//                                            .padding(16.dp)
+//                                            .focusRequester(remember { FocusRequester() }),
+//                                        shape = RoundedCornerShape(10.dp),
+//                                        placeholder = {
+//                                            Text(
+//                                                "Enter Parking No.",
+//                                                maxLines = 1
 //                                            )
-//                                        } else {
-//                                            Icon(
-//                                                imageVector = Icons.Outlined.Search,
-//                                                contentDescription = "Search",
-//                                                tint = PrimaryColor
-//                                            )
-//                                        }
-                                        },
-                                        colors = TextFieldDefaults.textFieldColors(
-                                            focusedIndicatorColor = Color.Transparent,
-                                            unfocusedIndicatorColor = Color.Transparent,
-                                            disabledIndicatorColor = Color.Transparent
-                                        )
-                                    )
-
-                                    Box(
-                                        modifier = Modifier.padding(10.dp)
-                                    ) {
-                                        PrimaryButton(
-                                            text = "Check In",
-                                            onClick = {
-                                                platform.generateBarcode(
-                                                    data = parkingNo,
-                                                    width = 800,
-                                                    height = 150
-                                                )
-                                                barcode = platform.barcode
-                                                val item = Parking(
-                                                    parkingNo = parkingNo,
-                                                    checkIn = getCurrentDateTime(),
-                                                    checkOut = null
-                                                )
-                                                parking = item
-                                                parkingViewModel.onEvent(ParkingEvent.AddParking(item))
-                                                isPreview = true
-                                                isCheckIn = true
-                                            }
-                                        )
-                                    }
-                                }
+//                                        },
+//                                        trailingIcon = {
+////                                        if (!isInputEmpty) {
+////                                            Icon(
+////                                                imageVector = Icons.Default.Clear,
+////                                                contentDescription = "Clear",
+////                                                tint = PrimaryColor,
+////                                                modifier = Modifier.clickable {
+////                                                    // Handle clear action
+////                                                    historyEvent(OrderHistoryEvent.ClearSearchOrder)
+////                                                    isInputEmpty = true
+////                                                }
+////                                            )
+////                                        } else {
+////                                            Icon(
+////                                                imageVector = Icons.Outlined.Search,
+////                                                contentDescription = "Search",
+////                                                tint = PrimaryColor
+////                                            )
+////                                        }
+//                                        },
+//                                        colors = TextFieldDefaults.textFieldColors(
+//                                            focusedIndicatorColor = Color.Transparent,
+//                                            unfocusedIndicatorColor = Color.Transparent,
+//                                            disabledIndicatorColor = Color.Transparent
+//                                        )
+//                                    )
+//
+//                                    Box(
+//                                        modifier = Modifier.padding(10.dp)
+//                                    ) {
+//                                        PrimaryButton(
+//                                            text = "Check In",
+//                                            onClick = {
+//                                                platform.generateBarcode(
+//                                                    data = parkingNo,
+//                                                    width = 800,
+//                                                    height = 150
+//                                                )
+//                                                barcode = platform.barcode
+//                                                val item = Parking(
+//                                                    parkingNo = parkingNo,
+//                                                    checkIn = getCurrentDateTime(),
+//                                                    checkOut = null
+//                                                )
+//                                                parking = item
+//                                                parkingViewModel.onEvent(ParkingEvent.AddParking(item))
+//                                                isPreview = true
+//                                                isCheckIn = true
+//                                            }
+//                                        )
+//                                    }
+//                                }
 
                                 LineWrapper()
 
@@ -531,11 +609,40 @@ class ParkingScreen: Screen, KoinComponent {
                 exit = scaleOut()
             ) {
                 QrScannerScreen(
-                    result = {
+                    result = { result ->
                         startBarCodeScan = false
 
-                        if (it.isEmpty()) return@QrScannerScreen
-                        parkingViewModel.onEvent(ParkingEvent.SearchParking(it))
+                        if (result.isEmpty()) return@QrScannerScreen
+
+                        val itemSelected = state.data?.find {
+                            it.parkingNo == result
+                        }
+                        itemSelected?.let { item ->
+                            var parkingData = ParkingFeeData()
+                            val parkingFee = SharePrefer.getPrefer("${Constants.PreferenceType.PARKING_FEE}")
+
+                            if (parkingFee.isNotEmpty()) {
+                                parkingData = convertToObject<ParkingFeeData>(parkingFee)
+                            }
+                            isPaid = item.checkOut?.isNotEmpty() == true
+                            val isWithinHour = checkTimeWithinHour(item.checkIn.orEmpty(), item.checkOut.orEmpty().takeIf { isPaid } ?: getCurrentDateTime())
+                            val fee = parkingData.fee ?: 0.00
+                            val period = getDateTimePeriod(item.checkIn ?: "", getCurrentDateTime())
+                            val price = (period.toDouble() * fee).takeIf { isWithinHour } ?: (period.toDouble() * 0.05)
+
+
+                            parking = item.copy(
+                                checkOut = item.checkOut.takeIf { isPaid } ?: getCurrentDateTime(),
+                                duration = item.duration.takeIf { isPaid } ?: period,
+                                timeUnit = "hour".takeIf { isWithinHour } ?: "minute",
+                                total = item.total.takeIf { isPaid } ?: price)
+
+                            isPreview = true
+                            isCheckIn = false
+                            parkingNo = ""
+                        }
+
+//                        parkingViewModel.onEvent(ParkingEvent.SearchParking(it))
                     }
                 )
             }

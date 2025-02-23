@@ -399,7 +399,7 @@ fun ProductList(
                                 singleLine = true,
                                 enabled = false,
                                 modifier = Modifier
-                                    .weight(2f)
+                                    .weight(3f)
                                     .clickable(
                                         interactionSource = remember { MutableInteractionSource() },
                                         indication = null
@@ -414,16 +414,9 @@ fun ProductList(
                                     disabledIndicatorColor = Color.Transparent
                                 ),
                                 shape = RoundedCornerShape(10.dp),
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.DateRange,
-                                        tint = PrimaryColor,
-                                        contentDescription = "Pick Date",
-                                    )
-                                },
                                 trailingIcon = {
                                     Icon(
-                                        imageVector = Icons.Default.KeyboardArrowDown,
+                                        imageVector = Icons.Default.DateRange,
                                         tint = PrimaryColor,
                                         contentDescription = "Pick Date",
                                     )
@@ -446,7 +439,7 @@ fun ProductList(
                                     .weight(3f)
                                     .focusRequester(remember { FocusRequester() }),
                                 shape = RoundedCornerShape(10.dp),
-                                placeholder = { Text("Search order ID, Cashier, Amount", maxLines = 1) },
+                                placeholder = { Text("Search Product", maxLines = 1) },
                                 trailingIcon = {
                                     if (searchText?.isNotEmpty() == true){
                                         Icon(

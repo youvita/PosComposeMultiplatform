@@ -1,6 +1,7 @@
 package ui.parking.presentation.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,15 +14,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import core.app.convertToObject
 import core.utils.Constants
 import core.utils.DashedDivider
 import core.utils.SharePrefer
 import core.utils.dollar
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
+import poscomposemultiplatform.composeapp.generated.resources.Res
+import poscomposemultiplatform.composeapp.generated.resources.invoice_paid
 import receipt.ResultItem
 import ui.parking.domain.model.Parking
 import ui.settings.domain.model.ParkingFeeData
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ParkingFooter(
     isPreview: Boolean = false,
@@ -86,6 +93,14 @@ fun ParkingFooter(
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text("Show Your Ticket Barcode")
+            }
+        }
+
+        if (parking?.status == "1") {
+            Box(
+                modifier = Modifier.padding(20.dp)
+            ) {
+                Image(painter = painterResource(resource = Res.drawable.invoice_paid), contentDescription = null)
             }
         }
     }
