@@ -354,13 +354,12 @@ fun formatDouble(value: Double): String {
     }
 }
 
-fun calculateAmount(qty: String?, price: String?): String {
-    if (qty?.isEmpty() == true || price?.isEmpty() == true) return ""
+fun calculateAmount(qty: String?, price: Double?): Double {
+    if (qty?.isEmpty() == true || price == null) return 0.0
 
     val a = qty?.toDouble() ?: 0.0
-    val b = price?.toDouble() ?: 0.0
-    val amount = a * b
-    return amount.dollar()
+    val amount = a * price
+    return amount
 }
 
 

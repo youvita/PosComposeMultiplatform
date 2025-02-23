@@ -11,7 +11,7 @@ data class ProductMenu(
     val imageUrl: String?,
     val uom: String?,
     val qty: String?,
-    val price: String?,
+    val price: Double?,
     val discount: String?,
     val statusCode: String?,
     val statusName: String?,

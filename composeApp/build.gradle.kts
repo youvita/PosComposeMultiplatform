@@ -83,7 +83,9 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
 
             // generate excel
+            implementation(libs.poi)
             implementation(libs.poi.ooxml)
+//            implementation(libs.poi.schemas)
 
             // generate barcode
             implementation(libs.barcode.generate.android)
@@ -160,7 +162,7 @@ android {
 
     defaultConfig {
         applicationId = "org.topteam.pos"
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        minSdk = 26
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"

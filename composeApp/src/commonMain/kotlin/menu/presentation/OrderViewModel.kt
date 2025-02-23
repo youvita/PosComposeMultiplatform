@@ -534,7 +534,7 @@ class OrderViewModel(
                                 image = it.image_product,
                                 imageUrl = it.imageUrl,
                                 qty = it.qtySelected?.toLong(),
-                                price = it.price?.toLong(),
+                                price = it.price,
                                 discount = it.discount?.toLong()
                             )
                         )

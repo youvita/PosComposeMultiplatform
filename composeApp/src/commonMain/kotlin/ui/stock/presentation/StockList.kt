@@ -86,7 +86,7 @@ fun StockList(
     // alert dialog to adjust stock
     if (isUpdate) {
         var productQty by remember { mutableStateOf(0) }
-        var unitPrice by remember { mutableStateOf(0) }
+        var unitPrice by remember { mutableStateOf(0.0) }
 
         DialogPreview(
             title = "Stock Management",
@@ -133,10 +133,10 @@ fun StockList(
                                 modifier = Modifier.fillMaxWidth(),
                                 label = "Unit Price",
                                 placeholder = "Enter Amount",
-                                keyboardType = KeyboardType.Number,
+                                keyboardType = KeyboardType.Decimal,
                                 onValueChange = {
                                     if (it.isNotEmpty()) {
-                                        unitPrice = it.toInt()
+                                        unitPrice = it.toDouble()
                                     }
                                 }
                             )
@@ -160,7 +160,7 @@ fun StockList(
                                         imageUrl = null,
                                         uom = null,
                                         qty = productQty.toString(),
-                                        price = product?.price.takeIf { stockStatus == Constants.StockType.STOCK_IN } ?: unitPrice.toString(),
+                                        price = product?.price.takeIf { stockStatus == Constants.StockType.STOCK_IN } ?: unitPrice,
                                         amount = null,
                                         discount = null,
                                         statusCode = stockStatus,

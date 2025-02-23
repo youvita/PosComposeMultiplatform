@@ -85,6 +85,7 @@ import core.utils.TextFieldWrapper
 import core.utils.TextInputDefault
 import core.utils.calculateAmount
 import core.utils.dashedBorder
+import core.utils.dollar
 import mario.presentation.MarioEvent
 import mario.presentation.MarioState
 import mario.presentation.component.CreateMenu
@@ -123,7 +124,7 @@ fun AddNewProduct(
     var barImage by remember { mutableStateOf("") }
     var name by remember { mutableStateOf(productItem?.name) }
     var price by remember { mutableStateOf(productItem?.price) }
-    var amount by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf(0.0) }
     var uom by remember { mutableStateOf(productItem?.uom) }
     var qty by remember { mutableStateOf(productItem?.qty) }
     var discount by remember { mutableStateOf(productItem?.discount) }
@@ -912,10 +913,12 @@ fun AddNewProduct(
 
                                         TextInputDefault(
                                             modifier = Modifier.fillMaxWidth(),
-                                            text = price.orEmpty(),
+                                            text = "${price.takeIf { price != null } ?: 0.0}",
                                             placeholder = "Enter Unit Price",
                                             onValueChange = {
-                                                price = it
+                                                if (it.isNullOrEmpty()) return@TextInputDefault
+
+                                                price = it.toDouble()
                                             },
                                             isInputPrice = true,
                                             keyboardType = KeyboardType.Decimal
@@ -946,7 +949,7 @@ fun AddNewProduct(
 
                                         TextFieldWrapper(
                                             modifier = Modifier.fillMaxWidth(),
-                                            value = amount,
+                                            value = amount.dollar(),
                                             enableInput = false,
                                             onValueChange = {
                                             },
@@ -1016,8 +1019,8 @@ private fun required(
     name: String?,
     categorySelected: Boolean,
     productImageSelected: Boolean,
-    price: String?,
+    price: Double?,
     qty: String?
 ): Boolean{
-    return (sku > 0 && name?.isNotEmpty() == true) && categorySelected && productImageSelected && price?.isNotEmpty() == true && qty?.isNotEmpty() == true
+    return (sku > 0 && name?.isNotEmpty() == true) && categorySelected && productImageSelected && price != null && qty?.isNotEmpty() == true
 }

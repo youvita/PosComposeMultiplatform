@@ -2,16 +2,23 @@ package org.topteam.pos.excel
 
 import android.content.Context
 import android.content.Intent
+import androidx.compose.material3.SnackbarDuration
 import androidx.core.content.FileProvider
 import core.app.convertToObject
 import io.kamel.core.utils.File
 import kotlinx.serialization.Serializable
+import org.apache.poi.hssf.usermodel.HSSFCellStyle
+import org.apache.poi.hssf.usermodel.HSSFDataFormat
 import org.apache.poi.hssf.usermodel.HSSFRichTextString
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
+import org.apache.poi.hssf.util.HSSFColor
 import org.apache.poi.ss.usermodel.Font
+import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.usermodel.RichTextString
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.xssf.usermodel.XSSFCellStyle
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -19,9 +26,23 @@ import java.util.Date
 import java.util.Locale
 
 fun createWorkbook(context: Context, data: String) {
-    val workbook = HSSFWorkbook()
+    val workbook = XSSFWorkbook()
     val sheet = workbook.createSheet("Sheet")
-    createSheetHeader(sheet)
+
+    // Column style
+    val fontBold = workbook.createFont()
+    fontBold.bold = true
+    val boldStyle = workbook.createCellStyle()
+    boldStyle.setFont(fontBold)
+
+    val unitPriceF = workbook.createFont()
+    unitPriceF.color = IndexedColors.BLACK.index
+    val unitStyle = workbook.createCellStyle()
+    unitStyle.setFont(unitPriceF)
+    val dataFormat = workbook.createDataFormat()
+    unitStyle.dataFormat = dataFormat.getFormat("$#,##0.00")
+
+    createSheetHeader(sheet, boldStyle)
 
     val stock = convertToObject<List<ProductStock>>(data)
     if (stock.isNotEmpty()) {
@@ -30,17 +51,44 @@ fun createWorkbook(context: Context, data: String) {
         val endRow = sheet.createRow(stock.size)
         val endRange = endRow.createCell(8)
 
+        // Stock In Column
+        val stockInSRange = startRow.createCell(4)
+        val stockInERange = endRow.createCell(4)
+
+        // Stock Out Column
+        val stockOutSRange = startRow.createCell(5)
+        val stockOutERange = endRow.createCell(5)
+
         for (index in stock.indices) {
-            addData(index + 1, sheet, stock.elementAt(index))
+            addData(index + 1, sheet, stock.elementAt(index), unitStyle)
         }
 
-        // Total amount
-        val row = sheet.createRow(stock.size + 2) // skip one row for total amount
-        val cell7 = row.createCell(7)
-        cell7.setCellValue("Total Amount")
+        // StockIn amount
+        val stockInRow = sheet.createRow(stock.size + 2) // skip one row for total amount
+        val stockInCell7 = stockInRow.createCell(7)
+        stockInCell7.setCellValue("Total Stock In")
+        stockInCell7.cellStyle = boldStyle
+        val stockInCell8 = stockInRow.createCell(8)
+        stockInCell8?.cellFormula = "SUMIF(${stockOutSRange.address}:${stockOutERange.address}, ${0} ,${startRange.address}:${endRange.address})"
+        stockInCell8?.cellStyle = unitStyle
 
-        val cell8 = row.createCell(8)
-        cell8?.cellFormula = "SUM(${startRange.address}:${endRange.address})"
+        // StockOut amount
+        val stockOutRow = sheet.createRow(stock.size + 3) // skip one row for total amount
+        val stockOutCell7 = stockOutRow.createCell(7)
+        stockOutCell7.setCellValue("Total Stock Out")
+        stockOutCell7.cellStyle = boldStyle
+        val stockOutCell8 = stockOutRow.createCell(8)
+        stockOutCell8?.cellFormula = "SUMIF(${stockInSRange.address}:${stockInERange.address}, ${0} ,${startRange.address}:${endRange.address})"
+        stockOutCell8?.cellStyle = unitStyle
+
+        // Total amount
+        val row = sheet.createRow(stock.size + 4) // skip one row for total amount
+        val totalCell7 = row.createCell(7)
+        totalCell7.setCellValue("Total Amount")
+        totalCell7.cellStyle = boldStyle
+        val totalCell8 = row.createCell(8)
+        totalCell8?.cellFormula = "${stockInCell8.address}-${stockOutCell8.address}"
+        totalCell8?.cellStyle = unitStyle
     }
 
     val phat = context.getExternalFilesDir(null)
@@ -50,7 +98,7 @@ fun createWorkbook(context: Context, data: String) {
         }
     }
 
-    val file = File(phat, "Report_${getCurrentDate()}${getCurrentTime()}.xls")
+    val file = File(phat, "Report_${getCurrentDate()}${getCurrentTime()}.xlsx")
     val fileOutputStream = FileOutputStream(file)
     workbook.write(fileOutputStream)
     fileOutputStream.close()
@@ -81,7 +129,7 @@ private fun getCurrentTime(): String {
     return formatter.format(time)
 }
 
-private fun createSheetHeader(sheet: Sheet) {
+private fun createSheetHeader(sheet: Sheet, style: XSSFCellStyle) {
     //setHeaderStyle is a custom function written below to add header style
 
     //Create sheet first row
@@ -103,10 +151,11 @@ private fun createSheetHeader(sheet: Sheet) {
 
         //value represents the header value from HEADER_LIST
         cell?.setCellValue(value)
+        cell?.cellStyle = style
     }
 }
 
-private fun addData(rowIndex: Int, sheet: Sheet, value: ProductStock) {
+private fun addData(rowIndex: Int, sheet: Sheet, value: ProductStock, style: XSSFCellStyle) {
 
     // Create row based on row index
     val row = sheet.createRow(rowIndex)
@@ -124,19 +173,21 @@ private fun addData(rowIndex: Int, sheet: Sheet, value: ProductStock) {
     cell3.setCellValue(value.productId.toString())
 
     val cell4 = row.createCell(4)
-    cell4.setCellValue(value.stockIn?.toDouble() ?: 0.0)
+    cell4.setCellValue(value.stockIn?.toDouble() ?: 0.00)
 
     val cell5 = row.createCell(5)
-    cell5.setCellValue(value.stockOut?.toDouble() ?: 0.0)
+    cell5.setCellValue(value.stockOut?.toDouble() ?: 0.00)
 
     val cell6 = row.createCell(6)
-    cell6.setCellValue(value.stockTotal?.toDouble() ?: 0.0)
+    cell6.setCellValue(value.stockTotal?.toDouble() ?: 0.00)
 
     val cell7 = row.createCell(7)
-    cell7.setCellValue(value.productPrice?.toDouble() ?: 0.0)
+    cell7.setCellValue(value.productPrice?.toDouble() ?: 0.00)
+    cell7.cellStyle = style
 
     val cell8 = row.createCell(8)
     cell8.cellFormula = "${cell6.address} * ${cell7.address}"
+    cell8.cellStyle = style
 }
 
 @Serializable

@@ -25,7 +25,7 @@ CREATE TABLE StockEntity (
     stock_out INTEGER,
     stock_box INTEGER,
     total INTEGER,
-    price INTEGER,
+    price REAL,
     status_code TEXT,
     status_name TEXT,
     date TEXT,
@@ -54,7 +54,7 @@ CREATE TABLE ProductEntity (
     imageUrl TEXT,
     uom TEXT,
     qty TEXT,
-    price TEXT,
+    price REAL,
     discount TEXT
 );
 
@@ -124,7 +124,7 @@ CREATE TABLE ProductOrderEntity (
     image BLOB,
     imageUrl TEXT,
     qty INTEGER,
-    price INTEGER,
+    price REAL,
     discount INTEGER
 );
 
