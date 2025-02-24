@@ -65,17 +65,23 @@ fun clearAll() {
 }
 
 fun printOut() {
-    val printer = EscPosPrinter(BluetoothPrintersConnections.selectFirstPaired(),
-        203,
-        48f,
-        32, EscPosCharsetEncoding("UTF-8", 24))
+    if (BluetoothPrintersConnections.selectFirstPaired()?.isConnected() == true) {
+        val printer = EscPosPrinter(
+            BluetoothPrintersConnections.selectFirstPaired(),
+            203,
+            48f,
+            32, EscPosCharsetEncoding("UTF-8", 24)
+        )
 
-    var receipt = ""
-    for(image in imageList.sortedBy { it.key }) {
-        receipt = receipt.plus("[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
-            printer, image.bitmap
-        ) + "</img>\n")
+        var receipt = ""
+        for (image in imageList.sortedBy { it.key }) {
+            receipt = receipt.plus(
+                "[C]<img>" + PrinterTextParserImg.bitmapToHexadecimalString(
+                    printer, image.bitmap
+                ) + "</img>\n"
+            )
+        }
+
+        printer.printFormattedText(receipt)
     }
-
-    printer.printFormattedText(receipt)
 }
